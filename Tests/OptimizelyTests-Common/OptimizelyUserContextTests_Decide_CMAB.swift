@@ -152,7 +152,7 @@ class OptimizelyUserContextTests_Decide_CMAB: XCTestCase {
         wait(for: [expectation], timeout: 5) // Increased timeout for reliability
     }
     
-    func testDecideAsync_cmabWithCaching() {
+    func testDecideAsync_cmabWithUserProfileCahing() {
         let expectation1 = XCTestExpectation(description: "First CMAB decision")
         let expectation2 = XCTestExpectation(description: "Second CMAB decision")
         
@@ -169,7 +169,7 @@ class OptimizelyUserContextTests_Decide_CMAB: XCTestCase {
             attributes: ["gender": "f", "age": 25]
         )
         
-        // First decision
+        // First decision cache into user profile
         user.decideAsync(key: "feature_1") { decision in
             XCTAssertEqual(decision.variationKey, "a")
             XCTAssertEqual(self.mockCmabService.decisionCallCount, 1)
@@ -186,38 +186,44 @@ class OptimizelyUserContextTests_Decide_CMAB: XCTestCase {
         
         wait(for: [expectation1, expectation2], timeout: 1)
     }
-    // FixMe: Need to fix the test case
-//    func testDecideAsync_cmabWithIgnoreCache() {
-//        let expectation = XCTestExpectation(description: "CMAB ignore cache")
-//        // Set up the CMAB experiment
-//        let cmab: Cmab = try! OTUtils.model(from: ["trafficAllocation": 10000, "attributeIds": ["10389729780"]])
-//        var experiments = optimizely.config!.project.experiments
-//        experiments[0].cmab = cmab
-//        optimizely.config?.project.experiments = experiments
-//        mockCmabService.variationId = "10389729780" // corresponds to variation "a"
-//        
-//        // Create user with attributes that match CMAB experiment
-//        let user = optimizely.createUserContext(
-//            userId: kUserId,
-//            attributes: ["gender": "f", "age": 25]
-//        )
-//        
-//        // Make decision with ignoreCmabCache option
-//        user.decideAsync(
-//            key: "feature_1",
-//            options: [.ignoreCmabCache, .ignoreUserProfileService]
-//        ) { decision in
-//            XCTAssertEqual(decision.variationKey, "a")
-//            XCTAssertTrue(self.mockCmabService.decisionCalled)
-//            XCTAssertTrue(self.mockCmabService.ignoreCacheUsed)
-//            expectation.fulfill()
-//        }
-//        
-//        wait(for: [expectation], timeout: 1)
-//    }
+    
+    func testDecideAsync_cmabCacheOptions() {
+        let exp1 = XCTestExpectation(description: "First call")
+        let exp2 = XCTestExpectation(description: "Second call")
+        let exp3 = XCTestExpectation(description: "Third call")
+
+        
+        // Set up the CMAB experiment
+        let cmab: Cmab = try! OTUtils.model(from: ["trafficAllocation": 10000, "attributeIds": ["10389729780"]])
+        var experiments = optimizely.config!.project.experiments
+        experiments[0].cmab = cmab
+        optimizely.config?.project.experiments = experiments
+        mockCmabService.variationId = "10389729780" // corresponds to variation "a"
+        
+        // Create user with attributes that match CMAB experiment
+        let user = optimizely.createUserContext(
+            userId: kUserId,
+            attributes: ["gender": "f", "age": 25]
+        )
+        user.decideAsync(key: "feature_1", options: [.ignoreUserProfileService, .ignoreCmabCache]) { decision in
+            XCTAssertEqual(decision.variationKey, "a")
+            XCTAssertTrue(self.mockCmabService.ignoreCacheUsed)
+            exp1.fulfill()
+        }
+        user.decideAsync(key: "feature_1", options: [.ignoreUserProfileService, .resetCmabCache]) { decision in
+            XCTAssertEqual(decision.variationKey, "a")
+            XCTAssertTrue(self.mockCmabService.resetCacheCache)
+            exp2.fulfill()
+        }
+        user.decideAsync(key: "feature_1", options: [.ignoreUserProfileService, .invalidateUserCmabCache]) { decision in
+            XCTAssertEqual(decision.variationKey, "a")
+            XCTAssertTrue(self.mockCmabService.invalidateUserCmabCache)
+            exp3.fulfill()
+        }
+        wait(for: [exp1, exp2, exp3], timeout: 1)
+
+    }
  
-    
-    
     func testDecideAsync_cmabError() {
         let expectation = XCTestExpectation(description: "CMAB error handling")
         // Set up the CMAB experiment
@@ -244,7 +250,6 @@ class OptimizelyUserContextTests_Decide_CMAB: XCTestCase {
     
 }
 
-
 fileprivate class MockCmabService: DefaultCmabService {
     var variationId: String?
     var error: Error?
@@ -252,6 +257,8 @@ fileprivate class MockCmabService: DefaultCmabService {
     var decisionCallCount = 0
     var lastRuleId: String?
     var ignoreCacheUsed = false
+    var resetCacheCache = false
+    var invalidateUserCmabCache = false
     
     init() {
         super.init(cmabClient: DefaultCmabClient(), cmabCache: LruCache(size: 10, timeoutInSecs: 10))
@@ -259,10 +266,11 @@ fileprivate class MockCmabService: DefaultCmabService {
     
     override func getDecision(config: ProjectConfig, userContext: OptimizelyUserContext, ruleId: String, options: [OptimizelyDecideOption]) -> Result<CmabDecision, any Error> {
         decisionCalled = true
-        decisionCallCount += 1
         lastRuleId = ruleId
         ignoreCacheUsed = options.contains(.ignoreCmabCache)
-        
+        resetCacheCache = options.contains(.resetCmabCache)
+        invalidateUserCmabCache = options.contains(.invalidateUserCmabCache)
+        decisionCallCount += 1
         if let error = error {
             return .failure(error)
         }

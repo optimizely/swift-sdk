@@ -365,7 +365,7 @@ class DefaultDecisionService: OPTDecisionService {
         var decisions = [DecisionResponse<FeatureDecision>]()
         
         for featureFlag in featureFlags {
-            let flagDecisionResponse = getDecisionForFlag(config: config, featureFlag: featureFlag, user: user, userProfileTracker: profileTracker, opType: opType)
+            let flagDecisionResponse = getDecisionForFlag(config: config, featureFlag: featureFlag, user: user, userProfileTracker: profileTracker, opType: opType, options: options)
             decisions.append(flagDecisionResponse)
         }
         
@@ -398,7 +398,8 @@ class DefaultDecisionService: OPTDecisionService {
             let holdoutDecision = getVariationForHoldout(config: config,
                                                          flagKey: featureFlag.key,
                                                          holdout: holdout,
-                                                         user: user)
+                                                         user: user,
+                                                         options: options)
             reasons.merge(holdoutDecision.reasons)
             if let variation = holdoutDecision.result {
                 let featureDicision = FeatureDecision(experiment: holdout, variation: variation, source: Constants.DecisionSource.holdout.rawValue)
@@ -406,14 +407,14 @@ class DefaultDecisionService: OPTDecisionService {
             }
         }
         
-        let flagExpDecision = getVariationForFeatureExperiments(config: config, featureFlag: featureFlag, user: user, userProfileTracker: userProfileTracker, opType: opType)
+        let flagExpDecision = getVariationForFeatureExperiments(config: config, featureFlag: featureFlag, user: user, userProfileTracker: userProfileTracker, opType: opType, options: options)
         reasons.merge(flagExpDecision.reasons)
         
         if let decision = flagExpDecision.result {
             return DecisionResponse(result: decision, reasons: reasons)
         }
         
-        let rolloutDecision = getVariationForFeatureRollout(config: config, featureFlag: featureFlag, user: user)
+        let rolloutDecision = getVariationForFeatureRollout(config: config, featureFlag: featureFlag, user: user, options: options)
         reasons.merge(rolloutDecision.reasons)
         
         if let decision = rolloutDecision.result {
@@ -631,6 +632,7 @@ class DefaultDecisionService: OPTDecisionService {
         let decisionResponse = getVariation(config: config,
                                             experiment: rule,
                                             user: user,
+                                            options: options,
                                             opType: opType,
                                             userProfileTracker: userProfileTracker)
         let variationResult = decisionResponse.result

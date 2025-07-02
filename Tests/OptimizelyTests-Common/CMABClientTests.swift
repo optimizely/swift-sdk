@@ -218,7 +218,6 @@ class DefaultCmabClientTests: XCTestCase {
             expectation.fulfill()
         }
         waitForExpectations(timeout: 2)
-        
     }
     
     private func verifyRequest(ruleId: String, userId: String, attributes: [String: Any], cmabUUID: String) {
@@ -268,6 +267,7 @@ extension DefaultCmabClientTests {
             with request: URLRequest,
             completionHandler: @escaping CompletionHandler
         ) -> URLSessionDataTask {
+
             self.lastRequest = request
             let idx = callCount
             callCount += 1

@@ -104,16 +104,15 @@ class DefaultDecisionService: OPTDecisionService {
             reasons.merge(_reasons)
         }
 
-        let entityId = bucketedResponse?.result ?? ""
+        let entityId = bucketedResponse?.result
         
         // this means the user is not in the cmab experiment
-        if entityId != dummyEntityId {
+        if entityId == nil {
             let info = LogMessage.userNotInCmabExperiment(user.userId, experiment.key)
             logger.d(info)
             reasons.addInfo(info)
             return DecisionResponse(result: nil, reasons: reasons)
         }
-        
         
         /// Fetch CMAB decision
         let response = cmabService.getDecision(config: config, userContext: user, ruleId: experiment.id, options: options ?? [])

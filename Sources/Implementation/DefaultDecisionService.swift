@@ -18,19 +18,14 @@ import Foundation
 
 struct FeatureDecision {
     var experiment: ExperimentCore?
-    let variation: Variation
+    let variation: Variation?
     let source: String
     var cmabUUID: String?
 }
 
-struct CMABDecisionResult {
-    var result: CmabDecision?
-    var error: Bool
-    var reasons: DecisionReasons
-}
-
 struct VariationDecision {
-    var variation: Variation
+    var variation: Variation?
+    var cmabError: Bool = false
     var cmabUUID: String?
 }
 
@@ -41,7 +36,6 @@ enum OperationType {
 
 typealias OPType = OperationType
 typealias UserProfile = OPTUserProfileService.UPProfile
-
 
 class DefaultDecisionService: OPTDecisionService {
     let bucketer: OPTBucketer
@@ -120,15 +114,19 @@ class DefaultDecisionService: OPTDecisionService {
             return DecisionResponse(result: nil, reasons: reasons)
         }
         
-        var cmabDecision: CmabDecision?
+        
         /// Fetch CMAB decision
         let response = cmabService.getDecision(config: config, userContext: user, ruleId: experiment.id, options: options ?? [])
-        if case let .success(decision) = response {
-            cmabDecision = decision
-        } else {
-            let info = LogMessage.cmabFetchFailed(experiment.key)
-            self.logger.e(info)
-            reasons.addInfo(info)
+        var cmabDecision: CmabDecision?
+        switch response {
+            case .success(let dicision):
+                cmabDecision = dicision
+            case .failure:
+                let info = LogMessage.cmabFetchFailed(experiment.key)
+                self.logger.e(info)
+                reasons.addInfo(info)
+                let nilVariation = VariationDecision(variation: nil, cmabError: true, cmabUUID: nil)
+                return DecisionResponse(result: nilVariation, reasons: reasons)
         }
         
         if let cmabDecision = cmabDecision,
@@ -460,8 +458,10 @@ class DefaultDecisionService: OPTDecisionService {
                                                                       options: options)
                 reasons.merge(decisionResponse.reasons)
                 if let result = decisionResponse.result {
-                    let featureDecision = FeatureDecision(experiment: experiment, variation: result.variation, source: Constants.DecisionSource.featureTest.rawValue, cmabUUID: result.cmabUUID)
-                    return DecisionResponse(result: featureDecision, reasons: reasons)
+                    if result.cmabError || result.variation != nil {
+                        let featureDecision = FeatureDecision(experiment: experiment, variation: result.variation, source: Constants.DecisionSource.featureTest.rawValue, cmabUUID: result.cmabUUID)
+                        return DecisionResponse(result: featureDecision, reasons: reasons)
+                    }
                 }
             }
         }

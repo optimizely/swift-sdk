@@ -793,7 +793,8 @@ extension DecisionServiceTests_Experiments {
                                                          opType: .async,
                                                          userProfileTracker: nil)
         
-        XCTAssertNil(decision.result, "Should return nil when CMAB service fails")
+        XCTAssertNotNil(decision.result)
+        XCTAssertEqual(decision.result?.variation, nil)
         XCTAssertEqual(expectedReasons.toReport(), decision.reasons.toReport())
     }
     

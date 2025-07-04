@@ -260,7 +260,7 @@ extension OptimizelyClient {
         
         let userId = user.userId
         let attributes = user.attributes
-        let flagEnabled = flagDecision?.variation.featureEnabled ?? false
+        let flagEnabled = flagDecision?.variation?.featureEnabled ?? false
         
         logger.i("Feature \(flagKey) is enabled for user \(userId) \(flagEnabled)")
         
@@ -312,7 +312,7 @@ extension OptimizelyClient {
                                                             reasons: reasonsToReport,
                                                             decisionEventDispatched: decisionEventDispatched))
         
-        return OptimizelyDecision(variationKey: flagDecision?.variation.key,
+        return OptimizelyDecision(variationKey: flagDecision?.variation?.key,
                                   enabled: flagEnabled,
                                   variables: optimizelyJSON,
                                   ruleKey: ruleKey,

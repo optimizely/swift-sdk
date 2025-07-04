@@ -263,7 +263,7 @@ extension DecisionServiceTests_Features {
                                                                          user: optimizely.createUserContext(userId: kUserId,
                                                                                                             attributes: kAttributesCountryMatch)).result
         XCTAssert(pair?.experiment?.key == kExperimentKey)
-        XCTAssert(pair?.variation.key == kVariationKeyD)
+        XCTAssert(pair?.variation?.key == kVariationKeyD)
         XCTAssert(pair?.source == Constants.DecisionSource.featureTest.rawValue)
     }
     
@@ -339,7 +339,7 @@ extension DecisionServiceTests_Features {
         XCTAssertEqual(mockProfileService.saveCount, 1)
         XCTAssertEqual(pair.count, 3)
         XCTAssert(pair[0].result?.experiment?.key == kExperimentKey)
-        XCTAssert(pair[0].result?.variation.key == kVariationKeyD)
+        XCTAssert(pair[0].result?.variation?.key == kVariationKeyD)
         XCTAssert(pair[0].result?.source == Constants.DecisionSource.featureTest.rawValue)
     }
 }
@@ -361,7 +361,7 @@ extension DecisionServiceTests_Features {
                                                                                                          attributes: kAttributesRolloutAge1Match)).result
         
         XCTAssert(pair?.experiment?.id == kRolloutExperimentId)
-        XCTAssert(pair?.variation.key == kRolloutVariationKeyA)
+        XCTAssert(pair?.variation?.key == kRolloutVariationKeyA)
         XCTAssert(pair?.source == Constants.DecisionSource.rollout.rawValue)
     }
     
@@ -412,7 +412,7 @@ extension DecisionServiceTests_Features {
                                                                       user: optimizely.createUserContext(userId: kUserId,
                                                                                                          attributes: kAttributesRolloutAge1Match)).result
         XCTAssert(pair?.experiment?.id == kRolloutExperimentId3)
-        XCTAssert(pair?.variation.key == kRolloutVariationKeyC)
+        XCTAssert(pair?.variation?.key == kRolloutVariationKeyC)
         XCTAssert(pair?.source == Constants.DecisionSource.rollout.rawValue)
     }
     
@@ -427,7 +427,7 @@ extension DecisionServiceTests_Features {
                                                                       user: optimizely.createUserContext(userId: kUserId,
                                                                                                          attributes: kAttributesRolloutAge2Match)).result
         XCTAssert(pair?.experiment?.id == kRolloutExperimentId2)
-        XCTAssert(pair?.variation.key == kRolloutVariationKeyB)
+        XCTAssert(pair?.variation?.key == kRolloutVariationKeyB)
         XCTAssert(pair?.source == Constants.DecisionSource.rollout.rawValue)
     }
     
@@ -443,7 +443,7 @@ extension DecisionServiceTests_Features {
                                                                       user: optimizely.createUserContext(userId: kUserId,
                                                                                                          attributes: kAttributesRolloutAge1Match)).result
         XCTAssert(pair?.experiment?.id == kRolloutExperimentId)
-        XCTAssert(pair?.variation.key == kRolloutVariationKeyA)
+        XCTAssert(pair?.variation?.key == kRolloutVariationKeyA)
         XCTAssert(pair?.source == Constants.DecisionSource.rollout.rawValue)
     }
     
@@ -489,7 +489,7 @@ extension DecisionServiceTests_Features {
                                                                user: optimizely.createUserContext(userId: kUserId,
                                                                                                   attributes: kAttributesCountryMatch)).result
         XCTAssert(pair?.experiment?.key == kExperimentKey)
-        XCTAssert(pair?.variation.key == kVariationKeyD)
+        XCTAssert(pair?.variation?.key == kVariationKeyD)
     }
     
     func testGetVariationForFeatureWhenExperimentNotMatchAndRolloutNotExist() {
@@ -512,9 +512,9 @@ extension DecisionServiceTests_Features {
                                                                                                   attributes: kAttributesCountryNotMatch)).result
         if let pair = pair {
             XCTAssert(pair.experiment?.id == kRolloutExperimentId3)
-            XCTAssert(pair.variation.key == kRolloutVariationKeyC)
+            XCTAssert(pair.variation!.key == kRolloutVariationKeyC)
             XCTAssert(pair.experiment?.id == kRolloutExperimentId3)
-            XCTAssert(pair.variation.key == kRolloutVariationKeyC)
+            XCTAssert(pair.variation?.key == kRolloutVariationKeyC)
         } else {
             XCTFail()
         }

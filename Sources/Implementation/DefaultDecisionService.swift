@@ -197,11 +197,11 @@ class DefaultDecisionService: OPTDecisionService {
     ///   - userProfileTracker: Optional tracker for user profile data.
     /// - Returns: A `DecisionResponse` with the variation (if any) and decision reasons.
     func getVariation(config: ProjectConfig,
-                              experiment: Experiment,
-                              user: OptimizelyUserContext,
-                              options: [OptimizelyDecideOption]? = nil,
-                              opType: OPType,
-                              userProfileTracker: UserProfileTracker?) -> DecisionResponse<VariationDecision> {
+                      experiment: Experiment,
+                      user: OptimizelyUserContext,
+                      options: [OptimizelyDecideOption]? = nil,
+                      opType: OPType,
+                      userProfileTracker: UserProfileTracker?) -> DecisionResponse<VariationDecision> {
         let reasons = DecisionReasons(options: options)
         let userId = user.userId
         let attributes = user.attributes

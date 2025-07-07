@@ -275,7 +275,8 @@ extension OptimizelyClient {
                                     attributes: attributes,
                                     flagKey: feature.key,
                                     ruleType: ruleType,
-                                    enabled: flagEnabled)
+                                    enabled: flagEnabled,
+                                    cmabUUID: flagDecision?.cmabUUID)
                 decisionEventDispatched = true
             }
         }

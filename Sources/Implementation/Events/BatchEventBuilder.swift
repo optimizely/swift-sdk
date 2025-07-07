@@ -28,9 +28,10 @@ class BatchEventBuilder {
                                       attributes: OptimizelyAttributes?,
                                       flagKey: String,
                                       ruleType: String,
-                                      enabled: Bool) -> Data? {
+                                      enabled: Bool,
+                                      cmabUUID: String?) -> Data? {
         
-        let metaData = DecisionMetadata(ruleType: ruleType, ruleKey: experiment?.key ?? "", flagKey: flagKey, variationKey: variation?.key ?? "", enabled: enabled)
+        let metaData = DecisionMetadata(ruleType: ruleType, ruleKey: experiment?.key ?? "", flagKey: flagKey, variationKey: variation?.key ?? "", enabled: enabled, cmabUUID: cmabUUID)
         
         let decision = Decision(variationID: variation?.id ?? "",
                                 campaignID: experiment?.layerId ?? "",

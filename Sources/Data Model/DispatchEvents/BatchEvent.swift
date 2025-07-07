@@ -85,6 +85,7 @@ struct DecisionMetadata: Codable, Equatable {
     let flagKey: String
     let variationKey: String
     let enabled: Bool
+    var cmabUUID: String?
     
     enum CodingKeys: String, CodingKey {
         case ruleType = "rule_type"
@@ -92,6 +93,7 @@ struct DecisionMetadata: Codable, Equatable {
         case flagKey = "flag_key"
         case variationKey = "variation_key"
         case enabled = "enabled"
+        case cmabUUID = "cmab_uuid"
     }
 }
 

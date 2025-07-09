@@ -113,8 +113,8 @@ class DefaultDecisionService: OPTDecisionService {
         let response = cmabService.getDecision(config: config, userContext: user, ruleId: experiment.id, options: options ?? [])
         var cmabDecision: CmabDecision?
         switch response {
-            case .success(let dicision):
-                cmabDecision = dicision
+            case .success(let decision):
+                cmabDecision = decision
             case .failure:
                 let info = LogMessage.cmabFetchFailed(experiment.key)
                 self.logger.e(info)
@@ -387,8 +387,8 @@ class DefaultDecisionService: OPTDecisionService {
                                                          options: options)
             reasons.merge(holdoutDecision.reasons)
             if let variation = holdoutDecision.result {
-                let featureDicision = FeatureDecision(experiment: holdout, variation: variation, source: Constants.DecisionSource.holdout.rawValue)
-                return DecisionResponse(result: featureDicision, reasons: reasons)
+                let featureDecision = FeatureDecision(experiment: holdout, variation: variation, source: Constants.DecisionSource.holdout.rawValue)
+                return DecisionResponse(result: featureDecision, reasons: reasons)
             }
         }
         

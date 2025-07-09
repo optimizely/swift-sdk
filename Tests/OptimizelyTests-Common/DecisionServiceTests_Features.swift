@@ -259,9 +259,9 @@ extension DecisionServiceTests_Features {
     
     func testGetVariationForFeatureExperimentWhenMatched() {
         let pair = self.decisionService.getVariationForFeatureExperiments(config: config,
-                                                                         featureFlag: featureFlag,
-                                                                         user: optimizely.createUserContext(userId: kUserId,
-                                                                                                            attributes: kAttributesCountryMatch)).result
+                                                                          featureFlag: featureFlag,
+                                                                          user: optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryMatch),
+                                                                          isAsync: false).result
         XCTAssert(pair?.experiment?.key == kExperimentKey)
         XCTAssert(pair?.variation?.key == kVariationKeyD)
         XCTAssert(pair?.source == Constants.DecisionSource.featureTest.rawValue)
@@ -269,9 +269,9 @@ extension DecisionServiceTests_Features {
     
     func testGetVariationForFeatureExperimentWhenNotMatched() {
         let pair = self.decisionService.getVariationForFeatureExperiments(config: config,
-                                                                         featureFlag: featureFlag,
-                                                                         user: optimizely.createUserContext(userId: kUserId,
-                                                                                                            attributes: kAttributesCountryNotMatch)).result
+                                                                          featureFlag: featureFlag,
+                                                                          user: optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryNotMatch),
+                                                                          isAsync: false).result
         XCTAssertNil(pair)
     }
     
@@ -281,9 +281,9 @@ extension DecisionServiceTests_Features {
         self.config.project.featureFlags = [featureFlag]
         
         let pair = self.decisionService.getVariationForFeatureExperiments(config: config,
-                                                                         featureFlag: featureFlag,
-                                                                         user: optimizely.createUserContext(userId: kUserId,
-                                                                                                            attributes: kAttributesCountryMatch)).result
+                                                                          featureFlag: featureFlag,
+                                                                          user: optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryMatch),
+                                                                          isAsync: false).result
         XCTAssertNil(pair)
     }
     
@@ -330,8 +330,8 @@ extension DecisionServiceTests_Features {
         let pair = ups_service.getVariationForFeatureList(
             config: config,
             featureFlags: [flag1, flag2, flag3],
-            user:  optimizely.createUserContext(userId: kUserId,
-                                                attributes: kAttributesCountryMatch)
+            user: optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryMatch),
+            isAsync: false
         )
         
        

@@ -726,7 +726,7 @@ extension DecisionServiceTests_Experiments {
                                                          experiment: cmabExperiment,
                                                          user: user,
                                                          options: nil,
-                                                         opType: .async,
+                                                         isAsync: true,
                                                          userProfileTracker: nil)
         let variation = decision.result?.variation
         XCTAssertNotNil(variation)
@@ -754,7 +754,7 @@ extension DecisionServiceTests_Experiments {
                                                          experiment: cmabExperiment,
                                                          user: user,
                                                          options: nil,
-                                                         opType: .async,
+                                                         isAsync: true,
                                                          userProfileTracker: nil)
         XCTAssertNil(decision.result, "Should return nil for 0% traffic allocation")
         XCTAssertEqual(expectedReasons.toReport(), decision.reasons.toReport())
@@ -790,7 +790,7 @@ extension DecisionServiceTests_Experiments {
                                                          experiment: cmabExperiment,
                                                          user: user,
                                                          options: nil,
-                                                         opType: .async,
+                                                         isAsync: true,
                                                          userProfileTracker: nil)
         
         XCTAssertNotNil(decision.result)
@@ -821,7 +821,7 @@ extension DecisionServiceTests_Experiments {
                                                          experiment: cmabExperiment,
                                                          user: user,
                                                          options: nil,
-                                                         opType: .sync,
+                                                         isAsync: false,
                                                          userProfileTracker: nil)
         XCTAssertNil(decision.result?.variation)
         XCTAssertEqual(expectedReasons.toReport(), decision.reasons.toReport())
@@ -849,7 +849,7 @@ extension DecisionServiceTests_Experiments {
                                                          experiment: cmabExperiment,
                                                          user: user,
                                                          options: nil,
-                                                         opType: .async,
+                                                         isAsync: true,
                                                          userProfileTracker: nil)
         XCTAssertNil(decision.result?.variation)
         XCTAssertEqual(expectedReasons.toReport(), decision.reasons.toReport())

@@ -48,7 +48,7 @@ extension OptimizelyClient {
         return createUserContext(userId: userId,
                                  attributes: (attributes ?? [:]) as [String: Any])
     }
-        
+    
     /// Create a user context to be used internally without sending an ODP identify event.
     ///
     /// - Parameters:
@@ -62,6 +62,13 @@ extension OptimizelyClient {
                                      identify: false)
     }
     
+    /// Returns a decision result for a given flag key
+    ///
+    /// - Parameters:
+    ///   - user: The user context for which the decision is being made
+    ///   - key: The feature flag key to evaluate
+    ///   - options: An array of options for decision-making.
+    /// - Returns: An OptimizelyDecision representing the flag decision
     func decide(user: OptimizelyUserContext,
                 key: String,
                 options: [OptimizelyDecideOption]? = nil) -> OptimizelyDecision {
@@ -73,14 +80,22 @@ extension OptimizelyClient {
         guard let _ = config.getFeatureFlag(key: key) else {
             return OptimizelyDecision.errorDecision(key: key, user: user, error: .featureKeyInvalid(key))
         }
-
+        
         var allOptions = defaultDecideOptions + (options ?? [])
+        //  Filtering out `enabledFlagsOnly` to ensure users always get a result.
         allOptions.removeAll(where: { $0 == .enabledFlagsOnly })
         
-        let decisionMap = decide(user: user, keys: [key], options: allOptions, opType: .sync, ignoreDefaultOptions: true)
+        let decisionMap = decide(user: user, keys: [key], options: allOptions, isAsync: false, ignoreDefaultOptions: true)
         return decisionMap[key] ?? OptimizelyDecision.errorDecision(key: key, user: user, error: .generic)
     }
     
+    /// Returns a decision result for a given key asynchronously
+    ///
+    /// - Parameters:
+    ///   - user: The user context for which the decision is being made
+    ///   - key: The feature flag key to evaluate
+    ///   - options: An array of options for decision-making.
+    ///   - completion: Handler will be called with a OptimizelyDecision
     func decideAsync(user: OptimizelyUserContext,
                      key: String,
                      options: [OptimizelyDecideOption]? = nil,
@@ -99,53 +114,59 @@ extension OptimizelyClient {
             }
             
             var allOptions = self.defaultDecideOptions + (options ?? [])
+            //  Filtering out `enabledFlagsOnly` to ensure users always get a result.
             allOptions.removeAll(where: { $0 == .enabledFlagsOnly })
             
-            let decisionMap = self.decide(user: user, keys: [key], options: allOptions, opType: .async, ignoreDefaultOptions: true)
+            let decisionMap = self.decide(user: user, keys: [key], options: allOptions, isAsync: true, ignoreDefaultOptions: true)
             let decision = decisionMap[key] ?? OptimizelyDecision.errorDecision(key: key, user: user, error: .generic)
             completion(decision)
         }
     }
     
+    /// Returns a key-map of decision results for multiple flag keys
+    ///
+    /// - Parameters:
+    ///   - user: The user context for which the decisions are being made
+    ///   - keys: The feature flag keys to evaluate
+    ///   - options: An array of options for decision-making.
+    /// - Returns: A dictionary of all decision results, mapped by flag keys.
     func decide(user: OptimizelyUserContext,
                 keys: [String],
                 options: [OptimizelyDecideOption]? = nil) -> [String: OptimizelyDecision] {
-        return decide(user: user, keys: keys, options: options, opType: .sync, ignoreDefaultOptions: false)
+        return decide(user: user, keys: keys, options: options, isAsync: false)
     }
     
+    /// Returns a decision result for a given key asynchronously
+    ///
+    /// - Parameters:
+    ///   - user: The user context for which the decision is being made
+    ///   - keys: The feature flag keys to evaluate
+    ///   - options: An array of options for decision-making
+    ///   - completion: Handler will be called with a dictionary mapping feature flag keys to OptimizelyDecision
     func decideAsync(user: OptimizelyUserContext,
                      keys: [String],
                      options: [OptimizelyDecideOption]? = nil,
                      completion: @escaping DecideForKeysCompletion) {
         decisionQueue.async {
-            let decisions = self.decide(user: user, keys: keys, options: options, opType: .async, ignoreDefaultOptions: false)
+            let decisions = self.decide(user: user, keys: keys, options: options, isAsync: true)
             completion(decisions)
         }
     }
     
-    func decide(user: OptimizelyUserContext,
-                keys: [String],
-                options: [OptimizelyDecideOption]? = nil,
-                ignoreDefaultOptions: Bool) -> [String: OptimizelyDecision] {
-        return self.decide(user: user, keys: keys, options: options, opType: .sync, ignoreDefaultOptions: ignoreDefaultOptions)
-    }
-    
-    func decideAsync(user: OptimizelyUserContext,
-                     keys: [String],
-                     options: [OptimizelyDecideOption]? = nil,
-                     ignoreDefaultOptions: Bool,
-                     completion: @escaping DecideForKeysCompletion) {
-        decisionQueue.async {
-            let decisions = self.decide(user: user, keys: keys, options: options, opType: .async, ignoreDefaultOptions: ignoreDefaultOptions)
-            completion(decisions)
-        }
-    }
-    
+    /// Returns a key-map of decision results for multiple flag keys
+    ///
+    /// - Parameters:
+    ///   - user: The user context for which to make the decision
+    ///   - keys: Array of feature flag keys to decide upon
+    ///   - options: Optional array of decision options that override default behavior
+    ///   - isAsync: Boolean indicating whether the operation is asynchronous
+    ///   - ignoreDefaultOptions: Boolean indicating whether to ignore default decide options
+    /// - Returns: A dictionary of all decision results, mapped by flag keys.
     private func decide(user: OptimizelyUserContext,
                         keys: [String],
                         options: [OptimizelyDecideOption]? = nil,
-                        opType: OPType,
-                        ignoreDefaultOptions: Bool) -> [String: OptimizelyDecision] {
+                        isAsync: Bool,
+                        ignoreDefaultOptions: Bool = false) -> [String: OptimizelyDecision] {
         guard let config = self.config else {
             logger.e(OptimizelyError.sdkNotReady)
             return [:]
@@ -187,7 +208,7 @@ extension OptimizelyClient {
             }
         }
         
-        let decisionList = (decisionService as? DefaultDecisionService)?.getVariationForFeatureList(config: config, featureFlags: flagsWithoutForceDecision, user: user, opType: opType, options: allOptions)
+        let decisionList = (decisionService as? DefaultDecisionService)?.getVariationForFeatureList(config: config, featureFlags: flagsWithoutForceDecision, user: user, isAsync: isAsync, options: allOptions)
         
         for index in 0..<flagsWithoutForceDecision.count {
             if decisionList?.indices.contains(index) ?? false {
@@ -221,6 +242,16 @@ extension OptimizelyClient {
         return decisionMap
     }
     
+    /// Returns a key-map of decision results for all flag keys
+    ///
+    /// This method evaluates all feature flags in the current configuration for the provided user.
+    /// It returns a dictionary mapping feature flag keys to their respective decisions.
+    ///
+    /// - Parameters:
+    ///   - user: The user context for which decisions are made.
+    ///   - options: Optional array of decision options that affect how decisions are made. Default is nil.
+    /// - Returns: A dictionary of all decision results, mapped by flag keys.
+    ///    - Returns an empty dictionary if the SDK is not ready.
     func decideAll(user: OptimizelyUserContext,
                    options: [OptimizelyDecideOption]? = nil) -> [String: OptimizelyDecision] {
         guard let config = self.config else {
@@ -231,6 +262,14 @@ extension OptimizelyClient {
         return decide(user: user, keys: config.featureFlagKeys, options: options)
     }
     
+    /// Asynchronously evaluates all feature flags and returns the decisions.
+    ///
+    /// This method will return decisions for all feature flags in the project.
+    ///
+    /// - Parameters:
+    ///   - user: The user context for which to evaluate the feature flags
+    ///   - options: An array of options for decision-making. Default is nil.
+    ///   - completion: Handler will be called with a dictionary mapping feature flag keys to OptimizelyDecision
     func decideAllAsync(user: OptimizelyUserContext,
                         options: [OptimizelyDecideOption]? = nil,
                         completion: @escaping DecideForKeysCompletion)  {
@@ -242,11 +281,11 @@ extension OptimizelyClient {
                 return
             }
             
-            let decision = self.decide(user: user, keys: config.featureFlagKeys, options: options,  opType: .async, ignoreDefaultOptions: false)
+            let decision = self.decide(user: user, keys: config.featureFlagKeys, options: options,  isAsync: true, ignoreDefaultOptions: false)
             completion(decision)
         }
     }
-
+    
     private func createOptimizelyDecision(flagKey: String,
                                           user: OptimizelyUserContext,
                                           flagDecision: FeatureDecision?,
@@ -357,16 +396,16 @@ extension OptimizelyClient {
         
         if let valueType = Constants.VariableValueType(rawValue: type) {
             switch valueType {
-            case .string:
-                break
-            case .integer:
-                valueParsed = Int(value)
-            case .double:
-                valueParsed = Double(value)
-            case .boolean:
-                valueParsed = Bool(value)
-            case .json:
-                valueParsed = OptimizelyJSON(payload: value)?.toMap()
+                case .string:
+                    break
+                case .integer:
+                    valueParsed = Int(value)
+                case .double:
+                    valueParsed = Double(value)
+                case .boolean:
+                    valueParsed = Bool(value)
+                case .json:
+                    valueParsed = OptimizelyJSON(payload: value)?.toMap()
             }
         }
         

@@ -84,6 +84,13 @@ class DefaultDecisionService: OPTDecisionService {
             return DecisionResponse(result: nil, reasons: reasons)
         }
         
+        // We do not choose the alternative solution (checking and rejecting if on the main thread)
+        // because it would lead to inconsistent decision results:
+        // - If the decision is called from the main thread, CMAB logic is skipped and an error is logged.
+        // - If called from a background thread, CMAB logic is included.
+        // This means the same API could return different results based on thread context, which is confusing for users.
+        // Instead, we pass an `isAsync` boolean to ensure that CMAB will be evaluated only for async calls.
+        
         guard isAsync else {
             let info = LogMessage.cmabNotSupportedInSyncMode
             logger.e(info)

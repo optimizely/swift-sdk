@@ -453,8 +453,13 @@ class DefaultDecisionService: OPTDecisionService {
                                                                       options: options)
                 reasons.merge(decisionResponse.reasons)
                 if let result = decisionResponse.result {
-                    if result.cmabError || result.variation != nil {
-                        let featureDecision = FeatureDecision(experiment: experiment, variation: result.variation, source: Constants.DecisionSource.featureTest.rawValue, cmabUUID: result.cmabUUID)
+                    if result.cmabError {
+                        // For CMAB - we're supposed to get decision from the server.
+                        // If failed, return decision with nil variation, so the client can take care of them.
+                        let featureDecision = FeatureDecision(experiment: experiment, variation: nil, source: Constants.DecisionSource.featureTest.rawValue)
+                        return DecisionResponse(result: featureDecision, reasons: reasons)
+                    } else if let variation = result.variation {
+                        let featureDecision = FeatureDecision(experiment: experiment, variation: variation, source: Constants.DecisionSource.featureTest.rawValue)
                         return DecisionResponse(result: featureDecision, reasons: reasons)
                     }
                 }

@@ -72,32 +72,30 @@ class OptimizelyUserContextTests_Decide_CMAB: XCTestCase {
             XCTAssertTrue(self.mockCmabService.decisionCalled, "CMAB decision service was not called")
             XCTAssertEqual(self.mockCmabService.lastRuleId, "10390977673", "Expected CMAB rule id '10390977673' but got \(String(describing: self.mockCmabService.lastRuleId))")
             
-            // Give event dispatcher time to process
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                // Verify impression event
-                self.optimizely.eventLock.sync {}
-                
-                guard let event = self.getFirstEventJSON(client: self.optimizely) else {
-                    XCTFail("No impression event found")
-                    expectation.fulfill()
-                    return
-                }
-                
-                let visitor = (event["visitors"] as! Array<Dictionary<String, Any>>)[0]
-                let snapshot = (visitor["snapshots"] as! Array<Dictionary<String, Any>>)[0]
-                let decision = (snapshot["decisions"] as! Array<Dictionary<String, Any>>)[0]
-                let metaData = decision["metadata"] as! Dictionary<String, Any>
-                
-                // Verify event metadata
-                XCTAssertEqual(metaData["rule_type"] as! String, Constants.DecisionSource.featureTest.rawValue)
-                XCTAssertEqual(metaData["rule_key"] as! String, "exp_with_audience")
-                XCTAssertEqual(metaData["flag_key"] as! String, "feature_1")
-                XCTAssertEqual(metaData["variation_key"] as! String, "a")
-                XCTAssertEqual(metaData["cmab_uuid"] as? String, "test-uuid")
-                XCTAssertTrue(metaData["enabled"] as! Bool)
-                
+            // Verify impression event
+            self.optimizely.eventLock.sync {}
+            
+            guard let event = self.getFirstEventJSON(client: self.optimizely) else {
+                XCTFail("No impression event found")
                 expectation.fulfill()
+                return
             }
+            
+            let visitor = (event["visitors"] as! Array<Dictionary<String, Any>>)[0]
+            let snapshot = (visitor["snapshots"] as! Array<Dictionary<String, Any>>)[0]
+            let decision = (snapshot["decisions"] as! Array<Dictionary<String, Any>>)[0]
+            let metaData = decision["metadata"] as! Dictionary<String, Any>
+            
+            // Verify event metadata
+            XCTAssertEqual(metaData["rule_type"] as! String, Constants.DecisionSource.featureTest.rawValue)
+            XCTAssertEqual(metaData["rule_key"] as! String, "exp_with_audience")
+            XCTAssertEqual(metaData["flag_key"] as! String, "feature_1")
+            XCTAssertEqual(metaData["variation_key"] as! String, "a")
+            XCTAssertEqual(metaData["cmab_uuid"] as? String, "test-uuid")
+            XCTAssertTrue(metaData["enabled"] as! Bool)
+            
+            expectation.fulfill()
+            
         }
         
         wait(for: [expectation], timeout: 5) // Increased timeout for reliability

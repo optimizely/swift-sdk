@@ -28,7 +28,6 @@ class OptimizelyUserContextTests_Decide_With_Holdouts_Reasons: XCTestCase {
             "status": "Running",
             "id": "id_holdout",
             "key": "key_holdout",
-            "layerId": "10420273888",
             "trafficAllocation": [
                 ["entityId": "id_holdout_variation", "endOfRange": 500]
             ],

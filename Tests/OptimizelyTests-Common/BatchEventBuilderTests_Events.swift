@@ -32,7 +32,6 @@ class BatchEventBuilderTests_Events: XCTestCase {
             "status": "Running",
             "id": "holdout_4444444",
             "key": "holdout_key",
-            "layerId": "10420273888",
             "trafficAllocation": [
                 ["entityId": "holdout_variation_a11", "endOfRange": 10000] // 100% traffic allocation
             ],

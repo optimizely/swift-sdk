@@ -111,7 +111,6 @@ class DecisionServiceTests_Holdouts: XCTestCase {
             "status": "Running",
             "id": "holdout_4444444",
             "key": "holdout_key",
-            "layerId": "10420273888",
             "trafficAllocation": [
                 ["entityId": "holdout_variation_a11", "endOfRange": 1000] // 10% traffic allocation
             ],
@@ -133,7 +132,6 @@ class DecisionServiceTests_Holdouts: XCTestCase {
             "status": "Running",
             "id": "holdout_global",
             "key": "holdout_global",
-            "layerId": "10420273888",
             "trafficAllocation": [
                 ["entityId": "holdout_global_variation", "endOfRange": 500]
             ],
@@ -155,7 +153,6 @@ class DecisionServiceTests_Holdouts: XCTestCase {
             "status": "Running",
             "id": "holdout_included",
             "key": "holdout_included",
-            "layerId": "10420273889",
             "trafficAllocation": [
                 ["entityId": "holdout_included_variation", "endOfRange": 1000]
             ],
@@ -177,7 +174,6 @@ class DecisionServiceTests_Holdouts: XCTestCase {
             "status": "Running",
             "id": "holdout_excluded",
             "key": "holdout_excluded",
-            "layerId": "10420273890",
             "trafficAllocation": [
                 ["entityId": "holdout_excluded_variation", "endOfRange": 1000]
             ],

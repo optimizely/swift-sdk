@@ -27,7 +27,6 @@ struct Holdout: Codable, ExperimentCore {
     var id: String
     var key: String
     var status: Status
-    var layerId: String
     var variations: [Variation]
     var trafficAllocation: [TrafficAllocation]
     var audienceIds: [String]
@@ -36,12 +35,14 @@ struct Holdout: Codable, ExperimentCore {
     var excludedFlags: [String]
     
     enum CodingKeys: String, CodingKey {
-        case id, key, status, layerId, variations, trafficAllocation, audienceIds, audienceConditions, includedFlags, excludedFlags
+        case id, key, status, variations, trafficAllocation, audienceIds, audienceConditions, includedFlags, excludedFlags
     }
     
     var variationsMap: [String: OptimizelyVariation] = [:]
     // replace with serialized string representation with audience names when ProjectConfig is ready
     var audiences: String = ""
+    // Not necessary for HO
+    var layerId: String = ""
     
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -49,7 +50,6 @@ struct Holdout: Codable, ExperimentCore {
         id = try container.decode(String.self, forKey: .id)
         key = try container.decode(String.self, forKey: .key)
         status = try container.decode(Status.self, forKey: .status)
-        layerId = try container.decode(String.self, forKey: .layerId)
         variations = try container.decode([Variation].self, forKey: .variations)
         trafficAllocation = try container.decode([TrafficAllocation].self, forKey: .trafficAllocation)
         audienceIds = try container.decode([String].self, forKey: .audienceIds)
@@ -65,8 +65,8 @@ extension Holdout: Equatable {
         return lhs.id == rhs.id &&
         lhs.key == rhs.key &&
         lhs.status == rhs.status &&
-        lhs.layerId == rhs.layerId &&
         lhs.variations == rhs.variations &&
+        lhs.layerId == rhs.layerId &&
         lhs.trafficAllocation == rhs.trafficAllocation &&
         lhs.audienceIds == rhs.audienceIds &&
         lhs.audienceConditions == rhs.audienceConditions &&

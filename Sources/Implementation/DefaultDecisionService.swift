@@ -29,12 +29,6 @@ struct VariationDecision {
     var cmabUUID: String?
 }
 
-enum OperationType {
-    case async
-    case sync
-}
-
-typealias OPType = OperationType
 typealias UserProfile = OPTUserProfileService.UPProfile
 
 class DefaultDecisionService: OPTDecisionService {

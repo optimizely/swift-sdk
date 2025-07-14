@@ -37,43 +37,16 @@ class DefaultBucketer: OPTBucketer {
                           bucketingId: String) -> DecisionResponse<Variation> {
         let reasons = DecisionReasons()
         
-        var mutexAllowed = true
+        // Check mutex rules
+        let mutexAllowed = checkMutexRules(
+            config: config,
+            experiment: experiment,
+            bucketingId: bucketingId,
+            reasons: reasons
+        )
         
-        // check for mutex
-        
-        let group = config.project.groups.filter { $0.getExperiment(id: experiment.id) != nil }.first
-        
-        if let group = group {
-            switch group.policy {
-            case .overlapping:
-                break
-            case .random:
-                let decisionResponse = bucketToExperiment(config: config,
-                                                          group: group,
-                                                          bucketingId: bucketingId)
-                reasons.merge(decisionResponse.reasons)
-                if let mutexExperiment = decisionResponse.result {
-                    if mutexExperiment.id == experiment.id {
-                        mutexAllowed = true
-                        
-                        let info = LogMessage.userBucketedIntoExperimentInGroup(bucketingId, experiment.key, group.id)
-                        logger.i(info)
-                        reasons.addInfo(info)
-                    } else {
-                        mutexAllowed = false
-                        
-                        let info = LogMessage.userNotBucketedIntoExperimentInGroup(bucketingId, experiment.key, group.id)
-                        logger.i(info)
-                        reasons.addInfo(info)
-                    }
-                } else {
-                    mutexAllowed = false
-                    
-                    let info = LogMessage.userNotBucketedIntoAnyExperimentInGroup(bucketingId, group.id)
-                    logger.i(info)
-                    reasons.addInfo(info)
-                }
-            }
+        if !mutexAllowed {
+            return DecisionResponse(result: nil, reasons: reasons)
         }
         
         if !mutexAllowed { return DecisionResponse(result: nil, reasons: reasons) }
@@ -120,6 +93,83 @@ class DefaultBucketer: OPTBucketer {
         return DecisionResponse(result: nil, reasons: reasons)
     }
     
+    /// Checks if an experiment is allowed to run based on mutex rules
+    /// - Parameters:
+    ///   - config: The project configuration
+    ///   - experiment: The experiment to check
+    ///   - bucketingId: The bucketing ID for the user
+    ///   - reasons: Decision reasons to track the mutex check process
+    /// - Returns: A boolean indicating if the experiment is allowed to run
+    private func checkMutexRules(
+        config: ProjectConfig,
+        experiment: Experiment,
+        bucketingId: String,
+        reasons: DecisionReasons
+    ) -> Bool {
+        // Find the group containing this experiment
+        let group = config.project.groups.filter { $0.getExperiment(id: experiment.id) != nil }.first
+        
+        guard let group = group else {
+            return true // No group found, experiment is allowed
+        }
+        
+        switch group.policy {
+            case .overlapping:
+                return true // Overlapping experiments are always allowed
+                
+            case .random:
+                let decisionResponse = bucketToExperiment(
+                    config: config,
+                    group: group,
+                    bucketingId: bucketingId
+                )
+                reasons.merge(decisionResponse.reasons)
+                
+                guard let mutexExperiment = decisionResponse.result else {
+                    let info = LogMessage.userNotBucketedIntoAnyExperimentInGroup(bucketingId, group.id)
+                    logger.i(info)
+                    reasons.addInfo(info)
+                    return false
+                }
+                
+                let isAllowed = mutexExperiment.id == experiment.id
+                let info = isAllowed
+                ? LogMessage.userBucketedIntoExperimentInGroup(bucketingId, experiment.key, group.id)
+                : LogMessage.userNotBucketedIntoExperimentInGroup(bucketingId, experiment.key, group.id)
+                
+                logger.i(info)
+                reasons.addInfo(info)
+                return isAllowed
+        }
+    }
+    
+    func bucketToEntityId(config: ProjectConfig,
+                          experiment: Experiment,
+                          bucketingId: String,
+                          trafficAllocation: [TrafficAllocation]) -> DecisionResponse<String> {
+        
+        let reasons = DecisionReasons()
+        
+        // Check mutex rules
+        let mutexAllowed = checkMutexRules(
+            config: config,
+            experiment: experiment,
+            bucketingId: bucketingId,
+            reasons: reasons
+        )
+        
+        if !mutexAllowed {
+            return DecisionResponse(result: nil, reasons: reasons)
+        }
+        
+        let hashId = makeHashIdFromBucketingId(bucketingId: bucketingId, entityId: experiment.id)
+        let bucketValue = self.generateBucketValue(bucketingId: hashId)
+        
+        let entityId = allocateTraffic(trafficAllocation: trafficAllocation, bucketValue: bucketValue)
+        
+        return DecisionResponse(result: entityId, reasons: reasons)
+    }
+    
     func bucketToVariation(experiment: ExperimentCore,
                            bucketingId: String) -> DecisionResponse<Variation> {
         let reasons = DecisionReasons()
@@ -153,7 +203,7 @@ class DefaultBucketer: OPTBucketer {
         for bucket in trafficAllocation where bucketValue < bucket.endOfRange {
             return bucket.entityId
         }
-        
+
         return nil
     }
     

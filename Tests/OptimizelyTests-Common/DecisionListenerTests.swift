@@ -1251,7 +1251,7 @@ class FakeDecisionService: DefaultDecisionService {
     var variation: Variation?
     var source: String!
     
-    override init(userProfileService: OPTUserProfileService) {
+    override init(userProfileService: OPTUserProfileService, cmabService: CmabService = DefaultCmabService.createDefault()) {
         super.init(userProfileService: DefaultUserProfileService())
     }
     
@@ -1267,7 +1267,7 @@ class FakeDecisionService: DefaultDecisionService {
         return DecisionResponse.responseNoReasons(result: featureDecision)
     }
     
-    override func getVariationForFeatureExperiments(config: ProjectConfig, featureFlag: FeatureFlag, user: OptimizelyUserContext, userProfileTracker: UserProfileTracker? = nil, options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<FeatureDecision> {
+    override func getVariationForFeatureExperiments(config: ProjectConfig, featureFlag: FeatureFlag, user: OptimizelyUserContext, userProfileTracker: UserProfileTracker? = nil, isAsync: Bool = false, options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<FeatureDecision> {
         guard let experiment = self.experiment, let tmpVariation = self.variation else {
             return DecisionResponse.nilNoReasons()
         }

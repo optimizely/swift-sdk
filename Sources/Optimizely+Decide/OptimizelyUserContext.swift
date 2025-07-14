@@ -16,6 +16,9 @@
 
 import Foundation
 
+public typealias DecideCompletion = (OptimizelyDecision) -> Void
+public typealias DecideForKeysCompletion = ([String: OptimizelyDecision]) -> Void
+
 /// An object for user contexts that the SDK will use to make decisions for.
 public class OptimizelyUserContext {
     weak var optimizely: OptimizelyClient?
@@ -121,6 +124,45 @@ public class OptimizelyUserContext {
         return optimizely.decide(user: clone, key: key, options: options)
     }
     
+    /// Asynchronously makes a feature decision for a given feature key.
+    ///
+    /// - Parameters:
+    ///   - key: The feature key to make a decision for
+    ///   - options: Optional array of decision options that will be used for this decision only
+    ///   - completion: A callback that receives the resulting OptimizelyDecision
+    ///
+    /// - Note:
+    ///     - If the SDK is not ready, this method will immediately return an error decision through the completion handler.
+    ///     - The completion handler will be called on a background queue. If you need to update the UI, dispatch to the main queue within the completion handler.
+    public func decideAsync(key: String,
+                            options: [OptimizelyDecideOption]? = nil,
+                            completion: @escaping DecideCompletion) {
+        
+        guard let optimizely = self.optimizely, let clone = self.clone else {
+            let decision = OptimizelyDecision.errorDecision(key: key, user: self, error: .sdkNotReady)
+            completion(decision)
+            return
+        }
+        optimizely.decideAsync(user: clone, key: key, options: options, completion: completion)
+    }
+
+    /// Returns a decision result asynchronously for a given flag key
+    /// - Parameters:
+    ///   - key: A flag key for which a decision will be made
+    ///   - options: An array of options for decision-making
+    /// - Returns: A decision result
+    ///
+    /// - Note: The completion handler will be called on a background queue. If you need to update the UI, dispatch to the main queue within the completion handler.
+    @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
+    public func decideAsync(key: String,
+                            options: [OptimizelyDecideOption]? = nil) async -> OptimizelyDecision {
+        return await withCheckedContinuation { continuation in
+            decideAsync(key: key, options: options) { decision in
+                continuation.resume(returning: decision)
+            }
+        }
+    }
+    
     /// Returns a key-map of decision results for multiple flag keys and a user context.
     ///
     /// - If the SDK finds an error (__flagKeyInvalid__, etc) for a key, the response will include a decision for the key showing `reasons` for the error (regardless of __includeReasons__ in options).
@@ -141,6 +183,46 @@ public class OptimizelyUserContext {
         return optimizely.decide(user: clone, keys: keys, options: options)
     }
     
+    /// Asynchronously decides variations for multiple feature flags.
+    ///
+    /// - Parameters:
+    ///   - keys: An array of feature flag keys.
+    ///   - options: An array of options for decision-making.
+    ///   - completion: A callback that receives a dictionary mapping each feature flag key to its corresponding decision result.
+    ///
+    /// - Note:
+    ///     - If the SDK is not ready, this method will immediately return an error decision through the completion handler.
+    ///     - Note: The completion handler will be called on a background queue. If you need to update the UI, dispatch to the main queue within the completion handler.
+    public func decideAsync(keys: [String],
+                            options: [OptimizelyDecideOption]? = nil,
+                            completion: @escaping DecideForKeysCompletion) {
+        
+        guard let optimizely = self.optimizely, let clone = self.clone else {
+            logger.e(OptimizelyError.sdkNotReady)
+            completion([:])
+            return
+        }
+        
+        optimizely.decideAsync(user: clone, keys: keys, options: options, completion: completion)
+    }
+    
+    /// Returns decisions for multiple flag keys asynchronously
+    /// - Parameters:
+    ///   - keys: An array of flag keys for which decisions will be made
+    ///   - options: An array of options for decision-making
+    /// - Returns: A dictionary of all decision results, mapped by flag keys
+    ///
+    /// - Note: The completion handler will be called on a background queue. If you need to update the UI, dispatch to the main queue within the completion handler.
+    @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
+    public func decideAsync(keys: [String],
+                            options: [OptimizelyDecideOption]? = nil) async -> [String: OptimizelyDecision] {
+        return await withCheckedContinuation { continuation in
+            decideAsync(keys: keys, options: options) { decisions in
+                continuation.resume(returning: decisions)
+            }
+        }
+    }
+    
     /// Returns a key-map of decision results for all active flag keys.
     ///
     /// - Parameters:
@@ -155,6 +237,38 @@ public class OptimizelyUserContext {
         return optimizely.decideAll(user: clone, options: options)
     }
     
+    /// Asynchronously makes a decision for all features and experiments for this user.
+    /// 
+    /// - Parameters:
+    ///   - options: An array of decision options. If not provided, the default options will be used.
+    ///   - completion: A closure that will be called with the decision results for all keys.
+    ///                 The closure takes a dictionary of feature/experiment keys to their corresponding decision results.
+    /// 
+    /// - Note: The completion handler will be called on a background queue. If you need to update the UI, dispatch to the main queue within the completion handler.
+    public func decideAllAsync(options: [OptimizelyDecideOption]? = nil, completion: @escaping DecideForKeysCompletion) {
+        guard let optimizely = self.optimizely, let clone = self.clone else {
+            logger.e(OptimizelyError.sdkNotReady)
+            completion([:])
+            return
+        }
+        
+        optimizely.decideAllAsync(user: clone, options: options, completion: completion)
+    }
+    
+    /// Returns decisions for all active flag keys asynchronously
+    /// - Parameter options: An array of options for decision-making
+    /// - Returns: A dictionary of all decision results, mapped by flag keys
+    ///
+    /// - Note: The completion handler will be called on a background queue. If you need to update the UI, dispatch to the main queue within the completion handler.
+    @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
+    public func decideAllAsync(options: [OptimizelyDecideOption]? = nil) async -> [String: OptimizelyDecision] {
+        return await withCheckedContinuation { continuation in
+            decideAllAsync(options: options) { decisions in
+                continuation.resume(returning: decisions)
+            }
+        }
+    }
+
     /// Tracks an event.
     ///
     /// - Parameters:

@@ -48,6 +48,7 @@ open class OptimizelyClient: NSObject {
     }
     
     let eventLock = DispatchQueue(label: "com.optimizely.client")
+    let decisionQueue = DispatchQueue(label: "com.optimizely.decisionQueue")
     
     // MARK: - Customizable Services
     
@@ -107,11 +108,13 @@ open class OptimizelyClient: NSObject {
         let logger = logger ?? DefaultLogger()
         type(of: logger).logLevel = defaultLogLevel ?? .info
         
+        let cmabService = DefaultCmabService.createDefault()
+        
         self.registerServices(sdkKey: sdkKey,
                               logger: logger,
                               eventDispatcher: eventDispatcher ?? DefaultEventDispatcher.sharedInstance,
                               datafileHandler: datafileHandler ?? DefaultDatafileHandler(),
-                              decisionService: DefaultDecisionService(userProfileService: userProfileService),
+                              decisionService: DefaultDecisionService(userProfileService: userProfileService, cmabService: cmabService),
                               notificationCenter: DefaultNotificationCenter())
         
         self.logger = HandlerRegistryService.shared.injectLogger()
@@ -435,7 +438,7 @@ open class OptimizelyClient: NSObject {
                                                           options: nil).result
         
         let source = pair?.source ?? Constants.DecisionSource.rollout.rawValue
-        let featureEnabled = pair?.variation.featureEnabled ?? false
+        let featureEnabled = pair?.variation?.featureEnabled ?? false
         if featureEnabled {
             logger.i(.featureEnabledForUser(featureKey, userId))
         } else {
@@ -585,8 +588,8 @@ open class OptimizelyClient: NSObject {
                                                               user: makeInternalUserContext(userId: userId, attributes: attributes),
                                                               options: nil).result
         if let decision = decision {
-            if let featureVariable = decision.variation.variables?.filter({$0.id == variable.id}).first {
-                if let featureEnabled = decision.variation.featureEnabled, featureEnabled {
+            if let featureVariable = decision.variation?.variables?.filter({$0.id == variable.id}).first {
+                if let featureEnabled = decision.variation?.featureEnabled, featureEnabled {
                     featureValue = featureVariable.value
                     logger.i(.userReceivedVariableValue(featureValue, variableKey, featureKey))
                 } else {
@@ -675,7 +678,7 @@ open class OptimizelyClient: NSObject {
                                                               featureFlag: featureFlag,
                                                               user: makeInternalUserContext(userId: userId, attributes: attributes),
                                                               options: nil).result
-        if let featureEnabled = decision?.variation.featureEnabled {
+        if let featureEnabled = decision?.variation?.featureEnabled {
             enabled = featureEnabled
             if featureEnabled {
                 logger.i(.featureEnabledForUser(featureKey, userId))
@@ -688,7 +691,7 @@ open class OptimizelyClient: NSObject {
         
         for v in featureFlag.variables {
             var featureValue = v.defaultValue ?? ""
-            if enabled, let variable = decision?.variation.getVariable(id: v.id) {
+            if enabled, let variable = decision?.variation?.getVariable(id: v.id) {
                 featureValue = variable.value
             }
             

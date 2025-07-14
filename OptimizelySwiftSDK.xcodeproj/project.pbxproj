@@ -2014,6 +2014,12 @@
 		98137C572A42BA0F004896EB /* OptimizelyUserContextTests_ODP_Aync_Await.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98137C562A42BA0F004896EB /* OptimizelyUserContextTests_ODP_Aync_Await.swift */; };
 		982C071F2D8C82AE0068B1FF /* HoldoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 982C071E2D8C82AE0068B1FF /* HoldoutTests.swift */; };
 		982C07202D8C82AE0068B1FF /* HoldoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 982C071E2D8C82AE0068B1FF /* HoldoutTests.swift */; };
+		9841590F2E13013E0042C01E /* OptimizelyUserContextTests_Decide_Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9841590E2E13013E0042C01E /* OptimizelyUserContextTests_Decide_Async.swift */; };
+		984159102E13013E0042C01E /* OptimizelyUserContextTests_Decide_Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9841590E2E13013E0042C01E /* OptimizelyUserContextTests_Decide_Async.swift */; };
+		984159122E141B640042C01E /* OptimizelyUserContextTests_Decide_CMAB.swift in Sources */ = {isa = PBXBuildFile; fileRef = 984159112E141B640042C01E /* OptimizelyUserContextTests_Decide_CMAB.swift */; };
+		984159132E141B640042C01E /* OptimizelyUserContextTests_Decide_CMAB.swift in Sources */ = {isa = PBXBuildFile; fileRef = 984159112E141B640042C01E /* OptimizelyUserContextTests_Decide_CMAB.swift */; };
+		984159372E16A7C50042C01E /* BucketTests_BucketToEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 984159362E16A7C50042C01E /* BucketTests_BucketToEntity.swift */; };
+		984159382E16A7C50042C01E /* BucketTests_BucketToEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 984159362E16A7C50042C01E /* BucketTests_BucketToEntity.swift */; };
 		984E2FDC2B27199B001F477A /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 987F11D92AF3F56F0083D3F9 /* PrivacyInfo.xcprivacy */; };
 		984E2FDD2B27199C001F477A /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 987F11D92AF3F56F0083D3F9 /* PrivacyInfo.xcprivacy */; };
 		984E2FDE2B27199D001F477A /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 987F11D92AF3F56F0083D3F9 /* PrivacyInfo.xcprivacy */; };
@@ -2569,6 +2575,9 @@
 		98137C542A41E86F004896EB /* OptimizelyClientTests_Init_Async_Await.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelyClientTests_Init_Async_Await.swift; sourceTree = "<group>"; };
 		98137C562A42BA0F004896EB /* OptimizelyUserContextTests_ODP_Aync_Await.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelyUserContextTests_ODP_Aync_Await.swift; sourceTree = "<group>"; };
 		982C071E2D8C82AE0068B1FF /* HoldoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoldoutTests.swift; sourceTree = "<group>"; };
+		9841590E2E13013E0042C01E /* OptimizelyUserContextTests_Decide_Async.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelyUserContextTests_Decide_Async.swift; sourceTree = "<group>"; };
+		984159112E141B640042C01E /* OptimizelyUserContextTests_Decide_CMAB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelyUserContextTests_Decide_CMAB.swift; sourceTree = "<group>"; };
+		984159362E16A7C50042C01E /* BucketTests_BucketToEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BucketTests_BucketToEntity.swift; sourceTree = "<group>"; };
 		984FE5102CC8AA88004F6F41 /* UserProfileTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileTracker.swift; sourceTree = "<group>"; };
 		987F11D92AF3F56F0083D3F9 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		989428B22DBFA431008BA1C8 /* MockBucketer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockBucketer.swift; sourceTree = "<group>"; };
@@ -3093,6 +3102,7 @@
 				6E75198F22C5211100B2B157 /* BucketTests_BucketVariation.swift */,
 				6E75198C22C5211100B2B157 /* BucketTests_ExpToVariation.swift */,
 				6E75198322C5211100B2B157 /* BucketTests_GroupToExp.swift */,
+				984159362E16A7C50042C01E /* BucketTests_BucketToEntity.swift */,
 				98AC98452DB7B762001405DD /* BucketTests_HoldoutToVariation.swift */,
 				6E75198422C5211100B2B157 /* BucketTests_Others.swift */,
 				6E75199622C5211100B2B157 /* DatafileHandlerTests.swift */,
@@ -3126,6 +3136,8 @@
 				6E75198122C5211100B2B157 /* OptimizelyErrorTests.swift */,
 				6EC6DD6824AE94820017D296 /* OptimizelyUserContextTests.swift */,
 				6E2D34B8250AD14000A0CDFE /* OptimizelyUserContextTests_Decide.swift */,
+				9841590E2E13013E0042C01E /* OptimizelyUserContextTests_Decide_Async.swift */,
+				984159112E141B640042C01E /* OptimizelyUserContextTests_Decide_CMAB.swift */,
 				98D5AE832DBB91C0000D5844 /* OptimizelyUserContextTests_Decide_Holdouts.swift */,
 				6E7E9B362523F8BF009E4426 /* OptimizelyUserContextTests_Decide_Reasons.swift */,
 				98AC985D2DBA6721001405DD /* OptimizelyUserContextTests_Decide_With_Holdouts_Reasons.swift */,
@@ -5005,6 +5017,7 @@
 				6E7518C122C520D400B2B157 /* Variable.swift in Sources */,
 				6E75170F22C520D400B2B157 /* OptimizelyClient.swift in Sources */,
 				6EC6DD4C24ABF89B0017D296 /* OptimizelyUserContext.swift in Sources */,
+				984159132E141B640042C01E /* OptimizelyUserContextTests_Decide_CMAB.swift in Sources */,
 				8464087D28130D3200CCF97D /* Integration.swift in Sources */,
 				6E7517E922C520D400B2B157 /* DefaultDecisionService.swift in Sources */,
 				989428C02DBFDCE5008BA1C8 /* DecisionListenerTest_Holdouts.swift in Sources */,
@@ -5012,6 +5025,7 @@
 				6E9B116A22C5487100C22D81 /* BucketTests_Base.swift in Sources */,
 				6E9B115F22C5487100C22D81 /* MurmurTests.swift in Sources */,
 				6E9B116022C5487100C22D81 /* DecisionServiceTests_Experiments.swift in Sources */,
+				984159382E16A7C50042C01E /* BucketTests_BucketToEntity.swift in Sources */,
 				6E9B116322C5487100C22D81 /* BucketTests_GroupToExp.swift in Sources */,
 				6E7516AF22C520D400B2B157 /* DefaultLogger.swift in Sources */,
 				6EF8DE2524BD1BB2008B9488 /* OptimizelyDecideOption.swift in Sources */,
@@ -5025,6 +5039,7 @@
 				980CC9012D833F0D00E07D24 /* Holdout.swift in Sources */,
 				6EF8DE1724BD1BB2008B9488 /* OptimizelyDecision.swift in Sources */,
 				8428D3D12807337400D0FB0C /* LruCacheTests.swift in Sources */,
+				984159102E13013E0042C01E /* OptimizelyUserContextTests_Decide_Async.swift in Sources */,
 				84861816286D0B8900B7F41B /* VuidManagerTests.swift in Sources */,
 				6E7517C522C520D400B2B157 /* DefaultDatafileHandler.swift in Sources */,
 				6E75190922C520D500B2B157 /* Attribute.swift in Sources */,
@@ -5297,6 +5312,7 @@
 				84861800286CF33700B7F41B /* OdpEvent.swift in Sources */,
 				6EC6DD4524ABF89B0017D296 /* OptimizelyUserContext.swift in Sources */,
 				6E7517CB22C520D400B2B157 /* DefaultBucketer.swift in Sources */,
+				984159122E141B640042C01E /* OptimizelyUserContextTests_Decide_CMAB.swift in Sources */,
 				845945C1287758A000D13E11 /* OdpConfig.swift in Sources */,
 				8464087528130D3200CCF97D /* Integration.swift in Sources */,
 				989428C12DBFDCE5008BA1C8 /* DecisionListenerTest_Holdouts.swift in Sources */,
@@ -5304,6 +5320,7 @@
 				6E9B115022C5486E00C22D81 /* BucketTests_Base.swift in Sources */,
 				6E9B114522C5486E00C22D81 /* MurmurTests.swift in Sources */,
 				6E9B114622C5486E00C22D81 /* DecisionServiceTests_Experiments.swift in Sources */,
+				984159372E16A7C50042C01E /* BucketTests_BucketToEntity.swift in Sources */,
 				6E9B114922C5486E00C22D81 /* BucketTests_GroupToExp.swift in Sources */,
 				6E75182B22C520D400B2B157 /* BatchEvent.swift in Sources */,
 				6EF8DE1E24BD1BB2008B9488 /* OptimizelyDecideOption.swift in Sources */,
@@ -5317,6 +5334,7 @@
 				6E75175D22C520D400B2B157 /* AtomicProperty.swift in Sources */,
 				6E7516D922C520D400B2B157 /* OPTUserProfileService.swift in Sources */,
 				6E7516E522C520D400B2B157 /* OPTEventDispatcher.swift in Sources */,
+				9841590F2E13013E0042C01E /* OptimizelyUserContextTests_Decide_Async.swift in Sources */,
 				98AC98462DB7B762001405DD /* BucketTests_HoldoutToVariation.swift in Sources */,
 				6E7E9B552523F8C6009E4426 /* OptimizelyUserContextTests_Decide_Legacy.swift in Sources */,
 				6E652305278E688B00954EA1 /* LruCache.swift in Sources */,

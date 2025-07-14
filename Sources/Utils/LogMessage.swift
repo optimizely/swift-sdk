@@ -47,6 +47,8 @@ enum LogMessage {
     case userHasNoForcedVariation(_ userId: String)
     case userHasNoForcedVariationForExperiment(_ userId: String, _ expKey: String)
     case userBucketedIntoVariationInExperiment(_ userId: String, _ expKey: String, _ varKey: String)
+    case userBucketedIntoEntity(_ entityId: String)
+    case userNotBucketedIntoAnyEntity
     case userBucketedIntoVariationInHoldout(_ userId: String, _ expKey: String, _ varKey: String)
     case userNotBucketedIntoVariation(_ userId: String)
     case userBucketedIntoInvalidVariation(_ id: String)
@@ -56,6 +58,7 @@ enum LogMessage {
     case userNotBucketedIntoAnyExperimentInGroup(_ userId: String, _ group: String)
     case userBucketedIntoInvalidExperiment(_ id: String)
     case userNotInExperiment(_ userId: String, _ expKey: String)
+    case userNotInCmabExperiment(_ userId: String, _ expKey: String)
     case userReceivedDefaultVariableValue(_ userId: String, _ feature: String, _ variable: String)
     case userReceivedAllDefaultVariableValues(_ userId: String, _ feature: String)
     case featureNotEnabledReturnDefaultVariableValue(_ userId: String, _ feature: String, _ variable: String)
@@ -73,6 +76,8 @@ enum LogMessage {
     case failedToAssignValue
     case valueForKeyNotFound(_ key: String)
     case lowPeriodicDownloadInterval
+    case cmabFetchFailed(_ expKey: String)
+    case cmabNotSupportedInSyncMode
 }
 
 extension LogMessage: CustomStringConvertible {
@@ -114,6 +119,8 @@ extension LogMessage: CustomStringConvertible {
         case .userHasNoForcedVariation(let userId):                             message = "User (\(userId)) is not in the forced variation map."
         case .userHasNoForcedVariationForExperiment(let userId, let expKey):    message = "No experiment (\(expKey)) mapped to user (\(userId)) in the forced variation map."
         case .userBucketedIntoVariationInExperiment(let userId, let expKey, let varKey): message = "User (\(userId)) is in variation (\(varKey)) of experiment (\(expKey))"
+        case .userBucketedIntoEntity(let entityId):                             message = "User bucketed into entity (\(entityId))"
+        case .userNotBucketedIntoAnyEntity:                                     message = "User not bucketed into any entity"
         case .userBucketedIntoVariationInHoldout(let userId, let holdoutKey, let varKey): message = "User (\(userId)) is in variation (\(varKey)) of holdout (\(holdoutKey))"
         case .userNotBucketedIntoVariation(let userId):                         message = "User (\(userId)) is in no variation."
         case .userNotBucketedIntoHoldoutVariation(let userId):                  message = "User (\(userId)) is in no holdout variation."
@@ -123,6 +130,7 @@ extension LogMessage: CustomStringConvertible {
         case .userNotBucketedIntoAnyExperimentInGroup(let userId, let group):   message = "User (\(userId)) is not in any experiment of group (\(group))."
         case .userBucketedIntoInvalidExperiment(let id):                        message = "Bucketed into an invalid experiment id (\(id))"
         case .userNotInExperiment(let userId, let expKey):                      message = "User (\(userId)) does not meet conditions to be in experiment (\(expKey))."
+        case .userNotInCmabExperiment(let userId, let expKey):                  message = "User (\(userId)) does not fall into cmab traffic allocation in experiment (\(expKey))."
         case .userReceivedDefaultVariableValue(let userId, let feature, let variable): message = "User (\(userId)) is not in any variation or rollout rule. Returning default value for variable (\(variable)) of feature flag (\(feature))."
         case .userReceivedAllDefaultVariableValues(let userId, let feature): message = "User (\(userId)) is not in any variation or rollout rule. Returning default value for all variables of feature flag (\(feature))."
         case .featureNotEnabledReturnDefaultVariableValue(let userId, let feature, let variable): message = "Feature (\(feature)) is not enabled for user (\(userId)). Returning the default variable value (\(variable))."
@@ -140,6 +148,8 @@ extension LogMessage: CustomStringConvertible {
         case .failedToAssignValue:                                              message = "Value for path could not be assigned to provided type."
         case .valueForKeyNotFound(let key):                                     message = "Value for JSON key (\(key)) not found."
         case .lowPeriodicDownloadInterval:                                      message = "Polling intervals below 30 seconds are not recommended."
+        case .cmabFetchFailed(let key):                                         message = "Failed to fetch CMAB data for experiment: \(key)."
+        case .cmabNotSupportedInSyncMode:                                       message = "CMAB is not supported in sync mode."
         }
         
         return message

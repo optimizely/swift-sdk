@@ -33,11 +33,15 @@ protocol CmabService {
     func getDecision(config: ProjectConfig,
                      userContext: OptimizelyUserContext,
                      ruleId: String,
+                     options: [OptimizelyDecideOption]) -> Result<CmabDecision, Error>
+    func getDecision(config: ProjectConfig,
+                     userContext: OptimizelyUserContext,
+                     ruleId: String,
                      options: [OptimizelyDecideOption],
                      completion: @escaping CmabDecisionCompletionHandler)
 }
 
-class DefaultCmabService {
+class DefaultCmabService: CmabService {
     typealias UserAttributes = [String : Any?]
     
     private let cmabClient: CmabClient
@@ -47,6 +51,22 @@ class DefaultCmabService {
     init(cmabClient: CmabClient, cmabCache: LruCache<String, CmabCacheValue>) {
         self.cmabClient = cmabClient
         self.cmabCache = cmabCache
+    }
+    
+    func getDecision(config: ProjectConfig,
+                     userContext: OptimizelyUserContext,
+                     ruleId: String,
+                     options: [OptimizelyDecideOption]) -> Result<CmabDecision, Error> {
+        var result: Result<CmabDecision, Error>!
+        let semaphore = DispatchSemaphore(value: 0)
+        getDecision(config: config,
+                    userContext: userContext,
+                    ruleId: ruleId, options: options) { _result in
+            result = _result
+            semaphore.signal()
+        }
+        semaphore.wait()
+        return result
     }
     
     func getDecision(config: ProjectConfig,
@@ -153,5 +173,14 @@ class DefaultCmabService {
             }
         }
         return filteredUserAttributes
+    }
+}
+
+extension DefaultCmabService {
+    static func createDefault() -> DefaultCmabService {
+        let DEFAULT_CMAB_CACHE_TIMEOUT = 30 * 60 * 1000  // 30 minutes in milliseconds
+        let DEFAULT_CMAB_CACHE_SIZE = 1000
+        let cache = LruCache<String, CmabCacheValue>(size: DEFAULT_CMAB_CACHE_SIZE, timeoutInSecs: DEFAULT_CMAB_CACHE_TIMEOUT)
+        return DefaultCmabService(cmabClient: DefaultCmabClient(), cmabCache: cache)
     }
 }

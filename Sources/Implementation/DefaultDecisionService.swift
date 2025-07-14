@@ -18,8 +18,15 @@ import Foundation
 
 struct FeatureDecision {
     var experiment: ExperimentCore?
-    let variation: Variation
+    let variation: Variation?
     let source: String
+    var cmabUUID: String?
+}
+
+struct VariationDecision {
+    var variation: Variation?
+    var cmabError: Bool = false
+    var cmabUUID: String?
 }
 
 typealias UserProfile = OPTUserProfileService.UPProfile
@@ -27,24 +34,110 @@ typealias UserProfile = OPTUserProfileService.UPProfile
 class DefaultDecisionService: OPTDecisionService {
     let bucketer: OPTBucketer
     let userProfileService: OPTUserProfileService
+    let cmabService: CmabService
+    let group: DispatchGroup = DispatchGroup()
     // thread-safe lazy logger load (after HandlerRegisterService ready)
     private let threadSafeLogger = ThreadSafeLogger()
-    
     // user-profile-service read-modify-write lock for supporting multiple clients
     static let upsRMWLock = DispatchQueue(label: "ups-rmw")
     
     var logger: OPTLogger {
         return threadSafeLogger.logger
     }
-        
-    init(userProfileService: OPTUserProfileService) {
+    
+    init(userProfileService: OPTUserProfileService,
+         cmabService: CmabService = DefaultCmabService.createDefault()) {
         self.bucketer = DefaultBucketer()
         self.userProfileService = userProfileService
+        self.cmabService = cmabService
     }
     
-    init(userProfileService: OPTUserProfileService, bucketer: OPTBucketer) {
+    init(userProfileService: OPTUserProfileService,
+         bucketer: OPTBucketer,
+         cmabService: CmabService = DefaultCmabService.createDefault()) {
         self.bucketer = bucketer
         self.userProfileService = userProfileService
+        self.cmabService = cmabService
+    }
+    
+    // MARK: - CMAB decision
+    
+    /// Get decision for CMAB Experiment
+    /// - Parameters:
+    ///   - config: The project configuration containing experiment and feature details.
+    ///   - experiment: The CMAB experiment to evaluate.
+    ///   - user: The user context containing user ID and attributes.
+    ///   - bucketingId: User bucketing id
+    ///   - isAsync: Controls synchronous or asynchronous decision.
+    ///   - options: Optional decision options (e.g., ignore user profile service).
+    /// - Returns: A `CMABDecisionResult` containing the CMAB decisions( variation id, cmabUUID) with reasons
+    
+    private func getDecisionForCmabExperiment(config: ProjectConfig,
+                                              experiment: Experiment,
+                                              user: OptimizelyUserContext,
+                                              bucketingId: String,
+                                              isAsync: Bool,
+                                              options: [OptimizelyDecideOption]?) -> DecisionResponse<VariationDecision> {
+        let reasons = DecisionReasons(options: options)
+        guard let cmab = experiment.cmab else {
+            logger.e("The experiment isn't a CMAB experiment")
+            return DecisionResponse(result: nil, reasons: reasons)
+        }
+        
+        // We do not choose the alternative solution (checking and rejecting if on the main thread)
+        // because it would lead to inconsistent decision results:
+        // - If the decision is called from the main thread, CMAB logic is skipped and an error is logged.
+        // - If called from a background thread, CMAB logic is included.
+        // This means the same API could return different results based on thread context, which is confusing for users.
+        // Instead, we pass an `isAsync` boolean to ensure that CMAB will be evaluated only for async calls.
+        
+        guard isAsync else {
+            let info = LogMessage.cmabNotSupportedInSyncMode
+            logger.e(info)
+            reasons.addInfo(info)
+            return DecisionResponse(result: nil, reasons: reasons)
+        }
+        
+        let dummyEntityId = "$"
+        let cmabTrafficAllocation = TrafficAllocation(entityId: dummyEntityId, endOfRange: cmab.trafficAllocation)
+        let bucketedResponse = (bucketer as? DefaultBucketer)?.bucketToEntityId(config: config, experiment: experiment, bucketingId: bucketingId, trafficAllocation: [cmabTrafficAllocation])
+        
+        if let _reasons = bucketedResponse?.reasons {
+            reasons.merge(_reasons)
+        }
+        
+        let entityId = bucketedResponse?.result
+        
+        // This means the user is not in the cmab experiment
+        if entityId == nil {
+            let info = LogMessage.userNotInCmabExperiment(user.userId, experiment.key)
+            logger.d(info)
+            reasons.addInfo(info)
+            return DecisionResponse(result: nil, reasons: reasons)
+        }
+        
+        // Fetch CMAB decision
+        let response = cmabService.getDecision(config: config, userContext: user, ruleId: experiment.id, options: options ?? [])
+        var cmabDecision: CmabDecision?
+        switch response {
+            case .success(let decision):
+                cmabDecision = decision
+            case .failure:
+                let info = LogMessage.cmabFetchFailed(experiment.key)
+                self.logger.e(info)
+                reasons.addInfo(info)
+                let nilVariation = VariationDecision(variation: nil, cmabError: true, cmabUUID: nil)
+                return DecisionResponse(result: nilVariation, reasons: reasons)
+        }
+        
+        if let cmabDecision = cmabDecision,
+           let experiment = config.getExperiment(id: experiment.id),
+           let bucketedVariation = experiment.getVariation(id: cmabDecision.variationId) {
+            let variationDecision = VariationDecision(variation: bucketedVariation, cmabUUID: cmabDecision.cmabUUID)
+            return DecisionResponse(result: variationDecision, reasons: reasons)
+        }
+        
+        return DecisionResponse(result: nil, reasons: reasons)
     }
     
     // MARK: - Experiment Decision
@@ -68,13 +161,14 @@ class DefaultDecisionService: OPTDecisionService {
             profileTracker?.loadUserProfile()
         }
         
-        let response = getVariation(config: config, experiment: experiment, user: user, userProfileTracker: profileTracker)
+        // isAsync to `false` for backward compatibility
+        let response = getVariation(config: config, experiment: experiment, user: user, isAsync: false, userProfileTracker: profileTracker)
         
         if (!ignoreUPS) {
             profileTracker?.save()
         }
         
-        return response
+        return DecisionResponse(result: response.result?.variation, reasons: response.reasons)
     }
     
     /// Determines the variation for a user in an experiment, considering user profile and decision rules.
@@ -83,20 +177,19 @@ class DefaultDecisionService: OPTDecisionService {
     ///   - experiment: The experiment to evaluate.
     ///   - user: The user context.
     ///   - options: Optional decision options.
+    ///   - isAsync: Controls synchronous or asynchronous decision.
     ///   - userProfileTracker: Optional tracker for user profile data.
     /// - Returns: A `DecisionResponse` with the variation (if any) and decision reasons.
     func getVariation(config: ProjectConfig,
                       experiment: Experiment,
                       user: OptimizelyUserContext,
                       options: [OptimizelyDecideOption]? = nil,
-                      userProfileTracker: UserProfileTracker?) -> DecisionResponse<Variation> {
+                      isAsync: Bool,
+                      userProfileTracker: UserProfileTracker?) -> DecisionResponse<VariationDecision> {
         let reasons = DecisionReasons(options: options)
         let userId = user.userId
         let attributes = user.attributes
         let experimentId = experiment.id
-        
-        // Acquire bucketingId .
-        let bucketingId = getBucketingId(userId: userId, attributes: attributes)
         
         // ---- check if the experiment is running ----
         if !experiment.isActivated {
@@ -113,7 +206,8 @@ class DefaultDecisionService: OPTDecisionService {
         
         if let variationId = decisionResponse.result?.id,
            let variation = experiment.getVariation(id: variationId) {
-            return DecisionResponse(result: variation, reasons: reasons)
+            let variationDecision = VariationDecision(variation: variation)
+            return DecisionResponse(result: variationDecision, reasons: reasons)
         }
         
         // ---- check to see if user is white-listed for a certain variation ----
@@ -122,7 +216,8 @@ class DefaultDecisionService: OPTDecisionService {
                 let info = LogMessage.forcedVariationFound(variationKey, userId)
                 logger.i(info)
                 reasons.addInfo(info)
-                return DecisionResponse(result: variation, reasons: reasons)
+                let variationDecision = VariationDecision(variation: variation)
+                return DecisionResponse(result: variationDecision, reasons: reasons)
             }
             
             // mapped to invalid variation - ignore and continue for other deciesions
@@ -131,7 +226,7 @@ class DefaultDecisionService: OPTDecisionService {
             reasons.addInfo(info)
         }
         
-        /// Load variation from tracker
+        // Load variation from tracker
         if let profile = userProfileTracker?.userProfile,
            let variationId = getVariationIdFromProfile(profile: profile, experimentId: experimentId),
            let variation = experiment.getVariation(id: variationId) {
@@ -139,10 +234,12 @@ class DefaultDecisionService: OPTDecisionService {
             let info = LogMessage.gotVariationFromUserProfile(variation.key, experiment.key, userId)
             logger.i(info)
             reasons.addInfo(info)
-            return DecisionResponse(result: variation, reasons: reasons)
+            let variationDecision = VariationDecision(variation: variation)
+            return DecisionResponse(result: variationDecision, reasons: reasons)
         }
         
-        var bucketedVariation: Variation?
+        
+        var variationDecision: VariationDecision?
         // ---- check if the user passes audience targeting before bucketing ----
         let audienceResponse = doesMeetAudienceConditions(config: config,
                                                           experiment: experiment,
@@ -150,15 +247,30 @@ class DefaultDecisionService: OPTDecisionService {
         reasons.merge(audienceResponse.reasons)
         
         if audienceResponse.result ?? false {
-            // bucket user into a variation
-            let decisionResponse = bucketer.bucketExperiment(config: config,
-                                                             experiment: experiment,
-                                                             bucketingId: bucketingId)
-            reasons.merge(decisionResponse.reasons)
+            // Acquire bucketingId
+            let bucketingId = getBucketingId(userId: userId, attributes: attributes)
             
-            bucketedVariation = decisionResponse.result
+            if experiment.isCmab {
+                let cmabDecisionResponse = getDecisionForCmabExperiment(config: config,
+                                                                        experiment: experiment,
+                                                                        user: user,
+                                                                        bucketingId: bucketingId,
+                                                                        isAsync: isAsync,
+                                                                        options: options)
+                reasons.merge(cmabDecisionResponse.reasons)
+                variationDecision = cmabDecisionResponse.result
+            } else {
+                // bucket user into a variation
+                let decisionResponse = bucketer.bucketExperiment(config: config,
+                                                                 experiment: experiment,
+                                                                 bucketingId: bucketingId)
+                reasons.merge(decisionResponse.reasons)
+                if let variation = decisionResponse.result {
+                    variationDecision = VariationDecision(variation: variation)
+                }
+            }
             
-            if let variation = bucketedVariation {
+            if let variation = variationDecision?.variation {
                 let info = LogMessage.userBucketedIntoVariationInExperiment(userId, experiment.key, variation.key)
                 logger.i(info)
                 reasons.addInfo(info)
@@ -175,7 +287,7 @@ class DefaultDecisionService: OPTDecisionService {
             reasons.addInfo(info)
         }
         
-        return DecisionResponse(result: bucketedVariation, reasons: reasons)
+        return DecisionResponse(result: variationDecision, reasons: reasons)
     }
     
     // MARK: - Feature Flag Decision
@@ -191,8 +303,25 @@ class DefaultDecisionService: OPTDecisionService {
                                 featureFlag: FeatureFlag,
                                 user: OptimizelyUserContext,
                                 options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<FeatureDecision> {
+        // isAsync to `false` for backward compatibility
+        self.getVariationForFeature(config: config, featureFlag: featureFlag, user: user, isAsync: false, options: options)
+    }
+    
+    /// Determines the feature decision for a user for a specific feature flag.
+    /// - Parameters:
+    ///   - config: The project configuration.
+    ///   - featureFlag: The feature flag to evaluate.
+    ///   - user: The user context.
+    ///   - isAsync: Controls synchronous or asynchronous decision.
+    ///   - options: Optional decision options.
+    /// - Returns: A `DecisionResponse` with the feature decision (if any) and reasons.
+    func getVariationForFeature(config: ProjectConfig,
+                                featureFlag: FeatureFlag,
+                                user: OptimizelyUserContext,
+                                isAsync: Bool,
+                                options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<FeatureDecision> {
         
-        let response = getVariationForFeatureList(config: config, featureFlags: [featureFlag], user: user, options: options).first
+        let response = getVariationForFeatureList(config: config, featureFlags: [featureFlag], user: user, isAsync: isAsync, options: options).first
         
         guard response?.result != nil else {
             let reasons = response?.reasons ?? DecisionReasons(options: options)
@@ -207,11 +336,13 @@ class DefaultDecisionService: OPTDecisionService {
     ///   - config: The project configuration.
     ///   - featureFlags: The list of feature flags to evaluate.
     ///   - user: The user context.
+    ///   - isAsync: Controls synchronous or asynchronous decision
     ///   - options: Optional decision options.
     /// - Returns: An array of `DecisionResponse` objects, each containing a feature decision and reasons.
     func getVariationForFeatureList(config: ProjectConfig,
                                     featureFlags: [FeatureFlag],
                                     user: OptimizelyUserContext,
+                                    isAsync: Bool,
                                     options: [OptimizelyDecideOption]? = nil) -> [DecisionResponse<FeatureDecision>] {
         
         let userId = user.userId
@@ -225,7 +356,7 @@ class DefaultDecisionService: OPTDecisionService {
         var decisions = [DecisionResponse<FeatureDecision>]()
         
         for featureFlag in featureFlags {
-            let flagDecisionResponse = getDecisionForFlag(config: config, featureFlag: featureFlag, user: user, userProfileTracker: profileTracker)
+            let flagDecisionResponse = getDecisionForFlag(config: config, featureFlag: featureFlag, user: user, userProfileTracker: profileTracker, isAsync: isAsync, options: options)
             decisions.append(flagDecisionResponse)
         }
         
@@ -243,12 +374,14 @@ class DefaultDecisionService: OPTDecisionService {
     ///   - featureFlag: The feature flag to evaluate.
     ///   - user: The user context.
     ///   - userProfileTracker: Optional tracker for user profile data.
+    ///   - isAsync: Controls synchronous or asynchronous decision
     ///   - options: Optional decision options.
     /// - Returns: A `DecisionResponse` with the feature decision (if any) and reasons.
     func getDecisionForFlag(config: ProjectConfig,
                             featureFlag: FeatureFlag,
                             user: OptimizelyUserContext,
                             userProfileTracker: UserProfileTracker? = nil,
+                            isAsync: Bool,
                             options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<FeatureDecision> {
         let reasons = DecisionReasons(options: options)
         
@@ -257,22 +390,23 @@ class DefaultDecisionService: OPTDecisionService {
             let holdoutDecision = getVariationForHoldout(config: config,
                                                          flagKey: featureFlag.key,
                                                          holdout: holdout,
-                                                         user: user)
+                                                         user: user,
+                                                         options: options)
             reasons.merge(holdoutDecision.reasons)
             if let variation = holdoutDecision.result {
-                let featureDicision = FeatureDecision(experiment: holdout, variation: variation, source: Constants.DecisionSource.holdout.rawValue)
-                return DecisionResponse(result: featureDicision, reasons: reasons)
+                let featureDecision = FeatureDecision(experiment: holdout, variation: variation, source: Constants.DecisionSource.holdout.rawValue)
+                return DecisionResponse(result: featureDecision, reasons: reasons)
             }
         }
         
-        let flagExpDecision = getVariationForFeatureExperiments(config: config, featureFlag: featureFlag, user: user, userProfileTracker: userProfileTracker)
+        let flagExpDecision = getVariationForFeatureExperiments(config: config, featureFlag: featureFlag, user: user, userProfileTracker: userProfileTracker, isAsync: isAsync, options: options)
         reasons.merge(flagExpDecision.reasons)
         
         if let decision = flagExpDecision.result {
             return DecisionResponse(result: decision, reasons: reasons)
         }
         
-        let rolloutDecision = getVariationForFeatureRollout(config: config, featureFlag: featureFlag, user: user)
+        let rolloutDecision = getVariationForFeatureRollout(config: config, featureFlag: featureFlag, user: user, options: options)
         reasons.merge(rolloutDecision.reasons)
         
         if let decision = rolloutDecision.result {
@@ -288,13 +422,15 @@ class DefaultDecisionService: OPTDecisionService {
     ///   - featureFlag: The feature flag to evaluate.
     ///   - user: The user context.
     ///   - userProfileTracker: Optional tracker for user profile data.
+    ///   - isAsync: Controls synchronous or asynchronous decision
     ///   - options: Optional decision options.
     /// - Returns: A `DecisionResponse` with the feature decision (if any) and reasons.
     func getVariationForFeatureExperiments(config: ProjectConfig,
-                                featureFlag: FeatureFlag,
-                                user: OptimizelyUserContext,
-                                userProfileTracker: UserProfileTracker? = nil,
-                                options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<FeatureDecision> {
+                                           featureFlag: FeatureFlag,
+                                           user: OptimizelyUserContext,
+                                           userProfileTracker: UserProfileTracker? = nil,
+                                           isAsync: Bool,
+                                           options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<FeatureDecision> {
         let reasons = DecisionReasons(options: options)
         
         let experimentIds = featureFlag.experimentIds
@@ -313,11 +449,19 @@ class DefaultDecisionService: OPTDecisionService {
                                                                       rule: experiment,
                                                                       user: user,
                                                                       userProfileTracker: userProfileTracker,
+                                                                      isAsync: isAsync,
                                                                       options: options)
                 reasons.merge(decisionResponse.reasons)
-                if let variation = decisionResponse.result {
-                    let featureDecision = FeatureDecision(experiment: experiment, variation: variation, source: Constants.DecisionSource.featureTest.rawValue)
-                    return DecisionResponse(result: featureDecision, reasons: reasons)
+                if let result = decisionResponse.result {
+                    if result.cmabError {
+                        // For CMAB - we're supposed to get decision from the server.
+                        // If failed, return decision with nil variation, so the client can take care of them.
+                        let featureDecision = FeatureDecision(experiment: experiment, variation: nil, source: Constants.DecisionSource.featureTest.rawValue)
+                        return DecisionResponse(result: featureDecision, reasons: reasons)
+                    } else if let variation = result.variation {
+                        let featureDecision = FeatureDecision(experiment: experiment, variation: variation, source: Constants.DecisionSource.featureTest.rawValue)
+                        return DecisionResponse(result: featureDecision, reasons: reasons)
+                    }
                 }
             }
         }
@@ -420,7 +564,7 @@ class DefaultDecisionService: OPTDecisionService {
         
         let userId = user.userId
         let attributes = user.attributes
-    
+        
         // Acquire bucketingId .
         let bucketingId = getBucketingId(userId: userId, attributes: attributes)
         var bucketedVariation: Variation?
@@ -471,7 +615,8 @@ class DefaultDecisionService: OPTDecisionService {
                                         rule: Experiment,
                                         user: OptimizelyUserContext,
                                         userProfileTracker: UserProfileTracker?,
-                                        options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<Variation> {
+                                        isAsync: Bool,
+                                        options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<VariationDecision> {
         let reasons = DecisionReasons(options: options)
         // check forced-decision first
         let forcedDecisionResponse = findValidatedForcedDecision(config: config,
@@ -480,16 +625,19 @@ class DefaultDecisionService: OPTDecisionService {
         reasons.merge(forcedDecisionResponse.reasons)
         
         if let variation = forcedDecisionResponse.result {
-            return DecisionResponse(result: variation, reasons: reasons)
+            let variationDecision = VariationDecision(variation: variation)
+            return DecisionResponse(result: variationDecision, reasons: reasons)
         }
         
         let decisionResponse = getVariation(config: config,
                                             experiment: rule,
                                             user: user,
+                                            options: options,
+                                            isAsync: isAsync,
                                             userProfileTracker: userProfileTracker)
-        let variation = decisionResponse.result
+        let variationResult = decisionResponse.result
         reasons.merge(decisionResponse.reasons)
-        return DecisionResponse(result: variation, reasons: reasons)
+        return DecisionResponse(result: variationResult, reasons: reasons)
     }
     
     /// Determines the variation for a delivery rule in a rollout.
@@ -509,7 +657,7 @@ class DefaultDecisionService: OPTDecisionService {
                                       options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<(Variation?, Bool)> {
         let reasons = DecisionReasons(options: options)
         var skipToEveryoneElse = false
-
+        
         // check forced-decision first
         
         let rule = rules[ruleIndex]

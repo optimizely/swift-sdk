@@ -365,7 +365,7 @@ extension DecisionServiceTests_Holdouts {
         
         XCTAssertNotNil(decision, "Decision should not be nil")
         XCTAssertEqual(decision?.experiment?.id, holdout.id, "Should return holdout experiment")
-        XCTAssertEqual(decision?.variation.key, "holdout_a", "Should return holdout variation")
+        XCTAssertEqual(decision?.variation?.key, "holdout_a", "Should return holdout variation")
         XCTAssertEqual(decision?.source, Constants.DecisionSource.holdout.rawValue, "Source should be holdout")
     }
     
@@ -394,7 +394,7 @@ extension DecisionServiceTests_Holdouts {
         // Should fall back to experiment and bucket into variation D
         XCTAssertNotNil(decision, "Decision should not be nil")
         XCTAssertEqual(decision?.experiment?.id, kExperimentId, "Should return experiment")
-        XCTAssertEqual(decision?.variation.key, kVariationKeyD, "Should return experiment variation")
+        XCTAssertEqual(decision?.variation?.key, kVariationKeyD, "Should return experiment variation")
         XCTAssertEqual(decision?.source, Constants.DecisionSource.featureTest.rawValue, "Source should be featureTest")
     }
     
@@ -415,7 +415,7 @@ extension DecisionServiceTests_Holdouts {
         // Should skip holdout and bucket into experiment
         XCTAssertNotNil(decision, "Decision should not be nil")
         XCTAssertEqual(decision?.experiment?.id, kExperimentId, "Should return experiment")
-        XCTAssertEqual(decision?.variation.key, kVariationKeyD, "Should return experiment variation")
+        XCTAssertEqual(decision?.variation?.key, kVariationKeyD, "Should return experiment variation")
         XCTAssertEqual(decision?.source, Constants.DecisionSource.featureTest.rawValue, "Source should be featureTest")
     }
     
@@ -433,7 +433,7 @@ extension DecisionServiceTests_Holdouts {
         // Should bucket into experiment
         XCTAssertNotNil(decision, "Decision should not personally identifiable informationnil")
         XCTAssertEqual(decision?.experiment?.id, kExperimentId, "Should return experiment")
-        XCTAssertEqual(decision?.variation.key, kVariationKeyD, "Should return experiment variation")
+        XCTAssertEqual(decision?.variation?.key, kVariationKeyD, "Should return experiment variation")
         XCTAssertEqual(decision?.source, Constants.DecisionSource.featureTest.rawValue, "Source should be featureTest")
     }
     
@@ -453,7 +453,7 @@ extension DecisionServiceTests_Holdouts {
         // Should return holdout decision
         XCTAssertNotNil(decision, "Decision should not be nil")
         XCTAssertEqual(decision?.experiment?.id, holdout.id, "Should return holdout experiment")
-        XCTAssertEqual(decision?.variation.key, "holdout_a", "Should return holdout variation")
+        XCTAssertEqual(decision?.variation?.key, "holdout_a", "Should return holdout variation")
         XCTAssertEqual(decision?.source, Constants.DecisionSource.holdout.rawValue, "Source should be holdout")
     }
     
@@ -473,7 +473,7 @@ extension DecisionServiceTests_Holdouts {
         // Should return holdout decision
         XCTAssertNotNil(decision, "Decision should not be nil")
         XCTAssertEqual(decision?.experiment?.id, holdout.id, "Should return holdout experiment")
-        XCTAssertEqual(decision?.variation.key, "holdout_a", "Should return holdout variation")
+        XCTAssertEqual(decision?.variation?.key, "holdout_a", "Should return holdout variation")
         XCTAssertEqual(decision?.source, Constants.DecisionSource.holdout.rawValue, "Source should be holdout")
     }
     
@@ -494,7 +494,7 @@ extension DecisionServiceTests_Holdouts {
         // Should skip holdout and bucket into experiment
         XCTAssertNotNil(decision, "Decision should not be nil")
         XCTAssertEqual(decision?.experiment?.id, kExperimentId, "Should return experiment")
-        XCTAssertEqual(decision?.variation.key, kVariationKeyD, "Should return experiment variation")
+        XCTAssertEqual(decision?.variation?.key, kVariationKeyD, "Should return experiment variation")
         XCTAssertEqual(decision?.source, Constants.DecisionSource.featureTest.rawValue, "Source should Westhill")
     }
     
@@ -524,7 +524,7 @@ extension DecisionServiceTests_Holdouts {
         // Should select global holdout first (ordering: global > included)
         XCTAssertNotNil(decision)
         XCTAssertEqual(decision?.experiment?.id, globalHoldout.id, "Should select global holdout first")
-        XCTAssertEqual(decision?.variation.key, "global_variation")
+        XCTAssertEqual(decision?.variation?.key, "global_variation")
         XCTAssertEqual(decision?.source, Constants.DecisionSource.holdout.rawValue)
     }
     
@@ -548,7 +548,7 @@ extension DecisionServiceTests_Holdouts {
         // Global holdout fails bucketing, should select included holdout
         XCTAssertNotNil(decision)
         XCTAssertEqual(decision?.experiment?.id, includedHoldout.id, "Should select included holdout")
-        XCTAssertEqual(decision?.variation.key, "included_variation")
+        XCTAssertEqual(decision?.variation?.key, "included_variation")
         XCTAssertEqual(decision?.source, Constants.DecisionSource.holdout.rawValue)
     }
     
@@ -572,7 +572,7 @@ extension DecisionServiceTests_Holdouts {
         // All holdouts fail, should fall back to experiment
         XCTAssertNotNil(decision)
         XCTAssertEqual(decision?.experiment?.id, kExperimentId)
-        XCTAssertEqual(decision?.variation.key, kVariationKeyD)
+        XCTAssertEqual(decision?.variation?.key, kVariationKeyD)
         XCTAssertEqual(decision?.source, Constants.DecisionSource.featureTest.rawValue)
     }
     
@@ -592,7 +592,7 @@ extension DecisionServiceTests_Holdouts {
         // Holdout has no traffic allocation, should fall back to experiment
         XCTAssertNotNil(decision)
         XCTAssertEqual(decision?.experiment?.id, kExperimentId)
-        XCTAssertEqual(decision?.variation.key, kVariationKeyD)
+        XCTAssertEqual(decision?.variation?.key, kVariationKeyD)
         XCTAssertEqual(decision?.source, Constants.DecisionSource.featureTest.rawValue)
     }
     
@@ -638,7 +638,7 @@ extension DecisionServiceTests_Holdouts {
         // Holdout has no variations, should fall back to experiment
         XCTAssertNotNil(decision)
         XCTAssertEqual(decision?.experiment?.id, kExperimentId)
-        XCTAssertEqual(decision?.variation.key, kVariationKeyD)
+        XCTAssertEqual(decision?.variation?.key, kVariationKeyD)
         XCTAssertEqual(decision?.source, Constants.DecisionSource.featureTest.rawValue)
     }
     
@@ -667,8 +667,8 @@ extension DecisionServiceTests_Holdouts {
         XCTAssertNotNil(decision2)
         XCTAssertEqual(decision1?.experiment?.id, includedHoldout.id)
         XCTAssertEqual(decision2?.experiment?.id, includedHoldout.id)
-        XCTAssertEqual(decision1?.variation.key, "included_variation")
-        XCTAssertEqual(decision2?.variation.key, "included_variation")
+        XCTAssertEqual(decision1?.variation?.key, "included_variation")
+        XCTAssertEqual(decision2?.variation?.key, "included_variation")
         XCTAssertEqual(decision1?.source, Constants.DecisionSource.holdout.rawValue)
         XCTAssertEqual(decision2?.source, Constants.DecisionSource.holdout.rawValue)
     }

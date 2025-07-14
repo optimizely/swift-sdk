@@ -98,7 +98,6 @@ class OptimizelyUserContextTests_Decide_CMAB: XCTestCase {
                 
                 expectation.fulfill()
             }
-            
         }
         
         wait(for: [expectation], timeout: 5) // Increased timeout for reliability

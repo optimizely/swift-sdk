@@ -130,7 +130,7 @@ extension LogMessage: CustomStringConvertible {
         case .userNotBucketedIntoAnyExperimentInGroup(let userId, let group):   message = "User (\(userId)) is not in any experiment of group (\(group))."
         case .userBucketedIntoInvalidExperiment(let id):                        message = "Bucketed into an invalid experiment id (\(id))"
         case .userNotInExperiment(let userId, let expKey):                      message = "User (\(userId)) does not meet conditions to be in experiment (\(expKey))."
-        case .userNotInCmabExperiment(let userId, let expKey):                  message = "User (\(userId)) does not fall into cmab taffic allocation in experiment (\(expKey))."
+        case .userNotInCmabExperiment(let userId, let expKey):                  message = "User (\(userId)) does not fall into cmab traffic allocation in experiment (\(expKey))."
         case .userReceivedDefaultVariableValue(let userId, let feature, let variable): message = "User (\(userId)) is not in any variation or rollout rule. Returning default value for variable (\(variable)) of feature flag (\(feature))."
         case .userReceivedAllDefaultVariableValues(let userId, let feature): message = "User (\(userId)) is not in any variation or rollout rule. Returning default value for all variables of feature flag (\(feature))."
         case .featureNotEnabledReturnDefaultVariableValue(let userId, let feature, let variable): message = "Feature (\(feature)) is not enabled for user (\(userId)). Returning the default variable value (\(variable))."

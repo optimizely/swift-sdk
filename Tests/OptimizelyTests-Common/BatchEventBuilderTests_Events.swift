@@ -111,6 +111,7 @@ class BatchEventBuilderTests_Events: XCTestCase {
         XCTAssertEqual(metaData["rule_key"] as! String, "ab_running_exp_audience_combo_exact_foo_or_true__and__42_or_4_2")
         XCTAssertEqual(metaData["flag_key"] as! String, "")
         XCTAssertEqual(metaData["variation_key"] as! String, "all_traffic_variation")
+        XCTAssertNil(metaData["cmab_uuid"])
         XCTAssertTrue(metaData["enabled"] as! Bool)
         
         let de = (snapshot["events"]  as! Array<Dictionary<String, Any>>)[0]
@@ -212,7 +213,7 @@ class BatchEventBuilderTests_Events: XCTestCase {
         let experiment = optimizely.config?.getExperiment(id: "10390977714")
         
         optimizely.config?.project.sendFlagDecisions = true
-        let event = BatchEventBuilder.createImpressionEvent(config: optimizely.config!, experiment: experiment!, variation: nil, userId: userId, attributes: attributes, flagKey: experiment!.key, ruleType: Constants.DecisionSource.featureTest.rawValue, enabled: false)
+        let event = BatchEventBuilder.createImpressionEvent(config: optimizely.config!, experiment: experiment!, variation: nil, userId: userId, attributes: attributes, flagKey: experiment!.key, ruleType: Constants.DecisionSource.featureTest.rawValue, enabled: false, cmabUUID: "cmab_uuid_124")
         XCTAssertNotNil(event)
         
         let visitor = (getEventJSON(data: event!)!["visitors"] as! Array<Dictionary<String, Any>>)[0]
@@ -224,6 +225,7 @@ class BatchEventBuilderTests_Events: XCTestCase {
         XCTAssertEqual(metaData["rule_key"] as! String, "ab_running_exp_audience_combo_exact_foo_or_true__and__42_or_4_2")
         XCTAssertEqual(metaData["flag_key"] as! String, "ab_running_exp_audience_combo_exact_foo_or_true__and__42_or_4_2")
         XCTAssertEqual(metaData["variation_key"] as! String, "")
+        XCTAssertEqual(metaData["cmab_uuid"] as! String, "cmab_uuid_124")
         XCTAssertFalse(metaData["enabled"] as! Bool)
         optimizely.config?.project.sendFlagDecisions = nil
     }
@@ -231,7 +233,7 @@ class BatchEventBuilderTests_Events: XCTestCase {
     func testCreateImpressionEventWithoutExperimentAndVariation() {
         
         optimizely.config?.project.sendFlagDecisions = true
-        let event = BatchEventBuilder.createImpressionEvent(config: optimizely.config!, experiment: nil, variation: nil, userId: userId, attributes: [String: Any](), flagKey: "feature_1", ruleType: Constants.DecisionSource.rollout.rawValue, enabled: true)
+        let event = BatchEventBuilder.createImpressionEvent(config: optimizely.config!, experiment: nil, variation: nil, userId: userId, attributes: [String: Any](), flagKey: "feature_1", ruleType: Constants.DecisionSource.rollout.rawValue, enabled: true, cmabUUID: nil)
         XCTAssertNotNil(event)
         
         let visitor = (getEventJSON(data: event!)!["visitors"] as! Array<Dictionary<String, Any>>)[0]
@@ -243,6 +245,7 @@ class BatchEventBuilderTests_Events: XCTestCase {
         XCTAssertEqual(metaData["rule_key"] as! String, "")
         XCTAssertEqual(metaData["flag_key"] as! String, "feature_1")
         XCTAssertEqual(metaData["variation_key"] as! String, "")
+        XCTAssertEqual(metaData["cmab_uuid"] as? String, nil)
         XCTAssertTrue(metaData["enabled"] as! Bool)
         optimizely.config?.project.sendFlagDecisions = nil
     }

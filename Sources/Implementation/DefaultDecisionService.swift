@@ -400,6 +400,7 @@ class DefaultDecisionService: OPTDecisionService {
         }
         
         let flagExpDecision = getVariationForFeatureExperiments(config: config, featureFlag: featureFlag, user: user, userProfileTracker: userProfileTracker, isAsync: isAsync, options: options)
+        
         reasons.merge(flagExpDecision.reasons)
         
         if let decision = flagExpDecision.result {
@@ -459,7 +460,7 @@ class DefaultDecisionService: OPTDecisionService {
                         let featureDecision = FeatureDecision(experiment: experiment, variation: nil, source: Constants.DecisionSource.featureTest.rawValue)
                         return DecisionResponse(result: featureDecision, reasons: reasons)
                     } else if let variation = result.variation {
-                        let featureDecision = FeatureDecision(experiment: experiment, variation: variation, source: Constants.DecisionSource.featureTest.rawValue)
+                        let featureDecision = FeatureDecision(experiment: experiment, variation: variation, source: Constants.DecisionSource.featureTest.rawValue, cmabUUID: result.cmabUUID)
                         return DecisionResponse(result: featureDecision, reasons: reasons)
                     }
                 }

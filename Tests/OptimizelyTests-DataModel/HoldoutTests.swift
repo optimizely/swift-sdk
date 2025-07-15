@@ -35,7 +35,6 @@ class HoldoutTests: XCTestCase {
     static var sampleData: [String: Any] = ["id": "11111",
                                             "key": "background",
                                             "status": "Running",
-                                            "layerId": "22222",
                                             "variations": [HoldoutTests.variationData],
                                             "trafficAllocation": [HoldoutTests.trafficAllocationData],
                                             "audienceIds": ["33333"],
@@ -44,7 +43,6 @@ class HoldoutTests: XCTestCase {
     static var sampleDataWithIncludedFlags: [String: Any] = ["id": "55555",
                                             "key": "background",
                                             "status": "Running",
-                                            "layerId": "22222",
                                             "variations": [HoldoutTests.variationData],
                                             "trafficAllocation": [HoldoutTests.trafficAllocationData],
                                             "audienceIds": ["33333"],
@@ -54,7 +52,6 @@ class HoldoutTests: XCTestCase {
     static var sampleDataWithExcludedFlags: [String: Any] = ["id": "3333",
                                                              "key": "background",
                                                              "status": "Running",
-                                                             "layerId": "22222",
                                                              "variations": [HoldoutTests.variationData],
                                                              "trafficAllocation": [HoldoutTests.trafficAllocationData],
                                                              "audienceIds": ["33333"],
@@ -76,7 +73,6 @@ extension HoldoutTests {
         XCTAssert(model.id == "11111")
         XCTAssert(model.key == "background")
         XCTAssert(model.status == .running)
-        XCTAssert(model.layerId == "22222")
         XCTAssert(model.variations == [try! OTUtils.model(from: HoldoutTests.variationData)])
         XCTAssert(model.trafficAllocation == [try! OTUtils.model(from: HoldoutTests.trafficAllocationData)])
         XCTAssert(model.audienceIds == ["33333"])
@@ -91,7 +87,6 @@ extension HoldoutTests {
         XCTAssert(model.id == "55555")
         XCTAssert(model.key == "background")
         XCTAssert(model.status == .running)
-        XCTAssert(model.layerId == "22222")
         XCTAssert(model.variations == [try! OTUtils.model(from: HoldoutTests.variationData)])
         XCTAssert(model.trafficAllocation == [try! OTUtils.model(from: HoldoutTests.trafficAllocationData)])
         XCTAssert(model.audienceIds == ["33333"])
@@ -107,7 +102,6 @@ extension HoldoutTests {
         XCTAssert(model.id == "3333")
         XCTAssert(model.key == "background")
         XCTAssert(model.status == .running)
-        XCTAssert(model.layerId == "22222")
         XCTAssert(model.variations == [try! OTUtils.model(from: HoldoutTests.variationData)])
         XCTAssert(model.trafficAllocation == [try! OTUtils.model(from: HoldoutTests.trafficAllocationData)])
         XCTAssert(model.audienceIds == ["33333"])
@@ -126,7 +120,6 @@ extension HoldoutTests {
         XCTAssert(model.id == "11111")
         XCTAssert(model.key == "background")
         XCTAssert(model.status == .running)
-        XCTAssert(model.layerId == "22222")
         XCTAssert(model.variations == [try! OTUtils.model(from: HoldoutTests.variationData)])
         XCTAssert(model.trafficAllocation == [try! OTUtils.model(from: HoldoutTests.trafficAllocationData)])
         XCTAssert(model.audienceIds == ["33333"])
@@ -151,14 +144,6 @@ extension HoldoutTests {
     func testDecodeFailWithMissingStatus() {
         var data: [String: Any] = HoldoutTests.sampleData
         data["status"] = nil
-        
-        let model: Holdout? = try? OTUtils.model(from: data)
-        XCTAssertNil(model)
-    }
-    
-    func testDecodeFailWithMissingLayerId() {
-        var data: [String: Any] = HoldoutTests.sampleData
-        data["layerId"] = nil
         
         let model: Holdout? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
@@ -203,7 +188,6 @@ extension HoldoutTests {
         let commonData: [String: Any] = ["id": "11111",
                                          "key": "background",
                                          "status": "Running",
-                                         "layerId": "22222",
                                          "variations": [HoldoutTests.variationData],
                                          "trafficAllocation": [HoldoutTests.trafficAllocationData],
                                          "audienceIds": [],

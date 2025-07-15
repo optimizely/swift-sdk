@@ -66,7 +66,6 @@ extension Holdout: Equatable {
         lhs.key == rhs.key &&
         lhs.status == rhs.status &&
         lhs.variations == rhs.variations &&
-        lhs.layerId == rhs.layerId &&
         lhs.trafficAllocation == rhs.trafficAllocation &&
         lhs.audienceIds == rhs.audienceIds &&
         lhs.audienceConditions == rhs.audienceConditions &&

@@ -19,7 +19,7 @@ import Foundation
 struct Holdout: Codable, ExperimentCore {
     enum Status: String, Codable {
         case draft = "Draft"
-        case running = "Running"
+        case running = "running"
         case concluded = "Concluded"
         case archived = "Archived"
     }

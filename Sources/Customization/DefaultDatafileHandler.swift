@@ -18,7 +18,9 @@ import Foundation
 
 open class DefaultDatafileHandler: OPTDatafileHandler {
     // endpoint used to get the datafile.  This is settable after you create a OptimizelyClient instance.
-    public var endPointStringFormat = "https://cdn.optimizely.com/datafiles/%@.json"
+    // public var endPointStringFormat = "https://cdn.optimizely.com/datafiles/%@.json"
+    public var endPointStringFormat = "https://dev.cdn.optimizely.com/datafiles/%@.json"
+    
     
     // thread-safe lazy logger load (after HandlerRegisterService ready)
     private let threadSafeLogger = ThreadSafeLogger()

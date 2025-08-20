@@ -32,7 +32,7 @@ import Foundation
         return userContext.optimizely
     }
 
-    public init(optimizely: OptimizelyClient, userId: String, attributes: [String: Any]? = nil) {
+    public init(optimizely: OptimizelyClient, userId: String, attributes: [String: Any]? = nil, region: String = "US") {
         userContext = OptimizelyUserContext(optimizely: optimizely, userId: userId, attributes: attributes)
     }
     
@@ -93,6 +93,13 @@ extension OptimizelyClient {
     @available(swift, obsoleted: 1.0)
     @objc(createUserContextWithUserId:attributes:)
     public func objcCreateUserContext(userId: String, attributes: [String: Any]? = nil) -> ObjcOptimizelyUserContext {
+        let user = createUserContext(userId: userId, attributes: attributes)
+        return ObjcOptimizelyUserContext(user: user)
+    }
+    
+    @available(swift, obsoleted: 1.0)
+    @objc(createUserContextWithUserId:attributes:region:)
+    public func objcCreateUserContext(userId: String, attributes: [String: Any]? = nil, region: String) -> ObjcOptimizelyUserContext {
         let user = createUserContext(userId: userId, attributes: attributes)
         return ObjcOptimizelyUserContext(user: user)
     }

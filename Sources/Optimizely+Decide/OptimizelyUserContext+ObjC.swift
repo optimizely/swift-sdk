@@ -100,7 +100,7 @@ extension OptimizelyClient {
     @available(swift, obsoleted: 1.0)
     @objc(createUserContextWithUserId:attributes:region:)
     public func objcCreateUserContext(userId: String, attributes: [String: Any]? = nil, region: String) -> ObjcOptimizelyUserContext {
-        let user = createUserContext(userId: userId, attributes: attributes)
+        let user = OptimizelyUserContext(optimizely: self, userId: userId, attributes: attributes, region: region)
         return ObjcOptimizelyUserContext(user: user)
     }
     

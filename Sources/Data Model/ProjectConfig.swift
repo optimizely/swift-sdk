@@ -216,6 +216,13 @@ extension ProjectConfig {
 extension ProjectConfig {
     
     /**
+     * Get the region value. Defaults to US if not specified in the project.
+     */
+    public var region: Region {
+        return project.region ?? .US
+    }
+    
+    /**
      * Get sendFlagDecisions value.
      */
     var sendFlagDecisions: Bool {

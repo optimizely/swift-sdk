@@ -16,6 +16,12 @@
 
 import Foundation
 
+/// Optimizely region identifiers
+public enum Region: String, Codable, Equatable {
+    case US
+    case EU
+}
+
 protocol ProjectProtocol {
     func evaluateAudience(audienceId: String, user: OptimizelyUserContext) throws -> Bool
 }
@@ -48,6 +54,8 @@ struct Project: Codable, Equatable {
     var environmentKey: String?
     // Holdouts
     var holdouts: [Holdout]
+    // Region
+    var region: Region?
     let logger = OPTLoggerFactory.getLogger()
     
     // Required since logger is not decodable
@@ -57,7 +65,7 @@ struct Project: Codable, Equatable {
         // V3
         case anonymizeIP
         // V4
-        case rollouts, integrations, typedAudiences, featureFlags, botFiltering, sendFlagDecisions, sdkKey, environmentKey, holdouts
+        case rollouts, integrations, typedAudiences, featureFlags, botFiltering, sendFlagDecisions, sdkKey, environmentKey, holdouts, region
     }
     
     init(from decoder: Decoder) throws {
@@ -88,6 +96,8 @@ struct Project: Codable, Equatable {
         environmentKey = try container.decodeIfPresent(String.self, forKey: .environmentKey)
         // Holdouts - defaults to empty array if key is not present
         holdouts = try container.decodeIfPresent([Holdout].self, forKey: .holdouts) ?? []
+        // Region - defaults to US if not present
+        region = try container.decodeIfPresent(Region.self, forKey: .region)
     }
     
     // Required since logger is not equatable
@@ -97,7 +107,9 @@ struct Project: Codable, Equatable {
             lhs.accountId == rhs.accountId && lhs.events == rhs.events && lhs.revision == rhs.revision &&
             lhs.anonymizeIP == rhs.anonymizeIP && lhs.rollouts == rhs.rollouts &&
             lhs.integrations == rhs.integrations && lhs.typedAudiences == rhs.typedAudiences &&
-            lhs.featureFlags == rhs.featureFlags && lhs.botFiltering == rhs.botFiltering && lhs.sendFlagDecisions == rhs.sendFlagDecisions && lhs.sdkKey == rhs.sdkKey && lhs.environmentKey == rhs.environmentKey
+            lhs.featureFlags == rhs.featureFlags && lhs.botFiltering == rhs.botFiltering && 
+            lhs.sendFlagDecisions == rhs.sendFlagDecisions && lhs.sdkKey == rhs.sdkKey && 
+            lhs.environmentKey == rhs.environmentKey && lhs.region == rhs.region
     }
 }
 

@@ -47,7 +47,8 @@ class BatchEventBuilder {
                                 userId: userId,
                                 attributes: attributes,
                                 decisions: [decision],
-                                dispatchEvents: [dispatchEvent])
+                                dispatchEvents: [dispatchEvent],
+                                region: config.region)
     }
     
     // MARK: - Converison Event
@@ -77,7 +78,8 @@ class BatchEventBuilder {
                                 userId: userId,
                                 attributes: attributes,
                                 decisions: nil,
-                                dispatchEvents: [dispatchEvent])
+                                dispatchEvents: [dispatchEvent],
+                                region: config.region)
     }
     
     // MARK: - Create Event
@@ -86,7 +88,9 @@ class BatchEventBuilder {
                                  userId: String,
                                  attributes: OptimizelyAttributes?,
                                  decisions: [Decision]?,
-                                 dispatchEvents: [DispatchEvent]) -> Data? {
+                                 dispatchEvents: [DispatchEvent],
+                                 region: Region? = nil) -> Data? {
+        let eventRegion = region ?? config.region
         let snapShot = Snapshot(decisions: decisions, events: dispatchEvents)
         
         let eventAttributes = getEventAttributes(config: config, attributes: attributes)
@@ -100,9 +104,13 @@ class BatchEventBuilder {
                                     projectID: config.project.projectId,
                                     clientName: Utils.swiftSdkClientName,
                                     anonymizeIP: config.project.anonymizeIP,
-                                    enrichDecisions: true)
+                                    enrichDecisions: true,
+                                    region: eventRegion.rawValue)
+
+        let data = try? JSONEncoder().encode(batchEvent)
+        let eventForDispatch = EventForDispatch(url: nil, body: data ?? Data(), region: eventRegion)
         
-        return try? JSONEncoder().encode(batchEvent)
+        return eventForDispatch.body
     }
     
     // MARK: - Event Tags

@@ -18,12 +18,23 @@ import Foundation
 
 @objcMembers public class EventForDispatch: NSObject, Codable {
     public static var eventEndpoint = "https://logx.optimizely.com/v1/events"
+    public static var euEventEndpoint = "https://eu.logx.optimizely.com/v1/events"
+    
+    public static func getEndpoint(for region: Region) -> String {
+        switch region {
+        case .EU:
+            return euEventEndpoint
+        case .US:
+            return eventEndpoint
+        }
+    }
     
     public let url: URL
     public let body: Data
 
-    public init(url: URL? = nil, body: Data) {
-        self.url = url ?? URL(string: EventForDispatch.eventEndpoint)!
+    public init(url: URL? = nil, body: Data, region: Region = .US) {
+        let endpoint = url?.absoluteString ?? EventForDispatch.getEndpoint(for: region)
+        self.url = URL(string: endpoint)!
         self.body = body
     }
     

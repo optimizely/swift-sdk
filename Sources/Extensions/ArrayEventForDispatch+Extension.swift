@@ -45,6 +45,7 @@ extension Array where Element == EventForDispatch {
         var url: URL?
         var projectId: String?
         var revision: String?
+        var region: String?
         
         let checkUrl = { (event: EventForDispatch) -> Bool in
             if url == nil {
@@ -69,10 +70,18 @@ extension Array where Element == EventForDispatch {
             }
             return revision == batchEvent.revision
         }
+        
+        let checkRegion = { (batchEvent: BatchEvent) -> Bool in
+            if region == nil {
+                region = batchEvent.region
+                return region != nil
+            }
+            return region == batchEvent.region
+        }
 
         for event in self {
             if let batchEvent = try? JSONDecoder().decode(BatchEvent.self, from: event.body) {
-                if !checkUrl(event) || !checkProjectId(batchEvent) || !checkRevision(batchEvent) {
+                if !checkUrl(event) || !checkProjectId(batchEvent) || !checkRevision(batchEvent) || !checkRegion(batchEvent) {
                     break
                 }
                 
@@ -101,12 +110,14 @@ extension Array where Element == EventForDispatch {
                                     projectID: base.projectID,
                                     clientName: base.clientName,
                                     anonymizeIP: base.anonymizeIP,
-                                    enrichDecisions: true)
+                                    enrichDecisions: true,
+                                    region: base.region)
         
         guard let data = try? JSONEncoder().encode(batchEvent) else {
             return nil
         }
-        
-        return EventForDispatch(url: url, body: data)
+
+        let regionValue = base.region == Region.EU.rawValue ? Region.EU : Region.US
+        return EventForDispatch(url: url, body: data, region: regionValue)
     }
 }

@@ -110,7 +110,7 @@ class BatchEventBuilder {
         let data = try? JSONEncoder().encode(batchEvent)
         let eventForDispatch = EventForDispatch(url: nil, body: data ?? Data(), region: eventRegion)
         
-        return eventForDispatch.body
+        return eventForDispatch
     }
     
     // MARK: - Event Tags

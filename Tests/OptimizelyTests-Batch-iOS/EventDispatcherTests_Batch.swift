@@ -950,7 +950,8 @@ extension EventDispatcherTests_Batch {
                           projectID: testProjectId,
                           clientName: kClientName,
                           anonymizeIP: kAnonymizeIP,
-                          enrichDecisions: kEnrichDecision)
+                          enrichDecisions: kEnrichDecision,
+                          region: "US")
     }
     
     func dispatchMultipleEvents(_ events: [(url: String, event: BatchEvent)]) {

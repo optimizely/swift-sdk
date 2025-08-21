@@ -36,7 +36,7 @@ import Foundation
         userContext = OptimizelyUserContext(optimizely: optimizely, userId: userId, attributes: attributes)
     }
     
-    public init(user: OptimizelyUserContext) {
+    public init(user: OptimizelyUserContext, region: String = "US") {
         self.userContext = user
     }
 
@@ -83,7 +83,7 @@ import Foundation
         ruleKey = decision.ruleKey
         
         flagKey = decision.flagKey
-        userContext = ObjcOptimizelyUserContext(user: decision.userContext)
+        userContext = ObjcOptimizelyUserContext(user: decision.userContext, region: "US")
         reasons = decision.reasons
     }
 }
@@ -94,14 +94,14 @@ extension OptimizelyClient {
     @objc(createUserContextWithUserId:attributes:)
     public func objcCreateUserContext(userId: String, attributes: [String: Any]? = nil) -> ObjcOptimizelyUserContext {
         let user = createUserContext(userId: userId, attributes: attributes)
-        return ObjcOptimizelyUserContext(user: user)
+        return ObjcOptimizelyUserContext(user: user, region: "US")
     }
     
     @available(swift, obsoleted: 1.0)
     @objc(createUserContextWithUserId:attributes:region:)
     public func objcCreateUserContext(userId: String, attributes: [String: Any]? = nil, region: String) -> ObjcOptimizelyUserContext {
         let user = OptimizelyUserContext(optimizely: self, userId: userId, attributes: attributes, region: region)
-        return ObjcOptimizelyUserContext(user: user)
+        return ObjcOptimizelyUserContext(user: user, region: region)
     }
     
     @available(swift, obsoleted: 1.0)

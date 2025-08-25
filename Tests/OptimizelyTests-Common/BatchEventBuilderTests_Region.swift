@@ -95,6 +95,31 @@ class BatchEventBuilderTests_Region: XCTestCase {
         let eventForDispatch = getFirstEvent(dispatcher: eventDispatcher)!
         XCTAssertEqual(eventForDispatch.url.absoluteString, EventForDispatch.getEndpoint(for: .EU))
     }
+
+    func testCreateImpressionEventWithInvalidRegion() {
+        // Set the region to invalid ZZ
+        optimizely.config?.project.region = .ZZ
+        
+        let attributes: [String: Any] = [
+            "s_foo": "foo",
+            "b_true": true,
+            "i_42": 42,
+            "d_4_2": 4.2
+        ]
+        
+        _ = try! optimizely.activate(experimentKey: experimentKey,
+                                     userId: userId,
+                                     attributes: attributes)
+        
+        let event = getFirstEventJSON(dispatcher: eventDispatcher)!
+        
+        // Check if the region is correctly set to default US in the event
+        XCTAssertEqual(event["region"] as! String, "US")
+        
+        // Check if the event was sent to the correct endpoint
+        let eventForDispatch = getFirstEvent(dispatcher: eventDispatcher)!
+        XCTAssertEqual(eventForDispatch.url.absoluteString, EventForDispatch.getEndpoint(for: .US))
+    }
     
     // MARK: - Test Conversion Event with Region
     
@@ -142,6 +167,29 @@ class BatchEventBuilderTests_Region: XCTestCase {
         // Check if the event was sent to the correct endpoint
         let eventForDispatch = getFirstEvent(dispatcher: eventDispatcher)!
         XCTAssertEqual(eventForDispatch.url.absoluteString, EventForDispatch.getEndpoint(for: .EU))
+    }
+
+    func testCreateConversionEventWithInvalidRegion() {
+        // Set the region to invalid ZZ
+        optimizely.config?.project.region = .ZZ
+        
+        let eventKey = "event_single_targeted_exp"
+        let attributes: [String: Any] = ["s_foo": "bar"]
+        let eventTags: [String: Any] = ["browser": "chrome"]
+        
+        try! optimizely.track(eventKey: eventKey,
+                              userId: userId,
+                              attributes: attributes,
+                              eventTags: eventTags)
+        
+        let event = getFirstEventJSON(dispatcher: eventDispatcher)!
+        
+        // Check if the region is correctly set to default US in the event
+        XCTAssertEqual(event["region"] as! String, "US")
+        
+        // Check if the event was sent to the correct endpoint
+        let eventForDispatch = getFirstEvent(dispatcher: eventDispatcher)!
+        XCTAssertEqual(eventForDispatch.url.absoluteString, EventForDispatch.getEndpoint(for: .US))
     }
     
     // MARK: - Test Direct Event Creation with Region

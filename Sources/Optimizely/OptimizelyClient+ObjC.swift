@@ -546,3 +546,10 @@ extension OptimizelyClient {
     }
     
 }
+
+// MARK: - EventForDispatch Objective-C initializer
+extension EventForDispatch {
+    @objc public convenience init(url: URL? = nil, body: Data) {
+        self.init(url: url, body: body, region: .US)
+    }
+}

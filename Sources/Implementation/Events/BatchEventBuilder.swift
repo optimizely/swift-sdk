@@ -47,8 +47,7 @@ class BatchEventBuilder {
                                 userId: userId,
                                 attributes: attributes,
                                 decisions: [decision],
-                                dispatchEvents: [dispatchEvent],
-                                region: config.region)
+                                dispatchEvents: [dispatchEvent])
     }
     
     // MARK: - Converison Event
@@ -78,8 +77,7 @@ class BatchEventBuilder {
                                 userId: userId,
                                 attributes: attributes,
                                 decisions: nil,
-                                dispatchEvents: [dispatchEvent],
-                                region: config.region)
+                                dispatchEvents: [dispatchEvent])
     }
     
     // MARK: - Create Event

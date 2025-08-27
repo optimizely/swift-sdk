@@ -117,7 +117,6 @@ extension Array where Element == EventForDispatch {
             return nil
         }
 
-        let regionValue = base.region == Region.EU.rawValue ? Region.EU : Region.US
-        return EventForDispatch(url: url, body: data, region: regionValue)
+        return EventForDispatch(url: url, body: data, region: Region(rawValue: base.region) ?? .US)
     }
 }

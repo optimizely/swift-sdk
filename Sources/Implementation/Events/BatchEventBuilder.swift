@@ -88,9 +88,8 @@ class BatchEventBuilder {
                                  userId: String,
                                  attributes: OptimizelyAttributes?,
                                  decisions: [Decision]?,
-                                 dispatchEvents: [DispatchEvent],
-                                 region: Region? = nil) -> Data? {
-        let eventRegion = region ?? config.region
+                                 dispatchEvents: [DispatchEvent]) -> Data? {
+        let eventRegion = config.region
         let snapShot = Snapshot(decisions: decisions, events: dispatchEvents)
         
         let eventAttributes = getEventAttributes(config: config, attributes: attributes)

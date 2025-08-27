@@ -73,8 +73,7 @@ public class OptimizelyUserContext {
     ///   - region: The region for the user context (optional). Defaults to the region from the project config.
     public convenience init(optimizely: OptimizelyClient,
                             userId: String,
-                            attributes: [String: Any?]? = nil,
-                            region: String? = nil) {
+                            attributes: [String: Any?]? = nil) {
         self.init(optimizely: optimizely, userId: userId, attributes: attributes ?? [:], identify: true)
     }
     

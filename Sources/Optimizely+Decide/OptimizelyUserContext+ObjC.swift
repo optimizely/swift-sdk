@@ -98,13 +98,6 @@ extension OptimizelyClient {
     }
     
     @available(swift, obsoleted: 1.0)
-    @objc(createUserContextWithUserId:attributes:)
-    public func objcCreateUserContext(userId: String, attributes: [String: Any]? = nil) -> ObjcOptimizelyUserContext {
-        let user = OptimizelyUserContext(optimizely: self, userId: userId, attributes: attributes)
-        return ObjcOptimizelyUserContext(user: user)
-    }
-    
-    @available(swift, obsoleted: 1.0)
     @objc public convenience init(sdkKey: String,
                                   logger: OPTLogger?,
                                   eventDispatcher: _ObjcOPTEventDispatcher?,

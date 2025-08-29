@@ -20,15 +20,6 @@ import Foundation
     public static var eventEndpoint = "https://logx.optimizely.com/v1/events"
     public static var euEventEndpoint = "https://eu.logx.optimizely.com/v1/events"
     
-    public static func getEndpoint(for region: Region) -> String {
-        switch region {
-        case .EU:
-            return euEventEndpoint
-        case .US:
-            return eventEndpoint
-        }
-    }
-    
     public let url: URL
     public let body: Data
 

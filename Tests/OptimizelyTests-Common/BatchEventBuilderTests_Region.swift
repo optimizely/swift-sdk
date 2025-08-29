@@ -68,7 +68,7 @@ class BatchEventBuilderTests_Region: XCTestCase {
         
         // Check if the event was sent to the correct endpoint
         let eventForDispatch = getFirstEvent(dispatcher: eventDispatcher)!
-        XCTAssertEqual(eventForDispatch.url.absoluteString, EventForDispatch.getEndpoint(for: .US))
+        XCTAssertEqual(eventForDispatch.url.absoluteString, EventForDispatch.eventEndpoint)
     }
     
     func testCreateImpressionEventWithEURegion() {
@@ -93,7 +93,7 @@ class BatchEventBuilderTests_Region: XCTestCase {
         
         // Check if the event was sent to the correct endpoint
         let eventForDispatch = getFirstEvent(dispatcher: eventDispatcher)!
-        XCTAssertEqual(eventForDispatch.url.absoluteString, EventForDispatch.getEndpoint(for: .EU))
+        XCTAssertEqual(eventForDispatch.url.absoluteString, EventForDispatch.euEventEndpoint)
     }
 
     func testCreateImpressionEventWithInvalidRegion() {
@@ -118,7 +118,7 @@ class BatchEventBuilderTests_Region: XCTestCase {
         
         // Check if the event was sent to the correct endpoint
         let eventForDispatch = getFirstEvent(dispatcher: eventDispatcher)!
-        XCTAssertEqual(eventForDispatch.url.absoluteString, EventForDispatch.getEndpoint(for: .US))
+        XCTAssertEqual(eventForDispatch.url.absoluteString, EventForDispatch.eventEndpoint)
     }
     
     // MARK: - Test Conversion Event with Region
@@ -143,7 +143,7 @@ class BatchEventBuilderTests_Region: XCTestCase {
         
         // Check if the event was sent to the correct endpoint
         let eventForDispatch = getFirstEvent(dispatcher: eventDispatcher)!
-        XCTAssertEqual(eventForDispatch.url.absoluteString, EventForDispatch.getEndpoint(for: .US))
+        XCTAssertEqual(eventForDispatch.url.absoluteString, EventForDispatch.eventEndpoint)
     }
     
     func testCreateConversionEventWithEURegion() {
@@ -166,7 +166,7 @@ class BatchEventBuilderTests_Region: XCTestCase {
         
         // Check if the event was sent to the correct endpoint
         let eventForDispatch = getFirstEvent(dispatcher: eventDispatcher)!
-        XCTAssertEqual(eventForDispatch.url.absoluteString, EventForDispatch.getEndpoint(for: .EU))
+        XCTAssertEqual(eventForDispatch.url.absoluteString, EventForDispatch.euEventEndpoint)
     }
 
     func testCreateConversionEventWithInvalidRegion() {
@@ -189,7 +189,7 @@ class BatchEventBuilderTests_Region: XCTestCase {
         
         // Check if the event was sent to the correct endpoint
         let eventForDispatch = getFirstEvent(dispatcher: eventDispatcher)!
-        XCTAssertEqual(eventForDispatch.url.absoluteString, EventForDispatch.getEndpoint(for: .US))
+        XCTAssertEqual(eventForDispatch.url.absoluteString, EventForDispatch.eventEndpoint)
     }
     
     // MARK: - Test Direct Event Creation with Region

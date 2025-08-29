@@ -70,7 +70,6 @@ public class OptimizelyUserContext {
     ///   - optimizely: An instance of OptimizelyClient to be used for decisions.
     ///   - userId: The user ID to be used for bucketing.
     ///   - attributes: A map of attribute names to current user attribute values.
-    ///   - region: The region for the user context (optional). Defaults to the region from the project config.
     public convenience init(optimizely: OptimizelyClient,
                             userId: String,
                             attributes: [String: Any?]? = nil) {

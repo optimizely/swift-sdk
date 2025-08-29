@@ -33,7 +33,7 @@ import Foundation
     public let body: Data
 
     public init(url: URL? = nil, body: Data, region: Region = .US) {
-        let endpoint = region == .US ? Self.eventEndpoint : Self.euEventEndpoint
+        let endpoint = url?.absoluteString ?? (region == .US ? Self.eventEndpoint : Self.euEventEndpoint)
         self.url = URL(string: endpoint)!
         self.body = body
     }

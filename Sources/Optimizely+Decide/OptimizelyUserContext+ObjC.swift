@@ -35,7 +35,7 @@ import Foundation
     public init(optimizely: OptimizelyClient, userId: String, attributes: [String: Any]? = nil) {
         userContext = OptimizelyUserContext(optimizely: optimizely, userId: userId, attributes: attributes)
     }
-    
+
     public init(user: OptimizelyUserContext) {
         self.userContext = user
     }

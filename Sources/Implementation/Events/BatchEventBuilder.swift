@@ -87,6 +87,7 @@ class BatchEventBuilder {
                                  attributes: OptimizelyAttributes?,
                                  decisions: [Decision]?,
                                  dispatchEvents: [DispatchEvent]) -> Data? {
+        let eventRegion = config.region
         let snapShot = Snapshot(decisions: decisions, events: dispatchEvents)
         
         let eventAttributes = getEventAttributes(config: config, attributes: attributes)
@@ -100,9 +101,13 @@ class BatchEventBuilder {
                                     projectID: config.project.projectId,
                                     clientName: Utils.swiftSdkClientName,
                                     anonymizeIP: config.project.anonymizeIP,
-                                    enrichDecisions: true)
+                                    enrichDecisions: true,
+                                    region: eventRegion.rawValue)
+
+        let data = try? JSONEncoder().encode(batchEvent)
+        let eventForDispatch = EventForDispatch(url: nil, body: data ?? Data(), region: eventRegion)
         
-        return try? JSONEncoder().encode(batchEvent)
+        return eventForDispatch.body
     }
     
     // MARK: - Event Tags

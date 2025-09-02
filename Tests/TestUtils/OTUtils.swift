@@ -232,7 +232,8 @@ class OTUtils {
                           projectID: testProjectId,
                           clientName: "test",
                           anonymizeIP: true,
-                          enrichDecisions: true)
+                          enrichDecisions: true,
+                          region: "US")
     }
     
     static func clearAllEventQueues() {

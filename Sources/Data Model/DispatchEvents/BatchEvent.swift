@@ -25,6 +25,7 @@ struct BatchEvent: Codable, Equatable {
     let clientName: String
     let anonymizeIP: Bool
     let enrichDecisions: Bool
+    let region: String
     
     enum CodingKeys: String, CodingKey {
         case revision
@@ -35,6 +36,7 @@ struct BatchEvent: Codable, Equatable {
         case clientName = "client_name"
         case anonymizeIP = "anonymize_ip"
         case enrichDecisions = "enrich_decisions"
+        case region
     }
     
     func getEventAttribute(key: String) -> EventAttribute? {

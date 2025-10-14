@@ -125,7 +125,7 @@ class DefaultDecisionService: OPTDecisionService {
             case .failure:
                 let info = LogMessage.cmabFetchFailed(experiment.key)
                 self.logger.e(info)
-                reasons.addInfo(info)
+                reasons.addError(info)
                 let nilVariation = VariationDecision(variation: nil, cmabError: true, cmabUUID: nil)
                 return DecisionResponse(result: nilVariation, reasons: reasons)
         }

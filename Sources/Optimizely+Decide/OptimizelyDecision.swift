@@ -52,6 +52,16 @@ extension OptimizelyDecision {
                                   reasons: [error.reason])
     }
     
+    static func errorDecision(key: String, user: OptimizelyUserContext, reasons: [String]) -> OptimizelyDecision {
+        return OptimizelyDecision(variationKey: nil,
+                                  enabled: false,
+                                  variables: OptimizelyJSON.createEmpty(),
+                                  ruleKey: nil,
+                                  flagKey: key,
+                                  userContext: user,
+                                  reasons: reasons)
+    }
+    
     var hasFailed: Bool {
         return variationKey == nil
     }

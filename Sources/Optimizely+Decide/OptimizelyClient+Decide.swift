@@ -297,7 +297,9 @@ extension OptimizelyClient {
             return OptimizelyDecision.errorDecision(key: flagKey, user: user, error: .featureKeyInvalid(flagKey))
         }
         
-        guard flagDecision?.variation != nil else {
+        let error = flagDecision?.error ?? false
+        
+        guard !error else {
             return OptimizelyDecision.errorDecision(key: flagKey, user: user, reasons: decisionReasons.toReport())
         }
         

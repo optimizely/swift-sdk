@@ -21,6 +21,7 @@ struct FeatureDecision {
     let variation: Variation?
     let source: String
     var cmabUUID: String?
+    var error = false
 }
 
 struct VariationDecision {
@@ -457,7 +458,7 @@ class DefaultDecisionService: OPTDecisionService {
                     if result.cmabError {
                         // For CMAB - we're supposed to get decision from the server.
                         // If failed, return decision with nil variation, so the client can take care of them.
-                        let featureDecision = FeatureDecision(experiment: experiment, variation: nil, source: Constants.DecisionSource.featureTest.rawValue)
+                        let featureDecision = FeatureDecision(experiment: experiment, variation: nil, source: Constants.DecisionSource.featureTest.rawValue, error: true)
                         return DecisionResponse(result: featureDecision, reasons: reasons)
                     } else if let variation = result.variation {
                         let featureDecision = FeatureDecision(experiment: experiment, variation: variation, source: Constants.DecisionSource.featureTest.rawValue, cmabUUID: result.cmabUUID)

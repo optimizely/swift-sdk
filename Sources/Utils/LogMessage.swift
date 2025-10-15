@@ -148,7 +148,7 @@ extension LogMessage: CustomStringConvertible {
         case .failedToAssignValue:                                              message = "Value for path could not be assigned to provided type."
         case .valueForKeyNotFound(let key):                                     message = "Value for JSON key (\(key)) not found."
         case .lowPeriodicDownloadInterval:                                      message = "Polling intervals below 30 seconds are not recommended."
-        case .cmabFetchFailed(let key):                                         message = "Failed to fetch CMAB data for experiment: \(key)."
+        case .cmabFetchFailed(let key):                                         message = "Failed to fetch CMAB data for experiment \(key)."
         case .cmabNotSupportedInSyncMode:                                       message = "CMAB is not supported in sync mode."
         }
         

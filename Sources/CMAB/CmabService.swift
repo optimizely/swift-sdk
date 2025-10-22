@@ -59,11 +59,9 @@ class DefaultCmabService: CmabService {
     
     private func getLockIndex(userId: String, ruleId: String) -> Int {
         let combinedKey = userId + ruleId
-        let hashValue = combinedKey.hashValue
-        // Take absolute value to ensure positive number
-        let positiveHash = abs(hashValue)
-        // Use modulo to map to lock array index [0, NUM_LOCKS-1]
-        return positiveHash % Self.NUM_LOCKS
+        let hashValue = MurmurHash3.hash32(key: combinedKey)
+        let lockIndex = Int(hashValue) % Self.NUM_LOCKS
+        return lockIndex
     }
     
     func getDecision(config: ProjectConfig,

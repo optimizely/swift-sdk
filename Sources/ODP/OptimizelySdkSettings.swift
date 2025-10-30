@@ -34,7 +34,6 @@ public struct OptimizelySdkSettings {
     /// VUID is enabled if this is set to true.
     let enableVuid: Bool
     
-    
     /// Optimizely SDK Settings
     ///
     /// - Parameters:
@@ -43,7 +42,7 @@ public struct OptimizelySdkSettings {
     ///   - timeoutForSegmentFetchInSecs: The timeout in seconds of odp segment fetch (optional. default = 10) - OS default timeout will be used if this is set to zero.
     ///   - timeoutForOdpEventInSecs: The timeout in seconds of odp event dispatch (optional. default = 10) - OS default timeout will be used if this is set to zero.
     ///   - cmabCacheSize: The maximum size of cmab cache (optional. default = 100).
-    ///   - cmabCacheTimeoutInSecs: The timeout in seconds of amb cache (optional. default = 600).
+    ///   - cmabCacheTimeoutInSecs: The timeout in seconds of amb cache (optional. default = 30 * 60).
     ///   - disableOdp: Set this flag to true (default = false) to disable ODP features
     ///   - enableVuid: Set this flag to true (default = false) to enable vuid.
     ///   - sdkName: Set this flag to override sdkName included in events
@@ -53,7 +52,7 @@ public struct OptimizelySdkSettings {
                 timeoutForSegmentFetchInSecs: Int = 10,
                 timeoutForOdpEventInSecs: Int = 10,
                 cmabCacheSize: Int = 100,
-                cmabCacheTimeoutInSecs: Int = 600,
+                cmabCacheTimeoutInSecs: Int = 30 * 60,
                 disableOdp: Bool = false,
                 enableVuid: Bool = false,
                 sdkName: String? = nil,

@@ -16,6 +16,9 @@
 
 import Foundation
 
+let DEFAULT_CMAB_CACHE_TIMEOUT = 30 * 60 // 30 minutes
+let DEFAULT_CMAB_CACHE_SIZE = 100
+
 class CmabCache: LruCache<String, CmabCacheValue> {
     override func lookup(key: String) -> CmabCacheValue? {
         if timeoutInSecs <= 0 {

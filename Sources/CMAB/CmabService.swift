@@ -41,9 +41,6 @@ protocol CmabService {
                      completion: @escaping CmabDecisionCompletionHandler)
 }
 
-let DEFAULT_CMAB_CACHE_TIMEOUT = 600 // secs
-let DEFAULT_CMAB_CACHE_SIZE = 100
-
 class DefaultCmabService: CmabService {
     typealias UserAttributes = [String : Any?]
     

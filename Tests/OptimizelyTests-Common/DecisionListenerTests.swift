@@ -1246,13 +1246,12 @@ class FakeManager: OptimizelyClient {
 }
 
 class FakeDecisionService: DefaultDecisionService {
-    
     var experiment: Experiment?
     var variation: Variation?
     var source: String!
     
     override init(userProfileService: OPTUserProfileService, cmabService: CmabService = DefaultCmabService.createDefault()) {
-        super.init(userProfileService: DefaultUserProfileService())
+        super.init(userProfileService: DefaultUserProfileService(), cmabService: cmabService)
     }
     
     override func getVariationForFeature(config: ProjectConfig,

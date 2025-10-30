@@ -32,7 +32,7 @@ enum CmabClientError: Error, Equatable {
 }
 
 struct CmabRetryConfig {
-    var maxRetries: Int = 3
+    var maxRetries: Int = 1
     var initialBackoff: TimeInterval = 0.1 // seconds
     var maxBackoff: TimeInterval = 10.0 // seconds
     var backoffMultiplier: Double = 2.0

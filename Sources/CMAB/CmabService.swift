@@ -41,11 +41,14 @@ protocol CmabService {
                      completion: @escaping CmabDecisionCompletionHandler)
 }
 
+let DEFAULT_CMAB_CACHE_TIMEOUT = 600 // secs
+let DEFAULT_CMAB_CACHE_SIZE = 100
+
 class DefaultCmabService: CmabService {
     typealias UserAttributes = [String : Any?]
     
     private let cmabClient: CmabClient
-    private let cmabCache: LruCache<String, CmabCacheValue>
+    let cmabCache: LruCache<String, CmabCacheValue>
     private let logger = OPTLoggerFactory.getLogger()
     
     init(cmabClient: CmabClient, cmabCache: LruCache<String, CmabCacheValue>) {
@@ -178,9 +181,12 @@ class DefaultCmabService: CmabService {
 
 extension DefaultCmabService {
     static func createDefault() -> DefaultCmabService {
-        let DEFAULT_CMAB_CACHE_TIMEOUT = 30 * 60 * 1000  // 30 minutes in milliseconds
-        let DEFAULT_CMAB_CACHE_SIZE = 1000
         let cache = LruCache<String, CmabCacheValue>(size: DEFAULT_CMAB_CACHE_SIZE, timeoutInSecs: DEFAULT_CMAB_CACHE_TIMEOUT)
+        return DefaultCmabService(cmabClient: DefaultCmabClient(), cmabCache: cache)
+    }
+    
+    static func createDefault(cacheSize: Int, cacheTimeout: Int) -> DefaultCmabService {
+        let cache = LruCache<String, CmabCacheValue>(size: cacheSize, timeoutInSecs: cacheTimeout)
         return DefaultCmabService(cmabClient: DefaultCmabClient(), cmabCache: cache)
     }
 }

@@ -42,8 +42,8 @@ public struct OptimizelySdkSettings {
     ///   - segmentsCacheTimeoutInSecs: The timeout in seconds of audience segments cache (optional. default = 600). Set to zero to disable timeout.
     ///   - timeoutForSegmentFetchInSecs: The timeout in seconds of odp segment fetch (optional. default = 10) - OS default timeout will be used if this is set to zero.
     ///   - timeoutForOdpEventInSecs: The timeout in seconds of odp event dispatch (optional. default = 10) - OS default timeout will be used if this is set to zero.
-    ///   - cmabCacheSize: The maximum size of cmab cache (optional. default = 100). Set to zero to disable caching.
-    ///   - cmabCacheTimeoutInSecs: The timeout in seconds of amb cache (optional. default = 600). Set to zero to disable timeout.
+    ///   - cmabCacheSize: The maximum size of cmab cache (optional. default = 100).
+    ///   - cmabCacheTimeoutInSecs: The timeout in seconds of amb cache (optional. default = 600).
     ///   - disableOdp: Set this flag to true (default = false) to disable ODP features
     ///   - enableVuid: Set this flag to true (default = false) to enable vuid.
     ///   - sdkName: Set this flag to override sdkName included in events

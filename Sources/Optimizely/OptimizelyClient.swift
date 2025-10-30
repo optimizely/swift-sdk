@@ -108,7 +108,7 @@ open class OptimizelyClient: NSObject {
         let logger = logger ?? DefaultLogger()
         type(of: logger).logLevel = defaultLogLevel ?? .info
         
-        let cmabService = DefaultCmabService.createDefault(cacheSize: self.sdkSettings.cmabCacheSize, cacheTimeout: self.sdkSettings.cmabCacheTitmeoutInSecs)
+        let cmabService = DefaultCmabService.createDefault(cacheSize: self.sdkSettings.cmabCacheSize, cacheTimeout: self.sdkSettings.cmabCacheTimeoutInSecs)
         
         self.registerServices(sdkKey: sdkKey,
                               logger: logger,

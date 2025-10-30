@@ -48,10 +48,10 @@ class DefaultCmabService: CmabService {
     typealias UserAttributes = [String : Any?]
     
     private let cmabClient: CmabClient
-    let cmabCache: LruCache<String, CmabCacheValue>
+    let cmabCache: CmabCache
     private let logger = OPTLoggerFactory.getLogger()
     
-    init(cmabClient: CmabClient, cmabCache: LruCache<String, CmabCacheValue>) {
+    init(cmabClient: CmabClient, cmabCache: CmabCache) {
         self.cmabClient = cmabClient
         self.cmabCache = cmabCache
     }
@@ -181,12 +181,12 @@ class DefaultCmabService: CmabService {
 
 extension DefaultCmabService {
     static func createDefault() -> DefaultCmabService {
-        let cache = LruCache<String, CmabCacheValue>(size: DEFAULT_CMAB_CACHE_SIZE, timeoutInSecs: DEFAULT_CMAB_CACHE_TIMEOUT)
+        let cache = CmabCache(size: DEFAULT_CMAB_CACHE_SIZE, timeoutInSecs: DEFAULT_CMAB_CACHE_TIMEOUT)
         return DefaultCmabService(cmabClient: DefaultCmabClient(), cmabCache: cache)
     }
     
     static func createDefault(cacheSize: Int, cacheTimeout: Int) -> DefaultCmabService {
-        let cache = LruCache<String, CmabCacheValue>(size: cacheSize, timeoutInSecs: cacheTimeout)
+        let cache = CmabCache(size: cacheSize, timeoutInSecs: cacheTimeout)
         return DefaultCmabService(cmabClient: DefaultCmabClient(), cmabCache: cache)
     }
 }

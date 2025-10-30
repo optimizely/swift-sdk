@@ -51,7 +51,7 @@ class OptimizelyClientTests_ODP: XCTestCase {
         var sdkSettings = OptimizelySdkSettings(segmentsCacheSize: 12,
                                                 segmentsCacheTimeoutInSecs: 345,
                                                 cmabCacheSize: 50,
-                                                cmabCacheTitmeoutInSecs: 120)
+                                                cmabCacheTimeoutInSecs: 120)
         var optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey, settings: sdkSettings)
         let cmabCache = ((optimizely.decisionService as! DefaultDecisionService).cmabService as! DefaultCmabService).cmabCache
         XCTAssertEqual(50, cmabCache.maxSize)

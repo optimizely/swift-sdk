@@ -28,7 +28,7 @@ public struct OptimizelySdkSettings {
     /// The maximum size of cmab  cache
     let cmabCacheSize: Int
     /// The timeout in seconds of cmab cache
-    let cmabCacheTitmeoutInSecs: Int
+    let cmabCacheTimeoutInSecs: Int
     /// ODP features are disabled if this is set to true.
     let disableOdp: Bool
     /// VUID is enabled if this is set to true.
@@ -43,7 +43,7 @@ public struct OptimizelySdkSettings {
     ///   - timeoutForSegmentFetchInSecs: The timeout in seconds of odp segment fetch (optional. default = 10) - OS default timeout will be used if this is set to zero.
     ///   - timeoutForOdpEventInSecs: The timeout in seconds of odp event dispatch (optional. default = 10) - OS default timeout will be used if this is set to zero.
     ///   - cmabCacheSize: The maximum size of cmab cache (optional. default = 100). Set to zero to disable caching.
-    ///   - cmabCacheTitmeoutInSecs: The timeout in seconds of amb cache (optional. default = 600). Set to zero to disable timeout.
+    ///   - cmabCacheTimeoutInSecs: The timeout in seconds of amb cache (optional. default = 600). Set to zero to disable timeout.
     ///   - disableOdp: Set this flag to true (default = false) to disable ODP features
     ///   - enableVuid: Set this flag to true (default = false) to enable vuid.
     ///   - sdkName: Set this flag to override sdkName included in events
@@ -53,7 +53,7 @@ public struct OptimizelySdkSettings {
                 timeoutForSegmentFetchInSecs: Int = 10,
                 timeoutForOdpEventInSecs: Int = 10,
                 cmabCacheSize: Int = 100,
-                cmabCacheTitmeoutInSecs: Int = 600,
+                cmabCacheTimeoutInSecs: Int = 600,
                 disableOdp: Bool = false,
                 enableVuid: Bool = false,
                 sdkName: String? = nil,
@@ -61,7 +61,7 @@ public struct OptimizelySdkSettings {
         self.segmentsCacheSize = segmentsCacheSize
         self.segmentsCacheTimeoutInSecs = segmentsCacheTimeoutInSecs
         self.cmabCacheSize = cmabCacheSize
-        self.cmabCacheTitmeoutInSecs = cmabCacheTitmeoutInSecs
+        self.cmabCacheTimeoutInSecs = cmabCacheTimeoutInSecs
         self.timeoutForSegmentFetchInSecs = timeoutForSegmentFetchInSecs
         self.timeoutForOdpEventInSecs = timeoutForOdpEventInSecs
         self.disableOdp = disableOdp

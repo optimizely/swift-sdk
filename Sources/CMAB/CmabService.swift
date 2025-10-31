@@ -48,25 +48,40 @@ class DefaultCmabService: CmabService {
     private let cmabCache: LruCache<String, CmabCacheValue>
     private let logger = OPTLoggerFactory.getLogger()
     
+    private static let NUM_LOCKS = 1000
+    private let locks: [NSLock]
+    
     init(cmabClient: CmabClient, cmabCache: LruCache<String, CmabCacheValue>) {
         self.cmabClient = cmabClient
         self.cmabCache = cmabCache
+        self.locks = (0..<Self.NUM_LOCKS).map { _ in NSLock() }
+    }
+    
+    private func getLockIndex(userId: String, ruleId: String) -> Int {
+        let combinedKey = userId + ruleId
+        let hashValue = MurmurHash3.hash32(key: combinedKey)
+        let lockIndex = Int(hashValue) % Self.NUM_LOCKS
+        return lockIndex
     }
     
     func getDecision(config: ProjectConfig,
                      userContext: OptimizelyUserContext,
                      ruleId: String,
                      options: [OptimizelyDecideOption]) -> Result<CmabDecision, Error> {
-        var result: Result<CmabDecision, Error>!
-        let semaphore = DispatchSemaphore(value: 0)
-        getDecision(config: config,
-                    userContext: userContext,
-                    ruleId: ruleId, options: options) { _result in
-            result = _result
-            semaphore.signal()
+        let lockIdx = getLockIndex(userId: userContext.userId, ruleId: ruleId)
+        let lock = locks[lockIdx]
+        return lock.withLock {
+            var result: Result<CmabDecision, Error>!
+            let semaphore = DispatchSemaphore(value: 0)
+            getDecision(config: config,
+                        userContext: userContext,
+                        ruleId: ruleId, options: options) { _result in
+                result = _result
+                semaphore.signal()
+            }
+            semaphore.wait()
+            return result
         }
-        semaphore.wait()
-        return result
     }
     
     func getDecision(config: ProjectConfig,

@@ -717,7 +717,8 @@ extension DefaultCmabServiceTests {
     }
     
     func testCacheTimeoutZero() {
-        // Create a cache with timeout 0 (immediate expiration)
+        // When timeout is 0, LruCache uses default timeout (30 * 60 seconds = 1800 seconds)
+        // So cache will NOT expire within the test timeframe
         let zeroTimeoutCache = CmabCache(size: 10, timeoutInSecs: 0)
         let zeroTimeoutService = DefaultCmabService(cmabClient: cmabClient, cmabCache: zeroTimeoutCache)
         
@@ -733,28 +734,28 @@ extension DefaultCmabServiceTests {
             options: []
         ) { result in
             switch result {
-            case .success(let decision):
-                XCTAssertEqual(decision.variationId, "variation-first")
-                XCTAssertTrue(self.cmabClient.fetchDecisionCalled, "Should call API on first request")
-                
-            case .failure(let error):
-                XCTFail("Expected success but got error: \(error)")
+                case .success(let decision):
+                    XCTAssertEqual(decision.variationId, "variation-first")
+                    XCTAssertTrue(self.cmabClient.fetchDecisionCalled, "Should call API on first request")
+                    
+                case .failure(let error):
+                    XCTFail("Expected success but got error: \(error)")
             }
             expectation1.fulfill()
         }
         
         wait(for: [expectation1], timeout: 1.0)
         
-        // Reset and change the variation
+        // Reset client but don't change the result
         cmabClient.reset()
         cmabClient.fetchDecisionResult = .success("variation-second")
         
-        // Small delay to ensure cache timeout
-        Thread.sleep(forTimeInterval: 1.1)
+        // Small delay (but not enough to expire default 1800s timeout)
+        Thread.sleep(forTimeInterval: 0.1)
         
         let expectation2 = self.expectation(description: "second request")
         
-        // Second request - should NOT use cache (timeout = 0, cache expired)
+        // Second request - SHOULD use cache (timeout defaults to 1800s, not expired)
         zeroTimeoutService.getDecision(
             config: config,
             userContext: userContext,
@@ -762,19 +763,20 @@ extension DefaultCmabServiceTests {
             options: []
         ) { result in
             switch result {
-            case .success(let decision):
-                XCTAssertEqual(decision.variationId, "variation-second")
-                XCTAssertTrue(self.cmabClient.fetchDecisionCalled, "Should call API again when cache timeout is 0")
-                
-            case .failure(let error):
-                XCTFail("Expected success but got error: \(error)")
+                case .success(let decision):
+                    // Should get cached value, not the new one
+                    XCTAssertEqual(decision.variationId, "variation-first")
+                    XCTAssertFalse(self.cmabClient.fetchDecisionCalled, "Should use cache when timeout defaults to 1800s")
+                    
+                case .failure(let error):
+                    XCTFail("Expected success but got error: \(error)")
             }
             expectation2.fulfill()
         }
         
         wait(for: [expectation2], timeout: 1.0)
     }
-    
+
     func testCacheSizeZeroAndTimeoutZero() {
         // Create a cache with both size 0 and timeout 0 (completely disabled)
         let disabledCache = CmabCache(size: 0, timeoutInSecs: 0)

@@ -198,7 +198,9 @@ extension DefaultCmabService {
     }
     
     static func createDefault(cacheSize: Int, cacheTimeout: Int) -> DefaultCmabService {
-        let cache = CmabCache(size: cacheSize, timeoutInSecs: cacheTimeout)
+        // if cache timeout is set to 0 or negative, use default timeout
+        let timeout = cacheTimeout <= 0 ? DEFAULT_CMAB_CACHE_TIMEOUT : cacheTimeout
+        let cache = CmabCache(size: cacheSize, timeoutInSecs: timeout)
         return DefaultCmabService(cmabClient: DefaultCmabClient(), cmabCache: cache)
     }
 }

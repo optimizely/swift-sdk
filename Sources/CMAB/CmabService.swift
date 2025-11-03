@@ -41,6 +41,11 @@ protocol CmabService {
                      completion: @escaping CmabDecisionCompletionHandler)
 }
 
+let DEFAULT_CMAB_CACHE_TIMEOUT = 30 * 60 // 30 minutes
+let DEFAULT_CMAB_CACHE_SIZE = 100
+
+typealias CmabCache = LruCache<String, CmabCacheValue>
+
 class DefaultCmabService: CmabService {
     typealias UserAttributes = [String : Any?]
     

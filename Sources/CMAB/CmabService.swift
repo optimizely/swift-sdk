@@ -41,17 +41,22 @@ protocol CmabService {
                      completion: @escaping CmabDecisionCompletionHandler)
 }
 
+let DEFAULT_CMAB_CACHE_TIMEOUT = 30 * 60 // 30 minutes
+let DEFAULT_CMAB_CACHE_SIZE = 100
+
+typealias CmabCache = LruCache<String, CmabCacheValue>
+
 class DefaultCmabService: CmabService {
     typealias UserAttributes = [String : Any?]
     
     private let cmabClient: CmabClient
-    private let cmabCache: LruCache<String, CmabCacheValue>
+    let cmabCache: CmabCache
     private let logger = OPTLoggerFactory.getLogger()
     
     private static let NUM_LOCKS = 1000
     private let locks: [NSLock]
     
-    init(cmabClient: CmabClient, cmabCache: LruCache<String, CmabCacheValue>) {
+    init(cmabClient: CmabClient, cmabCache: CmabCache) {
         self.cmabClient = cmabClient
         self.cmabCache = cmabCache
         self.locks = (0..<Self.NUM_LOCKS).map { _ in NSLock() }
@@ -193,9 +198,14 @@ class DefaultCmabService: CmabService {
 
 extension DefaultCmabService {
     static func createDefault() -> DefaultCmabService {
-        let DEFAULT_CMAB_CACHE_TIMEOUT = 30 * 60 * 1000  // 30 minutes in milliseconds
-        let DEFAULT_CMAB_CACHE_SIZE = 1000
-        let cache = LruCache<String, CmabCacheValue>(size: DEFAULT_CMAB_CACHE_SIZE, timeoutInSecs: DEFAULT_CMAB_CACHE_TIMEOUT)
+        let cache = CmabCache(size: DEFAULT_CMAB_CACHE_SIZE, timeoutInSecs: DEFAULT_CMAB_CACHE_TIMEOUT)
+        return DefaultCmabService(cmabClient: DefaultCmabClient(), cmabCache: cache)
+    }
+    
+    static func createDefault(cacheSize: Int, cacheTimeout: Int) -> DefaultCmabService {
+        // if cache timeout is set to 0 or negative, use default timeout
+        let timeout = cacheTimeout <= 0 ? DEFAULT_CMAB_CACHE_TIMEOUT : cacheTimeout
+        let cache = CmabCache(size: cacheSize, timeoutInSecs: timeout)
         return DefaultCmabService(cmabClient: DefaultCmabClient(), cmabCache: cache)
     }
 }

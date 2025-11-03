@@ -284,7 +284,7 @@ fileprivate class MockCmabService: DefaultCmabService {
     var invalidateUserCmabCache = false
     
     init() {
-        super.init(cmabClient: DefaultCmabClient(), cmabCache: LruCache(size: 10, timeoutInSecs: 10))
+        super.init(cmabClient: DefaultCmabClient(), cmabCache: CmabCache(size: 10, timeoutInSecs: 10))
     }
     
     override func getDecision(config: ProjectConfig, userContext: OptimizelyUserContext, ruleId: String, options: [OptimizelyDecideOption]) -> Result<CmabDecision, any Error> {

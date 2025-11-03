@@ -111,7 +111,7 @@ class MockUserContext: OptimizelyUserContext {
 class DefaultCmabServiceTests: XCTestCase {
     fileprivate var cmabClient: MockCmabClient!
     fileprivate var config: MockProjectConfig!
-    var cmabCache: LruCache<String, CmabCacheValue>!
+    var cmabCache: CmabCache!
     var cmabService: DefaultCmabService!
     var userContext: OptimizelyUserContext!
     let userAttributes: [String: Any] = ["age": 25, "location": "San Francisco"]
@@ -120,7 +120,7 @@ class DefaultCmabServiceTests: XCTestCase {
         super.setUp()
         config = MockProjectConfig()
         cmabClient = MockCmabClient()
-        cmabCache = LruCache<String, CmabCacheValue>(size: 10, timeoutInSecs: 10)
+        cmabCache = CmabCache(size: 10, timeoutInSecs: 10)
         cmabService = DefaultCmabService(cmabClient: cmabClient, cmabCache: cmabCache)
         // Set up user context
         userContext = MockUserContext(userId: "test-user", attributes: userAttributes)
@@ -656,4 +656,223 @@ extension DefaultCmabServiceTests {
         }
     }
     
+}
+
+extension DefaultCmabServiceTests {
+    
+    func testCacheSizeZero() {
+        // Create a cache with size 0 (no caching)
+        let zeroCmabCache = CmabCache(size: 0, timeoutInSecs: 10)
+        let zeroCacheService = DefaultCmabService(cmabClient: cmabClient, cmabCache: zeroCmabCache)
+        
+        cmabClient.fetchDecisionResult = .success("variation-first")
+        
+        let expectation1 = self.expectation(description: "first request")
+        
+        // First request
+        zeroCacheService.getDecision(
+            config: config,
+            userContext: userContext,
+            ruleId: "exp-123",
+            options: []
+        ) { result in
+            switch result {
+            case .success(let decision):
+                XCTAssertEqual(decision.variationId, "variation-first")
+                XCTAssertTrue(self.cmabClient.fetchDecisionCalled, "Should call API on first request")
+                
+            case .failure(let error):
+                XCTFail("Expected success but got error: \(error)")
+            }
+            expectation1.fulfill()
+        }
+        
+        wait(for: [expectation1], timeout: 1.0)
+        
+        // Reset and change the variation
+        cmabClient.reset()
+        cmabClient.fetchDecisionResult = .success("variation-second")
+        
+        let expectation2 = self.expectation(description: "second request")
+        
+        // Second request - should NOT use cache (size = 0)
+        zeroCacheService.getDecision(
+            config: config,
+            userContext: userContext,
+            ruleId: "exp-123",
+            options: []
+        ) { result in
+            switch result {
+            case .success(let decision):
+                XCTAssertEqual(decision.variationId, "variation-second")
+                XCTAssertTrue(self.cmabClient.fetchDecisionCalled, "Should call API again when cache size is 0")
+                
+            case .failure(let error):
+                XCTFail("Expected success but got error: \(error)")
+            }
+            expectation2.fulfill()
+        }
+        
+        wait(for: [expectation2], timeout: 1.0)
+    }
+    
+    func testCacheTimeoutZero() {
+        // When timeout is 0, LruCache uses default timeout (30 * 60 seconds = 1800 seconds)
+        // So cache will NOT expire within the test timeframe
+        let zeroTimeoutCache = CmabCache(size: 10, timeoutInSecs: 0)
+        let zeroTimeoutService = DefaultCmabService(cmabClient: cmabClient, cmabCache: zeroTimeoutCache)
+        
+        cmabClient.fetchDecisionResult = .success("variation-first")
+        
+        let expectation1 = self.expectation(description: "first request")
+        
+        // First request
+        zeroTimeoutService.getDecision(
+            config: config,
+            userContext: userContext,
+            ruleId: "exp-123",
+            options: []
+        ) { result in
+            switch result {
+                case .success(let decision):
+                    XCTAssertEqual(decision.variationId, "variation-first")
+                    XCTAssertTrue(self.cmabClient.fetchDecisionCalled, "Should call API on first request")
+                    
+                case .failure(let error):
+                    XCTFail("Expected success but got error: \(error)")
+            }
+            expectation1.fulfill()
+        }
+        
+        wait(for: [expectation1], timeout: 1.0)
+        
+        // Reset client but don't change the result
+        cmabClient.reset()
+        cmabClient.fetchDecisionResult = .success("variation-second")
+        
+        // Small delay (but not enough to expire default 1800s timeout)
+        Thread.sleep(forTimeInterval: 0.1)
+        
+        let expectation2 = self.expectation(description: "second request")
+        
+        // Second request - SHOULD use cache (timeout defaults to 1800s, not expired)
+        zeroTimeoutService.getDecision(
+            config: config,
+            userContext: userContext,
+            ruleId: "exp-123",
+            options: []
+        ) { result in
+            switch result {
+                case .success(let decision):
+                    // Should get cached value, not the new one
+                    XCTAssertEqual(decision.variationId, "variation-first")
+                    XCTAssertFalse(self.cmabClient.fetchDecisionCalled, "Should use cache when timeout defaults to 1800s")
+                    
+                case .failure(let error):
+                    XCTFail("Expected success but got error: \(error)")
+            }
+            expectation2.fulfill()
+        }
+        
+        wait(for: [expectation2], timeout: 1.0)
+    }
+
+    func testCacheSizeZeroAndTimeoutZero() {
+        // Create a cache with both size 0 and timeout 0 (completely disabled)
+        let disabledCache = CmabCache(size: 0, timeoutInSecs: 0)
+        let disabledCacheService = DefaultCmabService(cmabClient: cmabClient, cmabCache: disabledCache)
+        
+        cmabClient.fetchDecisionResult = .success("variation-1")
+        
+        let expectation1 = self.expectation(description: "first request")
+        
+        // First request
+        disabledCacheService.getDecision(
+            config: config,
+            userContext: userContext,
+            ruleId: "exp-123",
+            options: []
+        ) { result in
+            switch result {
+            case .success(let decision):
+                XCTAssertEqual(decision.variationId, "variation-1")
+                
+            case .failure(let error):
+                XCTFail("Expected success but got error: \(error)")
+            }
+            expectation1.fulfill()
+        }
+        
+        wait(for: [expectation1], timeout: 1.0)
+        
+        let apiCallCount1 = cmabClient.fetchDecisionCalled ? 1 : 0
+        
+        // Reset and make multiple requests
+        cmabClient.reset()
+        cmabClient.fetchDecisionResult = .success("variation-2")
+        
+        let expectation2 = self.expectation(description: "second request")
+        
+        disabledCacheService.getDecision(
+            config: config,
+            userContext: userContext,
+            ruleId: "exp-123",
+            options: []
+        ) { result in
+            expectation2.fulfill()
+        }
+        
+        wait(for: [expectation2], timeout: 1.0)
+        
+        let apiCallCount2 = cmabClient.fetchDecisionCalled ? 1 : 0
+        
+        XCTAssertEqual(apiCallCount1, 1, "First request should call API")
+        XCTAssertEqual(apiCallCount2, 1, "Second request should also call API (no caching)")
+    }
+    
+    func testSyncCacheSizeZero() {
+        // Create a cache with size 0
+        let zeroCmabCache = CmabCache(size: 0, timeoutInSecs: 10)
+        let zeroCacheService = DefaultCmabService(cmabClient: cmabClient, cmabCache: zeroCmabCache)
+        
+        cmabClient.fetchDecisionResult = .success("variation-first")
+        
+        // First request
+        let result1 = zeroCacheService.getDecision(
+            config: config,
+            userContext: userContext,
+            ruleId: "exp-123",
+            options: []
+        )
+        
+        switch result1 {
+        case .success(let decision):
+            XCTAssertEqual(decision.variationId, "variation-first")
+            XCTAssertTrue(cmabClient.fetchDecisionCalled, "Should call API on first request")
+            
+        case .failure(let error):
+            XCTFail("Expected success but got error: \(error)")
+        }
+        
+        // Reset and change variation
+        cmabClient.reset()
+        cmabClient.fetchDecisionResult = .success("variation-second")
+        
+        // Second request - should NOT use cache
+        let result2 = zeroCacheService.getDecision(
+            config: config,
+            userContext: userContext,
+            ruleId: "exp-123",
+            options: []
+        )
+        
+        switch result2 {
+        case .success(let decision):
+            XCTAssertEqual(decision.variationId, "variation-second")
+            XCTAssertTrue(cmabClient.fetchDecisionCalled, "Should call API again when cache size is 0")
+            
+        case .failure(let error):
+            XCTFail("Expected success but got error: \(error)")
+        }
+    }
 }

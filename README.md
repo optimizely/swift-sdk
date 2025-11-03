@@ -129,4 +129,4 @@ Used to enforce Swift style and conventions.
 
 - React - https://github.com/optimizely/react-sdk
 
-- Ruby - https://github.com/optimizely/ruby-sdk 
+- Ruby - https://github.com/optimizely/ruby-sdk  

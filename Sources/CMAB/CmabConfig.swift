@@ -16,6 +16,10 @@
 
 import Foundation
 
+let DEFAULT_CMAB_CACHE_TIMEOUT = 30 * 60 // 30 minutes
+let DEFAULT_CMAB_CACHE_SIZE = 100
+let CMAB_PREDICTION_END_POINT = "https://prediction.cmab.optimizely.com/predict"
+
 /// Configuration for CMAB (Contextual Multi-Armed Bandit) service
 public struct CmabConfig {
     /// The maximum size of CMAB decision cache
@@ -37,14 +41,14 @@ public struct CmabConfig {
         self.cacheTimeoutInSecs = cacheTimeoutInSecs
         // Sanitize and validate endpoint
         if let endpoint = predictionEndpoint?.trimmingCharacters(in: .whitespaces), !endpoint.isEmpty {
-            // Remove all trailing slashes
+            // Remove trailing slashes
             var sanitized = endpoint
-            while sanitized.hasSuffix("/") {
+            if sanitized.hasSuffix("/") {
                 sanitized = String(sanitized.dropLast())
             }
             self.predictionEndpoint = sanitized
         } else {
-            self.predictionEndpoint = CMAB_END_POINT
+            self.predictionEndpoint = CMAB_PREDICTION_END_POINT
         }
     }
 }

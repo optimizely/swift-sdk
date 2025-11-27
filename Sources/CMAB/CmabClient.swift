@@ -16,9 +16,6 @@
 
 import Foundation
 
-let DEFAULT_CMAB_CACHE_TIMEOUT = 30 * 60 // 30 minutes
-let DEFAULT_CMAB_CACHE_SIZE = 100
-
 enum CmabClientError: Error, Equatable {
     case fetchFailed(String)
     case invalidResponse
@@ -51,8 +48,6 @@ protocol CmabClient {
     )
 }
 
-let CMAB_END_POINT = "https://prediction.cmab.optimizely.com/predict"
-
 class DefaultCmabClient: CmabClient {
     let session: URLSession
     let retryConfig: CmabRetryConfig
@@ -69,7 +64,7 @@ class DefaultCmabClient: CmabClient {
         self.session = session
         self.retryConfig = retryConfig
         self.maxWaitTime = maxWaitTime
-        self.predictionEndpoint = predictionEndpoint ?? CMAB_END_POINT
+        self.predictionEndpoint = predictionEndpoint ?? CMAB_PREDICTION_END_POINT
     }
     
     func fetchDecision(

@@ -16,6 +16,9 @@
 
 import Foundation
 
+let DEFAULT_CMAB_CACHE_TIMEOUT = 30 * 60 // 30 minutes
+let DEFAULT_CMAB_CACHE_SIZE = 100
+
 enum CmabClientError: Error, Equatable {
     case fetchFailed(String)
     case invalidResponse
@@ -48,20 +51,25 @@ protocol CmabClient {
     )
 }
 
+let CMAB_END_POINT = "https://prediction.cmab.optimizely.com/predict"
+
 class DefaultCmabClient: CmabClient {
     let session: URLSession
     let retryConfig: CmabRetryConfig
     let maxWaitTime: TimeInterval
     let cmabQueue = DispatchQueue(label: "com.optimizley.cmab")
     let logger = OPTLoggerFactory.getLogger()
+    let predictionEndpoint: String
     
     init(session: URLSession = .shared,
          retryConfig: CmabRetryConfig = CmabRetryConfig(),
-         maxWaitTime: TimeInterval = 10.0
+         maxWaitTime: TimeInterval = 10.0,
+         predictionEndpoint: String? = nil
     ) {
         self.session = session
         self.retryConfig = retryConfig
         self.maxWaitTime = maxWaitTime
+        self.predictionEndpoint = predictionEndpoint ?? CMAB_END_POINT
     }
     
     func fetchDecision(
@@ -71,9 +79,8 @@ class DefaultCmabClient: CmabClient {
         cmabUUID: String,
         completion: @escaping (Result<String, Error>) -> Void
     ) {
-        let urlString = "https://prediction.cmab.optimizely.com/predict/\(ruleId)"
-        guard let url = URL(string: urlString) else {
-            completion(.failure(CmabClientError.fetchFailed("Invalid URL")))
+        guard let url = getUrl(ruleId: ruleId) else {
+            completion(.failure(CmabClientError.fetchFailed("Invalid CMAB prediction endpoint")))
             return
         }
         let attrType = "custom_attribute"
@@ -96,6 +103,15 @@ class DefaultCmabClient: CmabClient {
             timeout: maxWaitTime,
             completion: completion
         )
+    }
+    
+    func getUrl(ruleId: String) -> URL? {
+        let urlString = "\(predictionEndpoint)/\(ruleId)"
+        guard let url = URL(string: urlString) else {
+            self.logger.e("Invalid CMAB endpoint")
+            return nil
+        }
+        return url
     }
     
     private func doFetchWithRetry(

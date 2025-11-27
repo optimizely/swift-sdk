@@ -101,7 +101,7 @@ class DefaultCmabClient: CmabClient {
     }
     
     func getUrl(ruleId: String) -> URL? {
-        let urlString = "\(predictionEndpoint)/\(ruleId)"
+        let urlString = predictionEndpoint.hasSuffix("/") ? "predictionEndpoint\(ruleId)" : "\(predictionEndpoint)/\(ruleId)"
         guard let url = URL(string: urlString) else {
             self.logger.e("Invalid CMAB endpoint")
             return nil

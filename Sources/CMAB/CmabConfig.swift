@@ -40,12 +40,7 @@ public struct CmabConfig {
         self.cacheSize = cacheSize
         self.cacheTimeoutInSecs = cacheTimeoutInSecs
         // Sanitize and validate endpoint
-        if let endpoint = predictionEndpoint?.trimmingCharacters(in: .whitespaces), !endpoint.isEmpty {
-            // Remove trailing slashes
-            var sanitized = endpoint
-            if sanitized.hasSuffix("/") {
-                sanitized = String(sanitized.dropLast())
-            }
+        if let sanitized = predictionEndpoint?.trimmingCharacters(in: .whitespaces), !sanitized.isEmpty {
             self.predictionEndpoint = sanitized
         } else {
             self.predictionEndpoint = CMAB_PREDICTION_END_POINT

@@ -67,7 +67,8 @@ extension OptimizelyClient {
                             periodicDownloadInterval: Int?,
                             defaultLogLevel: OptimizelyLogLevel? = nil,
                             defaultDecideOptions: [OptimizelyDecideOption]? = nil,
-                            settings: OptimizelySdkSettings? = nil) {
+                            settings: OptimizelySdkSettings? = nil,
+                            cmabConfig: CmabConfig? = nil) {
 
         self.init(sdkKey: sdkKey,
                   logger: logger,
@@ -77,7 +78,8 @@ extension OptimizelyClient {
                   odpManager: odpManager,
                   defaultLogLevel: defaultLogLevel,
                   defaultDecideOptions: defaultDecideOptions,
-                  settings: settings)
+                  settings: settings,
+                  cmabConfig: cmabConfig)
         
         let interval = periodicDownloadInterval ?? 10 * 60
         if interval > 0 {

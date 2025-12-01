@@ -42,7 +42,7 @@ class OptimizelyClientTests_ODP: XCTestCase {
         let cmabClient = cmabService.cmabClient as! DefaultCmabClient
         XCTAssertEqual(100, cmabCache.maxSize)
         XCTAssertEqual(30 * 60, cmabCache.timeoutInSecs)
-        XCTAssertEqual("https://prediction.cmab.optimizely.com/predict", cmabClient.predictionEndpoint)
+        XCTAssertEqual("https://prediction.cmab.optimizely.com/predict/%@", cmabClient.predictionEndpoint)
         XCTAssertEqual(100, optimizely.odpManager.segmentManager?.segmentsCache.maxSize)
         XCTAssertEqual(600, optimizely.odpManager.segmentManager?.segmentsCache.timeoutInSecs)
         XCTAssertEqual(10, optimizely.odpManager.segmentManager?.apiMgr.resourceTimeoutInSecs)
@@ -64,35 +64,6 @@ class OptimizelyClientTests_ODP: XCTestCase {
         sdkSettings = OptimizelySdkSettings(disableOdp: true)
         optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey, settings: sdkSettings)
         XCTAssertEqual(false, optimizely.odpManager.enabled)
-    }
-    
-    func test_cmab_custom_config()  {
-        var cmabConfig = CmabConfig(cacheSize: 50, cacheTimeoutInSecs: 120)
-        var optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey, cmabConfig: cmabConfig)
-        var cmabService = ((optimizely.decisionService as! DefaultDecisionService).cmabService as! DefaultCmabService)
-        var cmabCache = cmabService.cmabCache
-        var cmabClient = cmabService.cmabClient as! DefaultCmabClient
-        XCTAssertEqual(50, cmabCache.maxSize)
-        XCTAssertEqual(120, cmabCache.timeoutInSecs)
-        XCTAssertEqual("https://prediction.cmab.optimizely.com/predict/rule_123", cmabClient.getUrl(ruleId: "rule_123")?.absoluteString)
-        
-        cmabConfig = CmabConfig(cacheSize: 50, cacheTimeoutInSecs: -10, predictionEndpoint: "http://demo.cmab.com/predict")
-        optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey, cmabConfig: cmabConfig)
-        cmabService = ((optimizely.decisionService as! DefaultDecisionService).cmabService as! DefaultCmabService)
-        cmabCache = cmabService.cmabCache
-        cmabClient = cmabService.cmabClient as! DefaultCmabClient
-        XCTAssertEqual(50, cmabCache.maxSize)
-        XCTAssertEqual(1800, cmabCache.timeoutInSecs)
-        XCTAssertEqual("http://demo.cmab.com/predict/rule_1234", cmabClient.getUrl(ruleId: "rule_1234")?.absoluteString)
-        
-        cmabConfig = CmabConfig(predictionEndpoint: "http://fowardslash.com/predict/")
-        optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey, cmabConfig: cmabConfig)
-        cmabService = ((optimizely.decisionService as! DefaultDecisionService).cmabService as! DefaultCmabService)
-        cmabCache = cmabService.cmabCache
-        cmabClient = cmabService.cmabClient as! DefaultCmabClient
-        XCTAssertEqual(100, cmabCache.maxSize)
-        XCTAssertEqual(1800, cmabCache.timeoutInSecs)
-        XCTAssertEqual("http://fowardslash.com/predict/rule-12345", cmabClient.getUrl(ruleId: "rule-12345")?.absoluteString)
     }
     
     // MARK: - sendOdpEvent

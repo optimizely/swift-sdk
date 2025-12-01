@@ -101,11 +101,12 @@ class DefaultCmabClient: CmabClient {
     }
     
     func getUrl(ruleId: String) -> URL? {
-        guard let baseURL = URL(string: predictionEndpoint) else {
+        let urlString = String(format: predictionEndpoint, ruleId)
+        guard let url = URL(string: urlString) else {
             self.logger.e("Invalid CMAB endpoint")
             return nil
         }
-        return baseURL.appendingPathComponent(ruleId)
+        return url
     }
     
     private func doFetchWithRetry(

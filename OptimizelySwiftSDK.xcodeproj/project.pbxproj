@@ -2028,6 +2028,7 @@
 		98261A252ED89A8500F7230A /* CmabConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98261A172ED89A8500F7230A /* CmabConfig.swift */; };
 		98261A262ED89A8500F7230A /* CmabConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98261A172ED89A8500F7230A /* CmabConfig.swift */; };
 		98261A272ED89A8500F7230A /* CmabConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98261A172ED89A8500F7230A /* CmabConfig.swift */; };
+		98261A472EDDC35900F7230A /* OptimizelyClientTests_Cmab_Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98261A462EDDC35900F7230A /* OptimizelyClientTests_Cmab_Config.swift */; };
 		982C071F2D8C82AE0068B1FF /* HoldoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 982C071E2D8C82AE0068B1FF /* HoldoutTests.swift */; };
 		982C07202D8C82AE0068B1FF /* HoldoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 982C071E2D8C82AE0068B1FF /* HoldoutTests.swift */; };
 		9841590F2E13013E0042C01E /* OptimizelyUserContextTests_Decide_Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9841590E2E13013E0042C01E /* OptimizelyUserContextTests_Decide_Async.swift */; };
@@ -2591,6 +2592,7 @@
 		98137C542A41E86F004896EB /* OptimizelyClientTests_Init_Async_Await.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelyClientTests_Init_Async_Await.swift; sourceTree = "<group>"; };
 		98137C562A42BA0F004896EB /* OptimizelyUserContextTests_ODP_Aync_Await.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelyUserContextTests_ODP_Aync_Await.swift; sourceTree = "<group>"; };
 		98261A172ED89A8500F7230A /* CmabConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CmabConfig.swift; sourceTree = "<group>"; };
+		98261A462EDDC35900F7230A /* OptimizelyClientTests_Cmab_Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelyClientTests_Cmab_Config.swift; sourceTree = "<group>"; };
 		982C071E2D8C82AE0068B1FF /* HoldoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoldoutTests.swift; sourceTree = "<group>"; };
 		9841590E2E13013E0042C01E /* OptimizelyUserContextTests_Decide_Async.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelyUserContextTests_Decide_Async.swift; sourceTree = "<group>"; };
 		984159112E141B640042C01E /* OptimizelyUserContextTests_Decide_CMAB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelyUserContextTests_Decide_CMAB.swift; sourceTree = "<group>"; };
@@ -3244,6 +3246,7 @@
 				6E7519BE22C5211100B2B157 /* OptimizelyClientTests_Invalid.swift */,
 				6E593FB425BB9C5500EC72BC /* OptimizelyClientTests_Decide.swift */,
 				84518B1E287665020023F104 /* OptimizelyClientTests_ODP.swift */,
+				98261A462EDDC35900F7230A /* OptimizelyClientTests_Cmab_Config.swift */,
 				6E7519BA22C5211100B2B157 /* OptimizelyClientTests_Evaluation.swift */,
 				6E7519BB22C5211100B2B157 /* OptimizelyClientTests_DatafileHandler.swift */,
 				6E7519C022C5211100B2B157 /* OptimizelyClientTests_Variables.swift */,
@@ -4821,6 +4824,7 @@
 				6E75180822C520D400B2B157 /* DataStoreFile.swift in Sources */,
 				6E7518EC22C520D400B2B157 /* ConditionHolder.swift in Sources */,
 				6E7516AA22C520D400B2B157 /* DefaultLogger.swift in Sources */,
+				98261A472EDDC35900F7230A /* OptimizelyClientTests_Cmab_Config.swift in Sources */,
 				84E2E97A2855875E001114AB /* OdpEventManager.swift in Sources */,
 				6E75186822C520D400B2B157 /* Rollout.swift in Sources */,
 				6E9B11E122C548A200C22D81 /* OptimizelyClientTests_ObjcOthers.m in Sources */,

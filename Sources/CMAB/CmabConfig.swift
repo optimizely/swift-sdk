@@ -18,7 +18,7 @@ import Foundation
 
 let DEFAULT_CMAB_CACHE_TIMEOUT = 30 * 60 // 30 minutes
 let DEFAULT_CMAB_CACHE_SIZE = 100
-let CMAB_PREDICTION_END_POINT = "https://prediction.cmab.optimizely.com/predict"
+let CMAB_PREDICTION_END_POINT = "https://prediction.cmab.optimizely.com/predict/%@"
 
 /// Configuration for CMAB (Contextual Multi-Armed Bandit) service
 public struct CmabConfig {

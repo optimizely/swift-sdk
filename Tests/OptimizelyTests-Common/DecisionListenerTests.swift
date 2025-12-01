@@ -1219,7 +1219,8 @@ class FakeManager: OptimizelyClient {
                   odpManager: OdpManager? = nil,
                   defaultLogLevel: OptimizelyLogLevel? = nil,
                   defaultDecideOptions: [OptimizelyDecideOption]? = nil,
-                  settings: OptimizelySdkSettings? = nil) {
+                  settings: OptimizelySdkSettings? = nil,
+                  cmabConfig: CmabConfig? = nil) {
         
         // clear shared handlers
         HandlerRegistryService.shared.removeAll()

@@ -37,9 +37,12 @@ class OptimizelyClientTests_ODP: XCTestCase {
     
     func testSdkSettings_default()  {
         let optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey)
-        let cmabCache = ((optimizely.decisionService as! DefaultDecisionService).cmabService as! DefaultCmabService).cmabCache
+        let cmabService = ((optimizely.decisionService as! DefaultDecisionService).cmabService as! DefaultCmabService)
+        let cmabCache = cmabService.cmabCache
+        let cmabClient = cmabService.cmabClient as! DefaultCmabClient
         XCTAssertEqual(100, cmabCache.maxSize)
         XCTAssertEqual(30 * 60, cmabCache.timeoutInSecs)
+        XCTAssertEqual("https://prediction.cmab.optimizely.com/predict/%@", cmabClient.predictionEndpoint)
         XCTAssertEqual(100, optimizely.odpManager.segmentManager?.segmentsCache.maxSize)
         XCTAssertEqual(600, optimizely.odpManager.segmentManager?.segmentsCache.timeoutInSecs)
         XCTAssertEqual(10, optimizely.odpManager.segmentManager?.apiMgr.resourceTimeoutInSecs)
@@ -48,30 +51,16 @@ class OptimizelyClientTests_ODP: XCTestCase {
     }
     
     func testSdkSettings_custom()  {
-        var sdkSettings = OptimizelySdkSettings(segmentsCacheSize: 12,
-                                                segmentsCacheTimeoutInSecs: 345,
-                                                cmabCacheSize: 50,
-                                                cmabCacheTimeoutInSecs: 120)
+        var sdkSettings = OptimizelySdkSettings(segmentsCacheSize: 12, segmentsCacheTimeoutInSecs: 345)
         var optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey, settings: sdkSettings)
-        var cmabCache = ((optimizely.decisionService as! DefaultDecisionService).cmabService as! DefaultCmabService).cmabCache
-        XCTAssertEqual(50, cmabCache.maxSize)
-        XCTAssertEqual(120, cmabCache.timeoutInSecs)
         XCTAssertEqual(12, optimizely.odpManager.segmentManager?.segmentsCache.maxSize)
         XCTAssertEqual(345, optimizely.odpManager.segmentManager?.segmentsCache.timeoutInSecs)
         
-        sdkSettings = OptimizelySdkSettings(timeoutForSegmentFetchInSecs: 34,
-                                            timeoutForOdpEventInSecs: 45)
+        sdkSettings = OptimizelySdkSettings(timeoutForSegmentFetchInSecs: 34, timeoutForOdpEventInSecs: 45)
         optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey, settings: sdkSettings)
         XCTAssertEqual(34, optimizely.odpManager.segmentManager?.apiMgr.resourceTimeoutInSecs)
         XCTAssertEqual(45, optimizely.odpManager.eventManager?.apiMgr.resourceTimeoutInSecs)
         
-        sdkSettings = OptimizelySdkSettings(cmabCacheSize: 50, cmabCacheTimeoutInSecs: -10)
-        
-        optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey, settings: sdkSettings)
-        cmabCache = ((optimizely.decisionService as! DefaultDecisionService).cmabService as! DefaultCmabService).cmabCache
-        XCTAssertEqual(50, cmabCache.maxSize)
-        XCTAssertEqual(1800, cmabCache.timeoutInSecs)
-
         sdkSettings = OptimizelySdkSettings(disableOdp: true)
         optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey, settings: sdkSettings)
         XCTAssertEqual(false, optimizely.odpManager.enabled)

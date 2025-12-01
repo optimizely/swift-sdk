@@ -76,8 +76,9 @@ open class OptimizelyClient: NSObject {
     ///   - userProfileService: custom UserProfileService (optional)
     ///   - odpManager: custom OdpManager (optional)
     ///   - defaultLogLevel: default log level (optional. default = .info)
-    ///   - defaultDecisionOptions: default decision options (optional)
+    ///   - defaultDecideOptions: default decision options (optional)
     ///   - settings: SDK configuration (optional)
+    ///   - cmabConfig: CMAB configuration (optional)
     public init(sdkKey: String,
                 logger: OPTLogger? = nil,
                 eventDispatcher: OPTEventDispatcher? = nil,
@@ -86,7 +87,8 @@ open class OptimizelyClient: NSObject {
                 odpManager: OdpManager? = nil,
                 defaultLogLevel: OptimizelyLogLevel? = nil,
                 defaultDecideOptions: [OptimizelyDecideOption]? = nil,
-                settings: OptimizelySdkSettings? = nil) {
+                settings: OptimizelySdkSettings? = nil,
+                cmabConfig: CmabConfig? = nil) {
         
         self.sdkKey = sdkKey
         self.sdkSettings = settings ?? OptimizelySdkSettings()
@@ -107,9 +109,9 @@ open class OptimizelyClient: NSObject {
         let userProfileService = userProfileService ?? DefaultUserProfileService()
         let logger = logger ?? DefaultLogger()
         type(of: logger).logLevel = defaultLogLevel ?? .info
-        
-        let cmabService = DefaultCmabService.createDefault(cacheSize: self.sdkSettings.cmabCacheSize, cacheTimeout: self.sdkSettings.cmabCacheTimeoutInSecs)
-        
+
+        let cmabService = DefaultCmabService.createDefault(config: cmabConfig ?? CmabConfig())
+
         self.registerServices(sdkKey: sdkKey,
                               logger: logger,
                               eventDispatcher: eventDispatcher ?? DefaultEventDispatcher.sharedInstance,

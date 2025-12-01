@@ -54,14 +54,17 @@ class DefaultCmabClient: CmabClient {
     let maxWaitTime: TimeInterval
     let cmabQueue = DispatchQueue(label: "com.optimizley.cmab")
     let logger = OPTLoggerFactory.getLogger()
+    let predictionEndpoint: String
     
     init(session: URLSession = .shared,
          retryConfig: CmabRetryConfig = CmabRetryConfig(),
-         maxWaitTime: TimeInterval = 10.0
+         maxWaitTime: TimeInterval = 10.0,
+         predictionEndpoint: String? = nil
     ) {
         self.session = session
         self.retryConfig = retryConfig
         self.maxWaitTime = maxWaitTime
+        self.predictionEndpoint = predictionEndpoint ?? CMAB_PREDICTION_END_POINT
     }
     
     func fetchDecision(
@@ -71,9 +74,8 @@ class DefaultCmabClient: CmabClient {
         cmabUUID: String,
         completion: @escaping (Result<String, Error>) -> Void
     ) {
-        let urlString = "https://prediction.cmab.optimizely.com/predict/\(ruleId)"
-        guard let url = URL(string: urlString) else {
-            completion(.failure(CmabClientError.fetchFailed("Invalid URL")))
+        guard let url = getUrl(ruleId: ruleId) else {
+            completion(.failure(CmabClientError.fetchFailed("Invalid CMAB prediction endpoint")))
             return
         }
         let attrType = "custom_attribute"
@@ -96,6 +98,15 @@ class DefaultCmabClient: CmabClient {
             timeout: maxWaitTime,
             completion: completion
         )
+    }
+    
+    func getUrl(ruleId: String) -> URL? {
+        let urlString = String(format: predictionEndpoint, ruleId)
+        guard let url = URL(string: urlString) else {
+            self.logger.e("Invalid CMAB endpoint")
+            return nil
+        }
+        return url
     }
     
     private func doFetchWithRetry(

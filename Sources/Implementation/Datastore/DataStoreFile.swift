@@ -46,10 +46,10 @@ open class DataStoreFile<T>: OPTDataStore where T: Codable {
         dataStoreName = storeName
         lock = DispatchQueue(label: storeName)
         
-        url = if let url = FileManager.default.urls(for: directory, in: .userDomainMask).first {
-            url.appendingPathComponent(storeName, isDirectory: false)
+        if let url = FileManager.default.urls(for: directory, in: .userDomainMask).first {
+            self.url = url.appendingPathComponent(storeName, isDirectory: false)
         } else {
-            URL(fileURLWithPath: storeName)
+            self.url = URL(fileURLWithPath: storeName)
         }
     }
     

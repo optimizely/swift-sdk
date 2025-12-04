@@ -150,6 +150,43 @@
                 
             },
             "id": "12331371850"
+        },
+        {
+            "id": "9300002796873",
+            "key": "cmab-rule-1",
+            "status": "Running",
+            "layerId": "9300002051159",
+            "variations": [
+                {
+                    "id": "1532445",
+                    "key": "on",
+                    "featureEnabled": true,
+                    "variables": []
+                },
+                {
+                    "id": "1532444",
+                    "key": "off",
+                    "featureEnabled": false,
+                    "variables": []
+                }
+            ],
+            "trafficAllocation": [],
+            "forcedVariations": {
+                
+            },
+            "audienceIds": [
+                "5716609898119168"
+            ],
+            "audienceConditions": [
+                "or",
+                "5716609898119168"
+            ],
+            "cmab": {
+                "attributeIds": [
+                    "6381652968996864"
+                ],
+                "trafficAllocation": 10000
+            }
         }
     ],
     "audiences": [
@@ -157,6 +194,11 @@
             "id": "12208130097",
             "conditions": "[\"and\", [\"or\", [\"or\", {\"name\": \"browser_type\", \"type\": \"custom_attribute\", \"value\": \"safari\"}, {\"name\": \"browser_type\", \"type\": \"custom_attribute\", \"value\": \"chrome\"}]]]",
             "name": "safari"
+        },
+        {
+            "id": "5716609898119168",
+            "conditions": "[\"and\", [\"or\", [\"or\", {\"match\": \"exact\", \"name\": \"country\", \"type\": \"custom_attribute\", \"value\": \"us\"}], [\"or\", {\"match\": \"exact\", \"name\": \"country\", \"type\": \"custom_attribute\", \"value\": \"ru\"}]]]",
+            "name": "cmab-audience"
         }
     ],
     "groups": [
@@ -174,6 +216,10 @@
         {
             "id": "12126623630",
             "key": "geo"
+        },
+        {
+            "id": "6381652968996864",
+            "key": "country"
         }
     ],
     "botFiltering": false,

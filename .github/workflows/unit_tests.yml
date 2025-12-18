@@ -24,7 +24,7 @@ jobs:
             test_sdk: "iphonesimulator"
             platform: "iOS Simulator"
             os_type: "iOS"
-            simulator_xcode_version: 14.1
+            simulator_xcode_version: 16.1
           - os: 16.2
             device: "iPhone 14"
             scheme: "OptimizelySwiftSDK-iOS"
@@ -46,13 +46,13 @@ jobs:
             test_sdk: "appletvsimulator"
             platform: "tvOS Simulator"
             os_type: "tvOS"
-            simulator_xcode_version: 14.1
+            simulator_xcode_version: 16.1
     steps:
       - uses: actions/checkout@v3
       - uses: maxim-lobanov/setup-xcode@v1
         with:
           # macos version and supported simulator_xcode_versions are all related to this xcode_version, so be careful when you upgrade this.
-          xcode-version: 14.1
+          xcode-version: 16.1
       - name: set SDK Branch if PR
         env:
           BASE_REF: ${{ github.base_ref }}

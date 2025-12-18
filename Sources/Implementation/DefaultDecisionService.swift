@@ -35,7 +35,7 @@ typealias UserProfile = OPTUserProfileService.UPProfile
 class DefaultDecisionService: OPTDecisionService {
     let bucketer: OPTBucketer
     let userProfileService: OPTUserProfileService
-    let cmabService: CmabService
+    var cmabService: CmabService
     let group: DispatchGroup = DispatchGroup()
     // thread-safe lazy logger load (after HandlerRegisterService ready)
     private let threadSafeLogger = ThreadSafeLogger()
@@ -123,6 +123,9 @@ class DefaultDecisionService: OPTDecisionService {
         switch response {
             case .success(let decision):
                 cmabDecision = decision
+                let info = LogMessage.cmabFetchSuccess(decision.variationId, decision.cmabUUID, _expKey: experiment.key)
+                self.logger.d(info)
+                reasons.addInfo(info)
             case .failure:
                 let info = LogMessage.cmabFetchFailed(experiment.key)
                 self.logger.e(info)
@@ -238,7 +241,6 @@ class DefaultDecisionService: OPTDecisionService {
             let variationDecision = VariationDecision(variation: variation)
             return DecisionResponse(result: variationDecision, reasons: reasons)
         }
-        
         
         var variationDecision: VariationDecision?
         // ---- check if the user passes audience targeting before bucketing ----

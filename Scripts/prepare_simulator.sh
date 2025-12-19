@@ -46,13 +46,13 @@ else
     RUNTIME_KEY1="com.apple.CoreSimulator.SimRuntime.${PLATFORM/ Simulator/}-${OS/./-}"
     RUNTIME_KEY2="${PLATFORM/ Simulator/}-${OS/./-}"
 
-    echo "Attempting to find simulator: $NAME with OS: $OS"
-    echo "Runtime key 1: $RUNTIME_KEY1"
-    echo "Runtime key 2: $RUNTIME_KEY2"
+    # echo "Attempting to find simulator: $NAME with OS: $OS"
+    # echo "Runtime key 1: $RUNTIME_KEY1"
+    # echo "Runtime key 2: $RUNTIME_KEY2"
 
     # List all available devices for debugging
-    echo "Available device runtimes:"
-    xcrun simctl list --json devices | jq -r '.devices | keys[]'
+    # echo "Available device runtimes:"
+    # xcrun simctl list --json devices | jq -r '.devices | keys[]'
 
     # Try format 1: com.apple.CoreSimulator.SimRuntime.iOS-XX-X
     echo ".devices.\"$RUNTIME_KEY1\"" > /tmp/jq_file

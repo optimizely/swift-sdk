@@ -26,7 +26,7 @@ jobs:
             os_type: "iOS"
             simulator_xcode_version: 16.3
           - os: 18.5
-            device: "iPhone 16"
+            device: "iPhone 16 Plus"
             scheme: "OptimizelySwiftSDK-iOS"
             test_sdk: "iphonesimulator"
             platform: "iOS Simulator"
@@ -39,13 +39,13 @@ jobs:
             platform: "iOS Simulator"
             os_type: "iOS"
             simulator_xcode_version: 16.4
-          - os: 18.4
+          - os: 18.5
             device: "Apple TV"
             scheme: "OptimizelySwiftSDK-tvOS"
             test_sdk: "appletvsimulator"
             platform: "tvOS Simulator"
             os_type: "tvOS"
-            simulator_xcode_version: 16.3
+            simulator_xcode_version: 16.4
     steps:
       - uses: actions/checkout@v3
       - uses: maxim-lobanov/setup-xcode@v1

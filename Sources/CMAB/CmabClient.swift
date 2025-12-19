@@ -18,14 +18,14 @@ import Foundation
 
 enum CmabClientError: Error, Equatable {
     case fetchFailed(String)
-    case invalidResponse
+    case invalidResponse(String)
     
     var message: String {
         switch self {
             case .fetchFailed(let message):
                 return message
-            case .invalidResponse:
-                return "Invalid response from CMA-B server"
+            case .invalidResponse(let reason):
+                return "Invalid response from CMA-B server: \(reason)"
             
         }
     }
@@ -189,12 +189,14 @@ class DefaultCmabClient: CmabClient {
                 {
                     completion(.success(variationId))
                 } else {
-                    self.logger.e(CmabClientError.invalidResponse.message)
-                    completion(.failure(CmabClientError.invalidResponse))
+                    let error = CmabClientError.invalidResponse("Response missing 'predictions' array or 'variation_id' field")
+                    self.logger.e(error.message)
+                    completion(.failure(error))
                 }
             } catch {
-                self.logger.e(CmabClientError.invalidResponse.message)
-                completion(.failure(CmabClientError.invalidResponse))
+                let error = CmabClientError.invalidResponse("JSON parsing failed: \(error.localizedDescription)")
+                self.logger.e(error.message)
+                completion(.failure(error))
             }
         }
         task.resume()

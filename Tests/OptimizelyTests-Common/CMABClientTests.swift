@@ -175,15 +175,19 @@ class DefaultCmabClientTests: XCTestCase {
             (Data("not a json".utf8), HTTPURLResponse(url: URL(string: "https://prediction.cmab.optimizely.com/predict/abc")!,
                                                       statusCode: 200, httpVersion: nil, headerFields: nil), nil)
         ]
-        
+
         let expectation = self.expectation(description: "Completion called")
         client.fetchDecision(
             ruleId: "abc", userId: "user1",
-            attributes: ["foo": "bar"], 
+            attributes: ["foo": "bar"],
             cmabUUID: "uuid"
         ) { result in
             if case let .failure(error) = result {
-                XCTAssertTrue(error is CmabClientError)
+                if case .invalidResponse(let reason) = error as? CmabClientError {
+                    XCTAssertTrue(reason.contains("JSON parsing failed"))
+                } else {
+                    XCTFail("Expected CmabClientError.invalidResponse for JSON parsing failure")
+                }
                 XCTAssertEqual(self.mockSession.callCount, 1)
             } else {
                 XCTFail("Expected failure on invalid JSON")
@@ -209,7 +213,11 @@ class DefaultCmabClientTests: XCTestCase {
             cmabUUID: "uuid-1234"
         ) { result in
             if case let .failure(error) = result {
-                XCTAssertEqual(error as? CmabClientError, .invalidResponse)
+                if case .invalidResponse(let reason) = error as? CmabClientError {
+                    XCTAssertTrue(reason.contains("Response missing 'predictions' array or 'variation_id' field"))
+                } else {
+                    XCTFail("Expected CmabClientError.invalidResponse")
+                }
                 XCTAssertEqual(self.mockSession.callCount, 1)
             } else {
                 XCTFail("Expected failure on invalid response structure")

@@ -110,13 +110,11 @@ open class OptimizelyClient: NSObject {
         let logger = logger ?? DefaultLogger()
         type(of: logger).logLevel = defaultLogLevel ?? .info
 
-        let cmabService = DefaultCmabService.createDefault(config: cmabConfig ?? CmabConfig())
-
         self.registerServices(sdkKey: sdkKey,
                               logger: logger,
                               eventDispatcher: eventDispatcher ?? DefaultEventDispatcher.sharedInstance,
                               datafileHandler: datafileHandler ?? DefaultDatafileHandler(),
-                              decisionService: DefaultDecisionService(userProfileService: userProfileService, cmabService: cmabService),
+                              decisionService: DefaultDecisionService(userProfileService: userProfileService),
                               notificationCenter: DefaultNotificationCenter())
         
         self.logger = HandlerRegistryService.shared.injectLogger()
@@ -124,6 +122,12 @@ open class OptimizelyClient: NSObject {
         self.datafileHandler = HandlerRegistryService.shared.injectDatafileHandler(sdkKey: self.sdkKey)
         self.decisionService = HandlerRegistryService.shared.injectDecisionService(sdkKey: self.sdkKey)
         self.notificationCenter = HandlerRegistryService.shared.injectNotificationCenter(sdkKey: self.sdkKey)
+        
+        // Set cmabService after injection to handle re-initialization with the same sdkKey.
+        // HandlerRegistryService won't replace existing bindings, so we mutate the instance instead.
+        let cmabService = DefaultCmabService.createDefault(config: cmabConfig ?? CmabConfig())
+        (self.decisionService as? DefaultDecisionService)?.cmabService = cmabService
+        
         if let _vuid = vuid {
             self.odpManager.vuid = _vuid
             sendInitializedEvent(vuid: _vuid)

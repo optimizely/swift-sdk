@@ -18,14 +18,14 @@ import Foundation
 
 enum CmabClientError: Error, Equatable {
     case fetchFailed(String)
-    case invalidResponse
+    case invalidResponse(String)
     
     var message: String {
         switch self {
             case .fetchFailed(let message):
                 return message
-            case .invalidResponse:
-                return "Invalid response from CMA-B server"
+            case .invalidResponse(let reason):
+                return "Invalid response from CMA-B server: \(reason)"
             
         }
     }
@@ -159,34 +159,44 @@ class DefaultCmabClient: CmabClient {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
         guard let httpBody = try? JSONSerialization.data(withJSONObject: requestBody, options: []) else {
+            self.logger.e("Failed to encode request body: \(requestBody)")
             completion(.failure(CmabClientError.fetchFailed("Failed to encode request body")))
             return
         }
+        
         request.httpBody = httpBody
+        
+        self.logger.d("Fetching CMAB decision: \(url) with body: \(requestBody)")
         
         let task = session.dataTask(with: request) { data, response, error in
             if let error = error {
+                self.logger.e(error.localizedDescription)
                 completion(.failure(CmabClientError.fetchFailed(error.localizedDescription)))
                 return
             }
             guard let httpResponse = response as? HTTPURLResponse, let data = data, (200...299).contains(httpResponse.statusCode) else {
                 let code = (response as? HTTPURLResponse)?.statusCode ?? -1
-                completion(.failure(CmabClientError.fetchFailed("HTTP error code: \(code)")))
+                let cmabError = CmabClientError.fetchFailed("HTTP error code: \(code)")
+                self.logger.e(cmabError.message)
+                completion(.failure(cmabError))
                 return
             }
             do {
-                if
-                    let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
-                    self.validateResponse(body: json),
-                    let predictions = json["predictions"] as? [[String: Any]],
-                    let variationId = predictions.first?["variation_id"] as? String
+                if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
+                   self.validateResponse(body: json),
+                   let predictions = json["predictions"] as? [[String: Any]],
+                   let variationId = predictions.first?["variation_id"] as? String
                 {
                     completion(.success(variationId))
                 } else {
-                    completion(.failure(CmabClientError.invalidResponse))
+                    let error = CmabClientError.invalidResponse("Response missing 'predictions' array or 'variation_id' field")
+                    self.logger.e(error.message)
+                    completion(.failure(error))
                 }
             } catch {
-                completion(.failure(CmabClientError.invalidResponse))
+                let error = CmabClientError.invalidResponse("JSON parsing failed: \(error.localizedDescription)")
+                self.logger.e(error.message)
+                completion(.failure(error))
             }
         }
         task.resume()

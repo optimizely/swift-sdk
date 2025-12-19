@@ -76,6 +76,7 @@ enum LogMessage {
     case failedToAssignValue
     case valueForKeyNotFound(_ key: String)
     case lowPeriodicDownloadInterval
+    case cmabFetchSuccess(_ variationId: String, _ cmabUUID: String, _expKey: String)
     case cmabFetchFailed(_ expKey: String)
     case cmabNotSupportedInSyncMode
 }
@@ -148,6 +149,7 @@ extension LogMessage: CustomStringConvertible {
         case .failedToAssignValue:                                              message = "Value for path could not be assigned to provided type."
         case .valueForKeyNotFound(let key):                                     message = "Value for JSON key (\(key)) not found."
         case .lowPeriodicDownloadInterval:                                      message = "Polling intervals below 30 seconds are not recommended."
+        case .cmabFetchSuccess(let variationId, let cmabUUID, let expKey):      message = "Successfully fetched CMAB decision, variationId: \(variationId), cmabUUID: \(cmabUUID) for experiment \(expKey)."
         case .cmabFetchFailed(let key):                                         message = "Failed to fetch CMAB data for experiment \(key)."
         case .cmabNotSupportedInSyncMode:                                       message = "CMAB is not supported in sync mode."
         }

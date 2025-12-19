@@ -41,8 +41,44 @@ if [ "$MAJOR_SIMULATOR_XCODE_VERSION" -lt 12 ]; then
     xcrun simctl create "custom-device" "com.apple.CoreSimulator.SimDeviceType.$name" "com.apple.CoreSimulator.SimRuntime.$OS_TYPE-$os"
     CUSTOM_SIMULATOR="$(instruments -s devices | grep -m 1 'custom-device' | awk -F'[][]' '{print $2}')"
 else
-    echo ".devices.\"com.apple.CoreSimulator.SimRuntime.${PLATFORM/ Simulator/}-${OS/./-}\"" > /tmp/jq_file
-    CUSTOM_SIMULATOR=$( xcrun simctl list --json devices | jq -f /tmp/jq_file | jq -r '.[] | select(.name==env.NAME) | .udid' )
+    # For Xcode 16+, try multiple runtime key formats
+    # The runtime key format has changed over Xcode versions
+    RUNTIME_KEY1="com.apple.CoreSimulator.SimRuntime.${PLATFORM/ Simulator/}-${OS/./-}"
+    RUNTIME_KEY2="${PLATFORM/ Simulator/}-${OS/./-}"
+
+    # echo "Attempting to find simulator: $NAME with OS: $OS"
+    # echo "Runtime key 1: $RUNTIME_KEY1"
+    # echo "Runtime key 2: $RUNTIME_KEY2"
+
+    # List all available devices for debugging
+    # echo "Available device runtimes:"
+    # xcrun simctl list --json devices | jq -r '.devices | keys[]'
+
+    # Try format 1: com.apple.CoreSimulator.SimRuntime.iOS-XX-X
+    echo ".devices.\"$RUNTIME_KEY1\"" > /tmp/jq_file
+    CUSTOM_SIMULATOR=$( xcrun simctl list --json devices | jq -f /tmp/jq_file 2>/dev/null | jq -r '.[]? | select(.name==env.NAME) | .udid' || echo "" )
+
+    # If not found, try format 2: iOS-XX-X
+    if [ -z "$CUSTOM_SIMULATOR" ]; then
+        echo "Trying alternative runtime key format..."
+        echo ".devices.\"$RUNTIME_KEY2\"" > /tmp/jq_file
+        CUSTOM_SIMULATOR=$( xcrun simctl list --json devices | jq -f /tmp/jq_file 2>/dev/null | jq -r '.[]? | select(.name==env.NAME) | .udid' || echo "" )
+    fi
+
+    # If still not found, search all runtimes
+    if [ -z "$CUSTOM_SIMULATOR" ]; then
+        echo "Searching all runtimes for device: $NAME"
+        CUSTOM_SIMULATOR=$( xcrun simctl list --json devices | jq -r --arg os "$OS" --arg name "$NAME" '.devices | to_entries[] | select(.key | contains($os)) | .value[] | select(.name==$name) | .udid' | head -n 1 )
+    fi
+
+    if [ -z "$CUSTOM_SIMULATOR" ]; then
+        echo "ERROR: Could not find simulator '$NAME' with OS version $OS"
+        echo "Available devices:"
+        xcrun simctl list devices available
+        exit 1
+    fi
+
+    echo "Found simulator: $CUSTOM_SIMULATOR"
 fi
 xcrun simctl boot $CUSTOM_SIMULATOR && sleep 30
 xcrun simctl list | grep Booted

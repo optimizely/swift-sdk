@@ -1,10 +1,10 @@
 # Optimizely Swift SDK Changelog
 
 ## 5.2.0
-Dec 5th, 2025
+Dec 19th, 2025
 
 ### New Features
-- **CMAB (Contextual Multi-Armed Bandit) Support**: Added support for CMAB experiments with new configuration options and cache control ([#599](https://github.com/optimizely/swift-sdk/pull/599), [#600](https://github.com/optimizely/swift-sdk/pull/600), [#601](https://github.com/optimizely/swift-sdk/pull/601), [#602](https://github.com/optimizely/swift-sdk/pull/602), [#603](https://github.com/optimizely/swift-sdk/pull/603), [#609](https://github.com/optimizely/swift-sdk/pull/609), [#610](https://github.com/optimizely/swift-sdk/pull/610))
+- **CMAB (Contextual Multi-Armed Bandit) Support**: Added support for CMAB experiments with new configuration options and cache control ([#599](https://github.com/optimizely/swift-sdk/pull/599), [#600](https://github.com/optimizely/swift-sdk/pull/600), [#601](https://github.com/optimizely/swift-sdk/pull/601), [#602](https://github.com/optimizely/swift-sdk/pull/602), [#603](https://github.com/optimizely/swift-sdk/pull/603), [#609](https://github.com/optimizely/swift-sdk/pull/609), [#610](https://github.com/optimizely/swift-sdk/pull/610), [#614](https://github.com/optimizely/swift-sdk/pull/614))
 - **Add Holdouts Feature**: Add Holdout support for feature experimentation. ([#577](https://github.com/optimizely/swift-sdk/pull/577), [#577](https://github.com/optimizely/swift-sdk/pull/577), [#578](https://github.com/optimizely/swift-sdk/pull/578), [#587](https://github.com/optimizely/swift-sdk/pull/587))
 - **Multi-Region Support for Data Hosting**: Added SDK support for multi-region data hosting ([#606](https://github.com/optimizely/swift-sdk/pull/606))
 

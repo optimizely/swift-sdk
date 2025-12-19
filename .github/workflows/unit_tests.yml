@@ -18,34 +18,34 @@ jobs:
         #   also, the xcode version (simulator_xcode_version) and simulator os versions (os) are moving target. We have to change these time to time.
         # - see "https://github.com/actions/runner-images/blob/main/images/macos/macos-15-Readme.md" for installed macOS, xcode and simulator versions.
         include:
-          - os: 18.1
-            device: "iPhone 16"
-            scheme: "OptimizelySwiftSDK-iOS"
-            test_sdk: "iphonesimulator"
-            platform: "iOS Simulator"
-            os_type: "iOS"
-            simulator_xcode_version: 16.1
-          - os: 18.2
-            device: "iPhone 16"
-            scheme: "OptimizelySwiftSDK-iOS"
-            test_sdk: "iphonesimulator"
-            platform: "iOS Simulator"
-            os_type: "iOS"
-            simulator_xcode_version: 16.2
           - os: 18.4
-            device: "iPad Air 11-inch (M2)"
+            device: "iPhone 16"
             scheme: "OptimizelySwiftSDK-iOS"
             test_sdk: "iphonesimulator"
             platform: "iOS Simulator"
             os_type: "iOS"
             simulator_xcode_version: 16.3
-          - os: 18.2
+          - os: 18.5
+            device: "iPhone 16"
+            scheme: "OptimizelySwiftSDK-iOS"
+            test_sdk: "iphonesimulator"
+            platform: "iOS Simulator"
+            os_type: "iOS"
+            simulator_xcode_version: 16.4
+          - os: 18.6
+            device: "iPad Air 11-inch (M2)"
+            scheme: "OptimizelySwiftSDK-iOS"
+            test_sdk: "iphonesimulator"
+            platform: "iOS Simulator"
+            os_type: "iOS"
+            simulator_xcode_version: 16.4
+          - os: 18.4
             device: "Apple TV"
             scheme: "OptimizelySwiftSDK-tvOS"
             test_sdk: "appletvsimulator"
             platform: "tvOS Simulator"
             os_type: "tvOS"
-            simulator_xcode_version: 16.2
+            simulator_xcode_version: 16.3
     steps:
       - uses: actions/checkout@v3
       - uses: maxim-lobanov/setup-xcode@v1

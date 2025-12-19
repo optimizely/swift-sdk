@@ -97,20 +97,20 @@ class DefaultCmabService: CmabService {
         let userId = userContext.userId
         
         if options.contains(.ignoreCmabCache) {
-            self.logger.d("Ignoring CMAB cache for user \(userId) and rule \(ruleId)")
+            self.logger.i("Ignoring CMAB cache for user \(userId) and rule \(ruleId)")
             fetchDecision(ruleId: ruleId, userId: userId, attributes: filteredAttributes, completion: completion)
             return
         }
         
         if options.contains(.resetCmabCache) {
-            self.logger.d("Resetting CMAB cache for user \(userId) and rule \(ruleId)")
+            self.logger.i("Resetting CMAB cache for user \(userId) and rule \(ruleId)")
             cmabCache.reset()
         }
         
         let cacheKey = getCacheKey(userId: userId, ruleId: ruleId)
         
         if options.contains(.invalidateUserCmabCache) {
-            self.logger.d("Invalidating CMAB cache for user \(userId) and rule \(ruleId)")
+            self.logger.i("Invalidating CMAB cache for user \(userId) and rule \(ruleId)")
             self.cmabCache.remove(key: cacheKey)
         }
         
@@ -119,16 +119,16 @@ class DefaultCmabService: CmabService {
         if let cachedValue = cmabCache.lookup(key: cacheKey) {
             if cachedValue.attributesHash == attributesHash {
                 let decision = CmabDecision(variationId: cachedValue.variationId, cmabUUID: cachedValue.cmabUUID)
-                self.logger.d("CMAB cache hit for user \(userId) and rule \(ruleId)")
+                self.logger.i("CMAB cache hit for user \(userId) and rule \(ruleId)")
                 completion(.success(decision))
                 return
             } else {
-                self.logger.d("CMAB cache attributes mismatch for user \(userId) and rule \(ruleId), fetching new decision")
+                self.logger.i("CMAB cache attributes mismatch for user \(userId) and rule \(ruleId), fetching new decision")
                 cmabCache.remove(key: cacheKey)
             }
             
         } else {
-            self.logger.d("CMAB cache miss for user \(userId) and rule \(ruleId)")
+            self.logger.i("CMAB cache miss for user \(userId) and rule \(ruleId)")
         }
         
         fetchDecision(ruleId: ruleId, userId: userId, attributes: filteredAttributes) { result in
@@ -153,7 +153,7 @@ class DefaultCmabService: CmabService {
             switch result {
                 case .success(let variaitonId):
                     let decision = CmabDecision(variationId: variaitonId, cmabUUID: cmabUUID)
-                    self.logger.d("Featched CMAB decision, (variationId: \(decision.variationId), cmabUUID: \(decision.cmabUUID))")
+                    self.logger.i("Featched CMAB decision, (variationId: \(decision.variationId), cmabUUID: \(decision.cmabUUID))")
                     completion(.success(decision))
                 case .failure(let error):
                     self.logger.e("Failed to fetch CMAB decision, error: \(error)")

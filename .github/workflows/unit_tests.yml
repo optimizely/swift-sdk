@@ -7,7 +7,7 @@ env:
 
 jobs:
   unittests:
-    runs-on: macos-13
+    runs-on: macos-15
     strategy:
       fail-fast: false
       matrix:
@@ -16,43 +16,42 @@ jobs:
         # - each xcode version has own simulator os versions.
         # - so to run tests with the target simulator, we have to find a proper xcode version pre-installed and support the target simulator os version.
         #   also, the xcode version (simulator_xcode_version) and simulator os versions (os) are moving target. We have to change these time to time.
-        # - see "https://github.com/actions/runner-images/blob/main/images/macos/macos-11-Readme.md" for installed macOS, xcode and simulator versions.
+        # - see "https://github.com/actions/runner-images/blob/main/images/macos/macos-15-Readme.md" for installed macOS, xcode and simulator versions.
         include:
-          - os: 16.1
-            device: "iPhone 14"
+          - os: 18.1
+            device: "iPhone 16"
             scheme: "OptimizelySwiftSDK-iOS"
             test_sdk: "iphonesimulator"
             platform: "iOS Simulator"
             os_type: "iOS"
-            simulator_xcode_version: 14.1
-          - os: 16.2
-            device: "iPhone 14"
+            simulator_xcode_version: 16.1
+          - os: 18.2
+            device: "iPhone 16"
             scheme: "OptimizelySwiftSDK-iOS"
             test_sdk: "iphonesimulator"
             platform: "iOS Simulator"
             os_type: "iOS"
-            simulator_xcode_version: 14.2
-          - os: 16.4
-            # good to have tests with older OS versions, but it looks like this is min OS+xcode versions supported by github actions
-            device: "iPad Air (5th generation)"
+            simulator_xcode_version: 16.2
+          - os: 18.4
+            device: "iPad Air 11-inch (M2)"
             scheme: "OptimizelySwiftSDK-iOS"
             test_sdk: "iphonesimulator"
             platform: "iOS Simulator"
             os_type: "iOS"
-            simulator_xcode_version: 14.3.1
-          - os: 16.1
+            simulator_xcode_version: 16.3
+          - os: 18.2
             device: "Apple TV"
             scheme: "OptimizelySwiftSDK-tvOS"
             test_sdk: "appletvsimulator"
             platform: "tvOS Simulator"
             os_type: "tvOS"
-            simulator_xcode_version: 14.1
+            simulator_xcode_version: 16.2
     steps:
       - uses: actions/checkout@v3
       - uses: maxim-lobanov/setup-xcode@v1
         with:
           # macos version and supported simulator_xcode_versions are all related to this xcode_version, so be careful when you upgrade this.
-          xcode-version: 14.1
+          xcode-version: 16.4
       - name: set SDK Branch if PR
         env:
           BASE_REF: ${{ github.base_ref }}
@@ -98,11 +97,11 @@ jobs:
         with:
           name: build-logs-${{ matrix.device }}-${{ matrix.os }}
           path: build/Logs
-      - # - report coverage for PR and iPhone 11 only (avoid redundant ones)
-        # - use Xcode12.4+ (older Xcode reports a wrong number)
+      - # - report coverage for PR and iPhone 16 only (avoid redundant ones)
+        # - use Xcode16+ (older Xcode reports a wrong number)
         name: Check on success
         id: coveralls
-        if: ${{ steps.unit_tests.outcome == 'success' && env.BRANCH == 'master' && env.PLATFORM == 'iOS Simulator' && env.NAME == 'iPhone 11' }}
+        if: ${{ steps.unit_tests.outcome == 'success' && env.BRANCH == 'master' && env.PLATFORM == 'iOS Simulator' && env.NAME == 'iPhone 16' }}
         env:
           PLATFORM: ${{ matrix.platform }}
           NAME: ${{ matrix.device }}

@@ -929,18 +929,18 @@ extension EventDispatcherTests_Batch {
     
     func makeEventForDispatch(url: String, event: BatchEvent) -> EventForDispatch {
         let encoder = JSONEncoder()
-        if #available(iOS 11.0, tvOS 11.0, watchOS 4.0, macOS 10.13, *) {
-            encoder.outputFormatting = .sortedKeys
-        }
+//        if #available(iOS 11.0, tvOS 11.0, watchOS 4.0, macOS 10.13, *) {
+//            encoder.outputFormatting = .sortedKeys
+//        }
         let data = try! encoder.encode(event)
         return EventForDispatch(url: URL(string: url), body: data)
     }
 
     func makeInvalidEventForDispatchWithNilUrl() -> EventForDispatch {
         let encoder = JSONEncoder()
-        if #available(iOS 11.0, tvOS 11.0, watchOS 4.0, macOS 10.13, *) {
-            encoder.outputFormatting = .sortedKeys
-        }
+//        if #available(iOS 11.0, tvOS 11.0, watchOS 4.0, macOS 10.13, *) {
+//            encoder.outputFormatting = .sortedKeys
+//        }
         let data = try! encoder.encode(batchEventA)
         return EventForDispatch(url: nil, body: data)
     }

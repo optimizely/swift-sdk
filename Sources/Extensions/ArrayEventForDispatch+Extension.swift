@@ -114,9 +114,9 @@ extension Array where Element == EventForDispatch {
                                     region: base.region)
 
         let encoder = JSONEncoder()
-        if #available(iOS 11.0, tvOS 11.0, watchOS 4.0, macOS 10.13, *) {
-            encoder.outputFormatting = .sortedKeys
-        }
+//        if #available(iOS 11.0, tvOS 11.0, watchOS 4.0, macOS 10.13, *) {
+//            encoder.outputFormatting = .sortedKeys
+//        }
 
         guard let data = try? encoder.encode(batchEvent) else {
             return nil

@@ -43,18 +43,18 @@ class OdpConfig {
 
     func update(apiKey: String?, apiHost: String?, segmentsToCheck: [String]) -> Bool {
         if (apiKey != nil) && (apiHost != nil) {
-            self._odpServiceIntegrated = .integrated
+            self.odpServiceIntegrated = .integrated
         } else {
             // disable future event queueing if datafile has no ODP integrations.
-            self._odpServiceIntegrated = .notIntegrated
+            self.odpServiceIntegrated = .notIntegrated
         }
         
-        if self._apiKey == apiKey, self._apiHost == apiHost, self._segmentsToCheck == segmentsToCheck {
+        if self.apiKey == apiKey, self.apiHost == apiHost, self.segmentsToCheck == segmentsToCheck {
             return false
         } else {
-            self._apiKey = apiKey
-            self._apiHost = apiHost
-            self._segmentsToCheck = segmentsToCheck
+            self.apiKey = apiKey
+            self.apiHost = apiHost
+            self.segmentsToCheck = segmentsToCheck
             return true
         }
     }

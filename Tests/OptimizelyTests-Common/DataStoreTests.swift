@@ -17,10 +17,9 @@
 import XCTest
 
 class DataStoreTests: XCTestCase {
-
-    override func setUp() {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-        if let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+    
+    private func createDirectoryIfNeeded(directory: FileManager.SearchPathDirectory) {
+        if let url = FileManager.default.urls(for: directory, in: .userDomainMask).first {
             if (!FileManager.default.fileExists(atPath: url.path)) {
                 do {
                     try FileManager.default.createDirectory(at: url, withIntermediateDirectories: false, attributes: nil)
@@ -30,7 +29,11 @@ class DataStoreTests: XCTestCase {
                 
             }
         }
+    }
 
+    override func setUp() {
+        // Put setup code here. This method is called before the invocation of each test method in the class.
+        createDirectoryIfNeeded(directory: .documentDirectory)
     }
 
     override func tearDown() {
@@ -168,6 +171,19 @@ class DataStoreTests: XCTestCase {
          datastore.removeItem(forKey: key)
      }
 
+    func testFileStoreCustomDirectory() throws {
+        createDirectoryIfNeeded(directory: .applicationSupportDirectory)
+        
+        let datastore = DataStoreFile<[String]>(storeName: "testFileStore")
+        
+        datastore.saveItem(forKey: "testString", value: ["value"])
+        let vj = datastore.getItem(forKey: "testString") as! [String]
+        XCTAssertEqual(vj.first, "value")
+        
+        var url = try XCTUnwrap(FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first)
+            .appendingPathComponent("testFileStore", isDirectory: false)
+        XCTAssertTrue(FileManager.default.fileExists(atPath: url.path()))
+    }
 
     
     func testUserDefaults() {

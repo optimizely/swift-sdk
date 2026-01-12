@@ -462,9 +462,11 @@ extension EventDispatcherTests_Batch {
 
         eventDispatcher.close()
 
-        let maxFailureCount = 3   // DefaultEventDispatcher.maxFailureCount
-        
-        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, maxFailureCount, "repeated the same request several times before giveup")
+        // With blocking implementation, each batch gets 3 attempts, and we retry failed batches
+        // until globalFailureCount >= 3. So: 3 batch cycles × 3 attempts = 9 sends total
+        let expectedSendsOnFailure = 9
+
+        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, expectedSendsOnFailure, "repeated the same request several times before giveup")
         
         let batch = eventDispatcher.sendRequestedEvents[0]
         let batchedEvents = try! JSONDecoder().decode(BatchEvent.self, from: batch.body)
@@ -487,8 +489,9 @@ extension EventDispatcherTests_Batch {
         // assume flushEvents called again on next timer fire
         eventDispatcher.close()
 
-        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, maxFailureCount + 1, "only one more since succeeded")
-        XCTAssertEqual(eventDispatcher.sendRequestedEvents[3], eventDispatcher.sendRequestedEvents[0])
+        // After error is removed, batch succeeds on first attempt: 9 + 1 = 10 total sends
+        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, expectedSendsOnFailure + 1, "only one more since succeeded")
+        XCTAssertEqual(eventDispatcher.sendRequestedEvents[9], eventDispatcher.sendRequestedEvents[0])
         
         XCTAssertEqual(eventDispatcher.eventQueue.count, 0, "all expected to get transmitted successfully")
     }
@@ -925,12 +928,20 @@ extension EventDispatcherTests_Batch {
 extension EventDispatcherTests_Batch {
     
     func makeEventForDispatch(url: String, event: BatchEvent) -> EventForDispatch {
-        let data = try! JSONEncoder().encode(event)
+        let encoder = JSONEncoder()
+        if #available(iOS 11.0, tvOS 11.0, watchOS 4.0, macOS 10.13, *) {
+            encoder.outputFormatting = .sortedKeys
+        }
+        let data = try! encoder.encode(event)
         return EventForDispatch(url: URL(string: url), body: data)
     }
-    
+
     func makeInvalidEventForDispatchWithNilUrl() -> EventForDispatch {
-        let data = try! JSONEncoder().encode(batchEventA)
+        let encoder = JSONEncoder()
+        if #available(iOS 11.0, tvOS 11.0, watchOS 4.0, macOS 10.13, *) {
+            encoder.outputFormatting = .sortedKeys
+        }
+        let data = try! encoder.encode(batchEventA)
         return EventForDispatch(url: nil, body: data)
     }
     

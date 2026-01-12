@@ -462,9 +462,9 @@ extension EventDispatcherTests_Batch {
 
         eventDispatcher.close()
 
-        // With blocking implementation, each batch gets 3 attempts, and we retry failed batches
-        // until globalFailureCount >= 3. So: 3 batch cycles × 3 attempts = 9 sends total
-        let expectedSendsOnFailure = 9
+        // With async implementation, we try 3 times (1 initial + 2 retries)
+        // The circuit breaker stops after 3 consecutive failures.
+        let expectedSendsOnFailure = 3
 
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, expectedSendsOnFailure, "repeated the same request several times before giveup")
         
@@ -489,9 +489,9 @@ extension EventDispatcherTests_Batch {
         // assume flushEvents called again on next timer fire
         eventDispatcher.close()
 
-        // After error is removed, batch succeeds on first attempt: 9 + 1 = 10 total sends
+        // After error is removed, batch succeeds on first attempt: 3 + 1 = 4 total sends
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, expectedSendsOnFailure + 1, "only one more since succeeded")
-        XCTAssertEqual(eventDispatcher.sendRequestedEvents[9], eventDispatcher.sendRequestedEvents[0])
+        XCTAssertEqual(eventDispatcher.sendRequestedEvents[expectedSendsOnFailure], eventDispatcher.sendRequestedEvents[0])
         
         XCTAssertEqual(eventDispatcher.eventQueue.count, 0, "all expected to get transmitted successfully")
     }
@@ -549,7 +549,7 @@ extension EventDispatcherTests_Batch {
                                 (self.kUrlB, self.batchEventB),
                                 (self.kUrlC, self.batchEventC)])
 
-        eventDispatcher.queueLock.sync {}
+        eventDispatcher.close()
         
         continueAfterFailure = false   // stop on XCTAssertEqual failure instead of array out-of-bound exception
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 3)

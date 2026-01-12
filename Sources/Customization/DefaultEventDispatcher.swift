@@ -53,8 +53,10 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     // network reachability
     let reachability = NetworkReachability(maxContiguousFails: 1)
 
-    // sync group used to ensure that the sendEvent is synchronous
+    // sync group used to ensure that the flushEvents is synchronous for close()
     let notify = DispatchGroup()
+    // track if flush is currently in progress
+    private var isFlushing = false
 
     public init(batchSize: Int = DefaultValues.batchSize,
                 backingStore: DataStoreType = .file,
@@ -110,80 +112,98 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
         completionHandler?(.success(event.body))
     }
 
-    // Note: flushEvents is synchronous with blocking notify.wait() and Thread.sleep() for retry delays
     // Per-batch retry: Each batch gets up to 3 attempts with exponential backoff
     // Global failure counter stops processing after 3 consecutive batch failures
 
     open func flushEvents() {
         queueLock.async {
-            // Global failure counter across all batches in this flush
-            var globalFailureCount = 0
-
-            func removeStoredEvents(num: Int) {
-                if let removedItem = self.eventQueue.removeFirstItems(count: num), removedItem.count > 0 {
-                    self.logger.d({ "Removed \(num) event(s) from queue starting with \(removedItem.first!)" })
+            guard !self.isFlushing else { return }
+            
+            self.isFlushing = true
+            self.notify.enter()
+            
+            self.processNextBatch(failureCount: 0)
+        }
+    }
+    
+    private func processNextBatch(failureCount: Int) {
+        // Global failure counter across all batches in this flush
+        if failureCount >= DefaultValues.maxFailureCount {
+            self.logger.e(.eventSendRetyFailed(failureCount))
+            self.finishFlush()
+            return
+        }
+        
+        // Check reachability
+        if self.reachability.shouldBlockNetworkAccess() {
+            self.logger.e("NetworkReachability down")
+            self.finishFlush()
+            return
+        }
+        
+        guard let eventsToSend: [EventForDispatch] = self.eventQueue.getFirstItems(count: self.batchSize) else {
+            self.finishFlush()
+            return
+        }
+        
+        let (numEvents, batchedEvent) = eventsToSend.batch()
+        
+        guard numEvents > 0 else {
+            self.finishFlush()
+            return
+        }
+        
+        guard let batchEvent = batchedEvent else {
+            // discard an invalid event that causes batching failure
+            // - if an invalid event is found while batching, it batches all the valid ones before the invalid one and sends it out.
+            // - when trying to batch next, it finds the invalid one at the header. It discards            // Invalid event - discard and continue with next batch
+            self.removeStoredEvents(num: 1)
+            self.processNextBatch(failureCount: failureCount)
+            return
+        }
+        
+        self.sendBatch(event: batchEvent, numEvents: numEvents) { success in
+            if success {
+                self.removeStoredEvents(num: numEvents)
+                self.processNextBatch(failureCount: 0)
+            } else {
+                // Retry with backoff
+                let attempt = failureCount + 1
+                if attempt < DefaultValues.maxFailureCount {
+                    let delay = self.calculateRetryDelay(attempt: attempt)
+                    self.queueLock.asyncAfter(deadline: .now() + delay) {
+                        self.processNextBatch(failureCount: attempt)
+                    }
                 } else {
-                    self.logger.e("Failed to remove \(num) event(s) from queue")
+                    self.logger.e(.eventSendRetyFailed(attempt))
+                    self.finishFlush()
                 }
             }
-
-            while let eventsToSend: [EventForDispatch] = self.eventQueue.getFirstItems(count: self.batchSize) {
-                let (numEvents, batchedEvent) = eventsToSend.batch()
-
-                guard numEvents > 0 else { break }
-
-                guard let batchEvent = batchedEvent else {
-                    // Invalid event - discard and continue with next batch
-                    removeStoredEvents(num: 1)
-                    continue
-                }
-
-                // Check global failure counter BEFORE processing batch
-                // Stop if we've exhausted our failure count (same as old behavior)
-                if globalFailureCount >= DefaultValues.maxFailureCount {
-                    self.logger.e(.eventSendRetyFailed(globalFailureCount))
-                    break
-                }
-
-                // Per-batch retry logic (up to 3 attempts)
-                var batchAttempt = 0
-                var batchSucceeded = false
-
-                while batchAttempt < 3 && !batchSucceeded {
-                    // Make send synchronous
-                    self.notify.enter()
-                    self.sendEvent(event: batchEvent) { result in
-                        switch result {
-                        case .success:
-                            batchSucceeded = true
-                        case .failure(let error):
-                            batchSucceeded = false
-                            self.logger.e(error.reason)
-                        }
-                        self.notify.leave()
-                    }
-                    self.notify.wait()  // Block until send completes
-
-                    if !batchSucceeded {
-                        batchAttempt += 1
-
-                        // Sleep between retry attempts (not after last failure)
-                        if batchAttempt < 3 {
-                            let delay = self.calculateRetryDelay(attempt: batchAttempt)
-                            Thread.sleep(forTimeInterval: delay)
-                        }
-                    }
-                }
-
-                // Update global counter based on final batch result
-                if batchSucceeded {
-                    removeStoredEvents(num: numEvents)
-                    globalFailureCount = 0  // Reset on success
-                } else {
-                    globalFailureCount += 1  // Increment on failure
-                    // Event stays in queue for next flush
-                }
+        }
+    }
+    
+    private func sendBatch(event: EventForDispatch, numEvents: Int, completion: @escaping (Bool) -> Void) {
+        self.sendEvent(event: event) { result in
+            switch result {
+            case .success:
+                completion(true)
+            case .failure(let error):
+                self.logger.e(error.reason)
+                completion(false)
             }
+        }
+    }
+    
+    private func finishFlush() {
+        self.isFlushing = false
+        self.notify.leave()
+    }
+    
+    private func removeStoredEvents(num: Int) {
+        if let removedItem = self.eventQueue.removeFirstItems(count: num), removedItem.count > 0 {
+            self.logger.d({ "Removed \(num) event(s) from queue starting with \(removedItem.first!)" })
+        } else {
+            self.logger.e("Failed to remove \(num) event(s) from queue")
         }
     }
 
@@ -238,8 +258,14 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
 
     open func close() {
         self.flushEvents()
-        // Ensure flush async block has started and completed
+        // Ensure flush async block has started
         self.queueLock.sync {}
+        // Wait for the flush to complete with a safety timeout.
+        // We use a 10-second timeout to prevent the app from hanging indefinitely during shutdown.
+        // If the flush takes longer (e.g. due to slow network or large queue), we proceed to close
+        // to avoid the OS watchdog killing the app for blocking the main thread for too long.
+        // This ensures a "best effort" flush while prioritizing a safe and graceful exit.
+        _ = self.notify.wait(timeout: .now() + 10.0)
     }
 
 }

@@ -98,6 +98,10 @@ extension Array where Element == EventForDispatch {
             // no batched event since the first event is invalid. notify so that it can be removed.
             return (1, nil)
         }
+        
+        if eventsBatched.count == 1 {
+            return (1, first)
+        }
 
         return (eventsBatched.count, makeBatchEvent(base: eventsBatched.first!, visitors: visitors, url: url))
     }
@@ -114,9 +118,9 @@ extension Array where Element == EventForDispatch {
                                     region: base.region)
 
         let encoder = JSONEncoder()
-//        if #available(iOS 11.0, tvOS 11.0, watchOS 4.0, macOS 10.13, *) {
-//            encoder.outputFormatting = .sortedKeys
-//        }
+        if #available(iOS 11.0, tvOS 11.0, watchOS 4.0, macOS 10.13, *) {
+            encoder.outputFormatting = .sortedKeys
+        }
 
         guard let data = try? encoder.encode(batchEvent) else {
             return nil

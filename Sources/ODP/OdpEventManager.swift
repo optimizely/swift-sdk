@@ -29,6 +29,11 @@ open class OdpEventManager {
     let reachability = NetworkReachability(maxContiguousFails: 1)
     let logger = OPTLoggerFactory.getLogger()
     
+    // sync group used to ensure that the flushEvents is synchronous for close()
+    let notify = DispatchGroup()
+    // track if flush is currently in progress
+    private var isFlushing = false
+    
     /// OdpEventManager init
     /// - Parameters:
     ///   - sdkKey: datafile sdkKey
@@ -135,93 +140,99 @@ open class OdpEventManager {
         }
 
         queueLock.async {
-            // Global failure counter across all batches in this flush
-            var globalFailureCount = 0
-            let notify = DispatchGroup()
-
-            func removeStoredEvents(num: Int) {
-                if let removedItem = self.eventQueue.removeFirstItems(count: num), removedItem.count > 0 {
-                    self.logger.d({ "ODP: Removed \(num) event(s) from queue starting with \(removedItem.first!)" })
+            guard !self.isFlushing else { return }
+            
+            self.isFlushing = true
+            self.notify.enter()
+            
+            self.processNextBatch(failureCount: 0, apiKey: odpApiKey, apiHost: odpApiHost)
+        }
+    }
+    
+    private func processNextBatch(failureCount: Int, apiKey: String, apiHost: String) {
+        // Global failure counter across all batches in this flush
+        if failureCount >= self.maxFailureCount {
+            self.logger.e(.odpEventSendRetyFailed(failureCount))
+            self.finishFlush()
+            return
+        }
+        
+        // Check reachability
+        if self.reachability.shouldBlockNetworkAccess() {
+            self.logger.e("NetworkReachability down for ODP events")
+            self.finishFlush()
+            return
+        }
+        
+        guard let events: [OdpEvent] = self.eventQueue.getFirstItems(count: self.maxBatchEvents) else {
+            self.finishFlush()
+            return
+        }
+        
+        let numEvents = events.count
+        
+        guard numEvents > 0 else {
+            self.finishFlush()
+            return
+        }
+        
+        self.sendBatch(events: events, apiKey: apiKey, apiHost: apiHost) { success, isRecoverable in
+            if success {
+                self.removeStoredEvents(num: numEvents)
+                self.processNextBatch(failureCount: 0, apiKey: apiKey, apiHost: apiHost)
+            } else {
+                if !isRecoverable {
+                    // Non-recoverable error - discard and continue
+                    self.removeStoredEvents(num: numEvents)
+                    self.processNextBatch(failureCount: 0, apiKey: apiKey, apiHost: apiHost)
                 } else {
-                    self.logger.e("ODP: Failed to remove \(num) event(s) from queue")
-                }
-            }
-
-            while let events: [OdpEvent] = self.eventQueue.getFirstItems(count: self.maxBatchEvents) {
-                let numEvents = events.count
-
-                // Check global failure counter BEFORE processing batch
-                if globalFailureCount >= self.maxFailureCount {
-                    self.logger.e(.odpEventSendRetyFailed(globalFailureCount))
-                    break
-                }
-
-                // Check network before each batch
-                guard !self.reachability.shouldBlockNetworkAccess() else {
-                    break
-                }
-
-                // Per-batch retry logic (up to 3 attempts for recoverable errors)
-                var batchAttempt = 0
-                var batchSucceeded = false
-                var isRecoverable = true
-
-                while batchAttempt < 3 && !batchSucceeded && isRecoverable {
-                    var odpError: OptimizelyError?
-
-                    // Make send synchronous
-                    notify.enter()
-                    self.apiMgr.sendOdpEvents(apiKey: odpApiKey,
-                                              apiHost: odpApiHost,
-                                              events: events) { error in
-                        odpError = error
-                        notify.leave()
-                    }
-                    notify.wait()  // Block until send completes
-
-                    if let error = odpError {
-                        self.logger.e(error.reason)
-
-                        // Check if recoverable
-                        if case .odpEventFailed(_, let canRetry) = error, canRetry {
-                            // Recoverable error - can retry
-                            isRecoverable = true
-                            batchAttempt += 1
-
-                            // Sleep between retry attempts (not after last failure)
-                            if batchAttempt < 3 {
-                                let delay = self.calculateRetryDelay(attempt: batchAttempt)
-                                Thread.sleep(forTimeInterval: delay)
-                            }
-                        } else {
-                            // Non-recoverable error - don't retry
-                            isRecoverable = false
-                            batchSucceeded = false
+                    // Recoverable error - retry with backoff
+                    let attempt = failureCount + 1
+                    if attempt < self.maxFailureCount {
+                        let delay = self.calculateRetryDelay(attempt: attempt)
+                        self.queueLock.asyncAfter(deadline: .now() + delay) {
+                            self.processNextBatch(failureCount: attempt, apiKey: apiKey, apiHost: apiHost)
                         }
                     } else {
-                        // Success
-                        batchSucceeded = true
+                        self.logger.e(.odpEventSendRetyFailed(attempt))
+                        self.finishFlush()
                     }
                 }
-
-                // Update reachability AFTER all retry attempts for this batch
-                let finallyFailed = !batchSucceeded
-                self.reachability.updateNumContiguousFails(isError: finallyFailed)
-
-                // Update global counter and remove events based on result
-                if batchSucceeded {
-                    removeStoredEvents(num: numEvents)
-                    globalFailureCount = 0  // Reset on success
-                } else if !isRecoverable {
-                    // Non-recoverable error - discard and continue
-                    removeStoredEvents(num: numEvents)
-                    globalFailureCount = 0  // Don't count non-recoverable as failure
-                } else {
-                    // Recoverable error, exhausted retries
-                    globalFailureCount += 1  // Increment on failure
-                    // Event stays in queue
-                }
             }
+        }
+    }
+    
+    private func sendBatch(events: [OdpEvent], apiKey: String, apiHost: String, completion: @escaping (Bool, Bool) -> Void) {
+        self.apiMgr.sendOdpEvents(apiKey: apiKey,
+                                  apiHost: apiHost,
+                                  events: events) { error in
+            if let error = error {
+                self.logger.e(error.reason)
+                
+                var isRecoverable = true
+                if case .odpEventFailed(_, let canRetry) = error {
+                    isRecoverable = canRetry
+                }
+                
+                self.reachability.updateNumContiguousFails(isError: true)
+                completion(false, isRecoverable)
+            } else {
+                self.reachability.updateNumContiguousFails(isError: false)
+                completion(true, true)
+            }
+        }
+    }
+    
+    private func finishFlush() {
+        self.isFlushing = false
+        self.notify.leave()
+    }
+    
+    private func removeStoredEvents(num: Int) {
+        if let removedItem = self.eventQueue.removeFirstItems(count: num), removedItem.count > 0 {
+            self.logger.d({ "ODP: Removed \(num) event(s) from queue starting with \(removedItem.first!)" })
+        } else {
+            self.logger.e("ODP: Failed to remove \(num) event(s) from queue")
         }
     }
 

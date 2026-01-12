@@ -40,8 +40,10 @@ class OdpEventManagerRetryTests: XCTestCase {
 
     /// Wait for all flush operations to complete
     func waitForFlush() {
-        // Ensure flush async block has started and completed (blocking behavior)
+        // Ensure flush async block has started
         manager.queueLock.sync {}
+        // Wait for the flush to complete
+        _ = manager.notify.wait(timeout: .now() + 10.0)
     }
 
     // MARK: - Basic Retry Tests
@@ -138,9 +140,9 @@ class OdpEventManagerRetryTests: XCTestCase {
         // Wait for all retries to exhaust
         waitForFlush()
 
-        // With blocking implementation, each batch gets 3 attempts, and we retry failed batches
-        // until globalFailureCount >= 3. So: 3 batch cycles × 3 attempts = 9 sends total
-        XCTAssertEqual(apiManager.sendCount, 9)
+        // With async implementation, we try 3 times (1 initial + 2 retries)
+        // The circuit breaker stops after 3 consecutive failures.
+        XCTAssertEqual(apiManager.sendCount, 3)
 
         // Event should remain in queue after global failure count exhausted
         XCTAssertEqual(manager.eventQueue.count, 1)

@@ -444,7 +444,7 @@ class SamplesForAPI {
                     userId: "USER_123",
                     attributes: ["country": "us"]
                 )
-                let options: [OptimizelyDecideOption] = [.ignoreCmabCache, .ignoreUserProfileService]
+                let options: [OptimizelyDecideOption] = [.ignoreCmabCache]
                 let decision =  await user.decideAsync(key: FLAG_KEY, options: options)
                 print("CMAB decision: \(decision)")
             }
@@ -462,7 +462,7 @@ class SamplesForAPI {
                 userId: "USER_123",
                 attributes: ["country": "us"]
             )
-            let options: [OptimizelyDecideOption] = [.ignoreCmabCache, .ignoreUserProfileService]
+            let options: [OptimizelyDecideOption] = [.ignoreCmabCache]
             user.decideAsync(key: FLAG_KEY, options: options, completion: { decision in
                 print("CMAB decision: \(decision)")
             })
@@ -494,7 +494,7 @@ class SamplesForAPI {
                     userId: "USER_123",
                     attributes: ["country": "us"]
                 )
-                let options: [OptimizelyDecideOption] = [.ignoreCmabCache, .ignoreUserProfileService]
+                let options: [OptimizelyDecideOption] = [.ignoreCmabCache]
                 let decision =  await user.decideAsync(key: FLAG_KEY, options: options)
                 print("CMAB decision: \(decision)")
             }
@@ -512,7 +512,7 @@ class SamplesForAPI {
                 userId: "USER_123",
                 attributes: ["country": "us"]
             )
-            let options: [OptimizelyDecideOption] = [.ignoreCmabCache, .ignoreUserProfileService]
+            let options: [OptimizelyDecideOption] = [.ignoreCmabCache]
             user.decideAsync(key: FLAG_KEY, options: options, completion: { decision in
                 print("CMAB decision: \(decision)")
             })

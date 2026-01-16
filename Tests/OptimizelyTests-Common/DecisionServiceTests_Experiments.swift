@@ -732,6 +732,38 @@ extension DecisionServiceTests_Experiments {
         XCTAssertNotNil(variation)
         XCTAssertEqual(variation?.key, kVariationKeyA)
     }
+    
+    func testCMABVariationDoesnotTrackByProfileTracker() {
+        self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
+        var cmabExperiment: Experiment = try! OTUtils.model(from: sampleExperimentData)
+        cmabExperiment.cmab = try! OTUtils.model(from: ["trafficAllocation": 10000, "attributeIds": ["10389729780"]])
+        self.config.project.experiments = [cmabExperiment]
+        let mocCmabService = MockCmabService()
+        mocCmabService.variationId = "10389729780" // kVariationKeyA
+        let ups = DefaultUserProfileService()
+        self.decisionService = DefaultDecisionService(userProfileService: ups, cmabService: mocCmabService)
+        
+        let user = optimizely.createUserContext(
+            userId: kUserId,
+            attributes: kAttributesCountryMatch
+        )
+        
+        let tracker = UserProfileTracker(userId: "user_1234", userProfileService: ups, logger: self.decisionService.logger)
+        tracker.loadUserProfile()
+        
+        let decision = self.decisionService.getVariation(config: config,
+                                                         experiment: cmabExperiment,
+                                                         user: user,
+                                                         options: nil,
+                                                         isAsync: true,
+                                                         userProfileTracker: tracker)
+        
+        let variation = decision.result?.variation
+        XCTAssertNotNil(variation)
+        XCTAssertEqual(variation?.key, kVariationKeyA)
+        XCTAssertFalse(tracker.profileUpdated)
+        XCTAssertTrue(tracker.userProfile!.isEmpty)
+    }
 
     func testGetVariationWithCMABZeroTrafficAllocation() {
         // Test when traffic allocation is 0%
@@ -834,6 +866,7 @@ extension DecisionServiceTests_Experiments {
         self.config.project.experiments = [cmabExperiment]
         let mocCmabService = MockCmabService()
         mocCmabService.variationId = "unknown_var_id"
+        mocCmabService.cmabUUID = "test_UUID_1234"
         
         self.decisionService = DefaultDecisionService(userProfileService: DefaultUserProfileService(), cmabService: mocCmabService)
         
@@ -843,7 +876,9 @@ extension DecisionServiceTests_Experiments {
         )
         
         let expectedReasons = DecisionReasons()
+        expectedReasons.addInfo(LogMessage.cmabFetchSuccess("unknown_var_id", "test_UUID_1234", _expKey: cmabExperiment.key))
         expectedReasons.addInfo(LogMessage.userNotBucketedIntoVariation(user.userId))
+        
         
         let decision = self.decisionService.getVariation(config: config,
                                                          experiment: cmabExperiment,
@@ -885,6 +920,7 @@ fileprivate struct MockError: Error {
 fileprivate class MockCmabService: DefaultCmabService {
     var error: Error?
     var variationId: String?
+    var cmabUUID: String?
     
     init() {
         super.init(cmabClient: DefaultCmabClient(), cmabCache: CmabCache(size: 10, timeoutInSecs: 10))
@@ -892,7 +928,7 @@ fileprivate class MockCmabService: DefaultCmabService {
     
     override func getDecision(config: ProjectConfig, userContext: OptimizelyUserContext, ruleId: String, options: [OptimizelyDecideOption]) -> Result<CmabDecision, any Error> {
         if let variationId = self.variationId {
-            let cmabUUID = UUID().uuidString
+            let cmabUUID = self.cmabUUID ?? UUID().uuidString
             return .success(CmabDecision(variationId: variationId, cmabUUID: cmabUUID))
         } else {
             return .failure(self.error ?? MockError())

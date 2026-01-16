@@ -834,6 +834,7 @@ extension DecisionServiceTests_Experiments {
         self.config.project.experiments = [cmabExperiment]
         let mocCmabService = MockCmabService()
         mocCmabService.variationId = "unknown_var_id"
+        mocCmabService.cmabUUID = "test_UUID_1234"
         
         self.decisionService = DefaultDecisionService(userProfileService: DefaultUserProfileService(), cmabService: mocCmabService)
         
@@ -843,7 +844,9 @@ extension DecisionServiceTests_Experiments {
         )
         
         let expectedReasons = DecisionReasons()
+        expectedReasons.addInfo(LogMessage.cmabFetchSuccess("unknown_var_id", "test_UUID_1234", _expKey: cmabExperiment.key))
         expectedReasons.addInfo(LogMessage.userNotBucketedIntoVariation(user.userId))
+        
         
         let decision = self.decisionService.getVariation(config: config,
                                                          experiment: cmabExperiment,
@@ -885,6 +888,7 @@ fileprivate struct MockError: Error {
 fileprivate class MockCmabService: DefaultCmabService {
     var error: Error?
     var variationId: String?
+    var cmabUUID: String?
     
     init() {
         super.init(cmabClient: DefaultCmabClient(), cmabCache: CmabCache(size: 10, timeoutInSecs: 10))
@@ -892,7 +896,7 @@ fileprivate class MockCmabService: DefaultCmabService {
     
     override func getDecision(config: ProjectConfig, userContext: OptimizelyUserContext, ruleId: String, options: [OptimizelyDecideOption]) -> Result<CmabDecision, any Error> {
         if let variationId = self.variationId {
-            let cmabUUID = UUID().uuidString
+            let cmabUUID = self.cmabUUID ?? UUID().uuidString
             return .success(CmabDecision(variationId: variationId, cmabUUID: cmabUUID))
         } else {
             return .failure(self.error ?? MockError())

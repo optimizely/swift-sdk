@@ -249,8 +249,6 @@ class DefaultDecisionService: OPTDecisionService {
                                                           user: user)
         reasons.merge(audienceResponse.reasons)
         
-        var ignoreUPS = false
-        
         if audienceResponse.result ?? false {
             // Acquire bucketingId
             let bucketingId = getBucketingId(userId: userId, attributes: attributes)
@@ -264,9 +262,6 @@ class DefaultDecisionService: OPTDecisionService {
                                                                         options: options)
                 reasons.merge(cmabDecisionResponse.reasons)
                 variationDecision = cmabDecisionResponse.result
-                
-                // CMAB decision shouldn't be in the UPS
-                ignoreUPS = cmabDecisionResponse.result?.variation != nil
             } else {
                 // bucket user into a variation
                 let decisionResponse = bucketer.bucketExperiment(config: config,
@@ -282,7 +277,9 @@ class DefaultDecisionService: OPTDecisionService {
                 let info = LogMessage.userBucketedIntoVariationInExperiment(userId, experiment.key, variation.key)
                 logger.i(info)
                 reasons.addInfo(info)
-                if !ignoreUPS {
+                
+                // CMAB decision shouldn't be in the UPS
+                if !experiment.isCmab {
                     userProfileTracker?.updateProfile(experiment: experiment, variation: variation)
                 }
                 

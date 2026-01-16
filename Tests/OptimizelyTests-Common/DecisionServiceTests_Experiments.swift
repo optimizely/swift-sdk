@@ -732,6 +732,38 @@ extension DecisionServiceTests_Experiments {
         XCTAssertNotNil(variation)
         XCTAssertEqual(variation?.key, kVariationKeyA)
     }
+    
+    func testCMABVariationDoesnotTrackByProfileTracker() {
+        self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
+        var cmabExperiment: Experiment = try! OTUtils.model(from: sampleExperimentData)
+        cmabExperiment.cmab = try! OTUtils.model(from: ["trafficAllocation": 10000, "attributeIds": ["10389729780"]])
+        self.config.project.experiments = [cmabExperiment]
+        let mocCmabService = MockCmabService()
+        mocCmabService.variationId = "10389729780" // kVariationKeyA
+        let ups = DefaultUserProfileService()
+        self.decisionService = DefaultDecisionService(userProfileService: ups, cmabService: mocCmabService)
+        
+        let user = optimizely.createUserContext(
+            userId: kUserId,
+            attributes: kAttributesCountryMatch
+        )
+        
+        let tracker = UserProfileTracker(userId: "user_1234", userProfileService: ups, logger: self.decisionService.logger)
+        tracker.loadUserProfile()
+        
+        let decision = self.decisionService.getVariation(config: config,
+                                                         experiment: cmabExperiment,
+                                                         user: user,
+                                                         options: nil,
+                                                         isAsync: true,
+                                                         userProfileTracker: tracker)
+        
+        let variation = decision.result?.variation
+        XCTAssertNotNil(variation)
+        XCTAssertEqual(variation?.key, kVariationKeyA)
+        XCTAssertFalse(tracker.profileUpdated)
+        XCTAssertTrue(tracker.userProfile!.isEmpty)
+    }
 
     func testGetVariationWithCMABZeroTrafficAllocation() {
         // Test when traffic allocation is 0%

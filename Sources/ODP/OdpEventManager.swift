@@ -21,13 +21,18 @@ open class OdpEventManager {
     var apiMgr: OdpEventApiManager
 
     var maxQueueSize = 100
-    let maxBatchEvents = 10
+    var maxBatchEvents = 10
     let maxFailureCount = 3
     let queueLock: DispatchQueue
     let eventQueue: DataStoreQueueStackImpl<OdpEvent>
-    
+
     let reachability = NetworkReachability(maxContiguousFails: 1)
     let logger = OPTLoggerFactory.getLogger()
+    
+    // sync group used to ensure that the flushEvents is synchronous for close()
+    let notify = DispatchGroup()
+    // track if flush is currently in progress
+    private var isFlushing = false
     
     /// OdpEventManager init
     /// - Parameters:
@@ -123,73 +128,122 @@ open class OdpEventManager {
             reset()
             return
         }
-        
+
         guard let odpApiKey = odpConfig.apiKey, let odpApiHost = odpConfig.apiHost else {
             return
         }
-        
+
         // check if network is down to avoid that all existing events in the queue get discarded when network is down
-        if reachability.shouldBlockNetworkAccess() {
+        guard !reachability.shouldBlockNetworkAccess() else {
             logger.e(.eventDispatchFailed("NetworkReachability down for ODP events"))
             return
         }
-        
-        queueLock.async {
-            func removeStoredEvents(num: Int) {
-                if let removedItem = self.eventQueue.removeFirstItems(count: num), removedItem.count > 0 {
-                    // avoid event-log-message preparation overheads with closure-logging
-                    self.logger.d({ "ODP: Removed stored \(num) events starting with \(removedItem.first!)" })
-                } else {
-                    self.logger.e("ODP: Failed to removed \(num) events")
-                }
-            }
-            
-            // sync group used to ensure that the sendEvent is synchronous.
-            // used in flushEvents
-            let sync = DispatchGroup()
-            var failureCount = 0
-            
-            while let events: [OdpEvent] = self.eventQueue.getFirstItems(count: self.maxBatchEvents) {
-                let numEvents = events.count
-                
-                // multiple auto-retries are disabled for now
-                // - this may be too much since they'll be retried any way when next events arrive.
-                // - also, no guarantee on success after multiple retries, so it helps minimal with extra complexity.
-                
-                var odpError: OptimizelyError?
-                
-                sync.enter()  // make the send event synchronous. enter our notify
-                self.apiMgr.sendOdpEvents(apiKey: odpApiKey,
-                                          apiHost: odpApiHost,
-                                          events: events) { error in
-                    if let error = error {
-                        self.logger.e(error.reason)
-                    }
 
-                    odpError = error
-                    sync.leave()  // our send is done.
-                }
-                sync.wait()  // wait for send completed
-                
-                // retry only for recoverable errors (connection failures or 5xx server errors)
-                if let error = odpError, case .odpEventFailed(_, let canRetry) = error, canRetry {
-                    failureCount += 1
-                    
-                    if failureCount >= self.maxFailureCount {
-                        self.logger.e(.odpEventSendRetyFailed(failureCount))
-                        failureCount = 0
+        queueLock.async {
+            guard !self.isFlushing else { return }
+            
+            self.isFlushing = true
+            self.notify.enter()
+            
+            self.processNextBatch(failureCount: 0, apiKey: odpApiKey, apiHost: odpApiHost)
+        }
+    }
+    
+    private func processNextBatch(failureCount: Int, apiKey: String, apiHost: String) {
+        // Global failure counter across all batches in this flush
+        if failureCount >= self.maxFailureCount {
+            self.logger.e(.odpEventSendRetyFailed(failureCount))
+            self.finishFlush()
+            return
+        }
+        
+        // Check reachability
+        if self.reachability.shouldBlockNetworkAccess() {
+            self.logger.e("NetworkReachability down for ODP events")
+            self.finishFlush()
+            return
+        }
+        
+        guard let events: [OdpEvent] = self.eventQueue.getFirstItems(count: self.maxBatchEvents) else {
+            self.finishFlush()
+            return
+        }
+        
+        let numEvents = events.count
+        
+        guard numEvents > 0 else {
+            self.finishFlush()
+            return
+        }
+        
+        self.sendBatch(events: events, apiKey: apiKey, apiHost: apiHost) { success, isRecoverable in
+            if success {
+                self.removeStoredEvents(num: numEvents)
+                self.processNextBatch(failureCount: 0, apiKey: apiKey, apiHost: apiHost)
+            } else {
+                if !isRecoverable {
+                    // Non-recoverable error - discard and continue
+                    self.removeStoredEvents(num: numEvents)
+                    self.processNextBatch(failureCount: 0, apiKey: apiKey, apiHost: apiHost)
+                } else {
+                    // Recoverable error - retry with backoff
+                    let attempt = failureCount + 1
+                    if attempt < self.maxFailureCount {
+                        let delay = self.calculateRetryDelay(attempt: attempt)
+                        self.queueLock.asyncAfter(deadline: .now() + delay) {
+                            self.processNextBatch(failureCount: attempt, apiKey: apiKey, apiHost: apiHost)
+                        }
+                    } else {
+                        self.logger.e(.odpEventSendRetyFailed(attempt))
+                        self.finishFlush()
                     }
-                } else { // success or non-recoverable errors
-                    failureCount = 0
                 }
-                                
-                if failureCount == 0 {
-                    removeStoredEvents(num: numEvents)
-                }
-                
-                self.reachability.updateNumContiguousFails(isError: odpError != nil)
             }
         }
+    }
+    
+    private func sendBatch(events: [OdpEvent], apiKey: String, apiHost: String, completion: @escaping (Bool, Bool) -> Void) {
+        self.apiMgr.sendOdpEvents(apiKey: apiKey,
+                                  apiHost: apiHost,
+                                  events: events) { error in
+            if let error = error {
+                self.logger.e(error.reason)
+                
+                var isRecoverable = true
+                if case .odpEventFailed(_, let canRetry) = error {
+                    isRecoverable = canRetry
+                }
+                
+                self.reachability.updateNumContiguousFails(isError: true)
+                completion(false, isRecoverable)
+            } else {
+                self.reachability.updateNumContiguousFails(isError: false)
+                completion(true, true)
+            }
+        }
+    }
+    
+    private func finishFlush() {
+        self.isFlushing = false
+        self.notify.leave()
+    }
+    
+    private func removeStoredEvents(num: Int) {
+        if let removedItem = self.eventQueue.removeFirstItems(count: num), removedItem.count > 0 {
+            self.logger.d({ "ODP: Removed \(num) event(s) from queue starting with \(removedItem.first!)" })
+        } else {
+            self.logger.e("ODP: Failed to remove \(num) event(s) from queue")
+        }
+    }
+
+    /// Calculate retry delay using exponential backoff
+    /// - Parameter attempt: Current attempt number (1, 2, 3)
+    /// - Returns: Delay in seconds (200ms, 400ms, 800ms, capped at 1s)
+    private func calculateRetryDelay(attempt: Int) -> TimeInterval {
+        let retryStrategy = RetryStrategy(maxRetries: 2,
+                                          initialInterval: 0.2,
+                                          maxInterval: 1.0)
+        return retryStrategy.delayForRetry(attempt: attempt)
     }
         
     func reset() {

@@ -288,25 +288,33 @@ extension OdpSegmentApiManagerTests {
     
     func testLiveOdpGraphQL_defaultParameters_userNotRegistered() {
         let manager = OdpSegmentApiManager()
-        
+
         let sem = DispatchSemaphore(value: 0)
         manager.fetchSegments(apiKey: odpApiKey,
                               apiHost: odpApiHost,
                               userKey: "fs_user_id",
                               userValue: "not-registered-user-1",
                               segmentsToCheck: ["segment-1"]) { segments, error in
-            if case .invalidSegmentIdentifier = error {
-                XCTAssert(true)
-            
-            // [TODO] ODP server will fix to add this "InvalidSegmentIdentifier" later.
-            //        Until then, use the old error format ("DataFetchingException").
-                
-            } else if case .fetchSegmentsFailed("DataFetchingException") = error {
-                XCTAssert(true)
+            // API behavior has changed - now returns empty array instead of error for unregistered users
+            // Accept both old error response and new empty array response
+            if let error = error {
+                if case .invalidSegmentIdentifier = error {
+                    XCTAssert(true)
+
+                // [TODO] ODP server will fix to add this "InvalidSegmentIdentifier" later.
+                //        Until then, use the old error format ("DataFetchingException").
+
+                } else if case .fetchSegmentsFailed("DataFetchingException") = error {
+                    XCTAssert(true)
+                } else {
+                    XCTFail("Unexpected error type: \(error)")
+                }
+                XCTAssertNil(segments)
             } else {
-                XCTFail()
+                // New API behavior: returns empty array for unregistered users
+                XCTAssertNotNil(segments)
+                XCTAssertEqual(segments, [], "Expected empty array for unregistered user")
             }
-            XCTAssertNil(segments)
             sem.signal()
         }
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(30)))

@@ -51,7 +51,7 @@ jobs:
       - uses: maxim-lobanov/setup-xcode@v1
         with:
           # macos version and supported simulator_xcode_versions are all related to this xcode_version, so be careful when you upgrade this.
-          xcode-version: 16.4
+          xcode-version: 15.3
       - name: set SDK Branch if PR
         env:
           BASE_REF: ${{ github.base_ref }}

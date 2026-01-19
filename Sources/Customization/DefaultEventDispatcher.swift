@@ -156,7 +156,7 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
         guard let batchEvent = batchedEvent else {
             // discard an invalid event that causes batching failure
             // - if an invalid event is found while batching, it batches all the valid ones before the invalid one and sends it out.
-            // - when trying to batch next, it finds the invalid one at the header. It discards            // Invalid event - discard and continue with next batch
+            // - when trying to batch next, it finds the invalid one at the header. It discards and continue with next batch
             self.removeStoredEvents(num: 1)
             self.processNextBatch(failureCount: failureCount)
             return

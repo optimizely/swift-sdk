@@ -99,10 +99,6 @@ extension Array where Element == EventForDispatch {
             return (1, nil)
         }
         
-//        if eventsBatched.count == 1 {
-//            return (1, first)
-//        }
-
         return (eventsBatched.count, makeBatchEvent(base: eventsBatched.first!, visitors: visitors, url: url))
     }
     

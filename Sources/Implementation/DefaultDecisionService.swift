@@ -277,7 +277,12 @@ class DefaultDecisionService: OPTDecisionService {
                 let info = LogMessage.userBucketedIntoVariationInExperiment(userId, experiment.key, variation.key)
                 logger.i(info)
                 reasons.addInfo(info)
-                userProfileTracker?.updateProfile(experiment: experiment, variation: variation)
+                
+                // CMAB decision shouldn't be in the UPS
+                if !experiment.isCmab {
+                    userProfileTracker?.updateProfile(experiment: experiment, variation: variation)
+                }
+                
             } else {
                 let info = LogMessage.userNotBucketedIntoVariation(userId)
                 logger.i(info)

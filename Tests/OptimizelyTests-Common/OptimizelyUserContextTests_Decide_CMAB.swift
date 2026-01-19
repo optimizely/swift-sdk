@@ -132,7 +132,7 @@ class OptimizelyUserContextTests_Decide_CMAB: XCTestCase {
         let user = optimizely.createUserContext(userId: kUserId, attributes: ["gender": "f"])
         
         // Test multiple decisions with decideAsync
-        user.decideAsync(keys: featureKeys, options: [.ignoreUserProfileService]) { decisions in
+        user.decideAsync(keys: featureKeys) { decisions in
             
             // Verify correct number of decisions were returned
             XCTAssertEqual(decisions.count, 2)
@@ -175,7 +175,7 @@ class OptimizelyUserContextTests_Decide_CMAB: XCTestCase {
         wait(for: [expectation], timeout: 5) // Increased timeout for reliability
     }
     
-    func testDecideAsync_cmabWithUserProfileCahing() {
+    func testDecideAsync_cmabIgnoreUPSCacheing() {
         let expectation1 = XCTestExpectation(description: "First CMAB decision")
         let expectation2 = XCTestExpectation(description: "Second CMAB decision")
         
@@ -192,17 +192,17 @@ class OptimizelyUserContextTests_Decide_CMAB: XCTestCase {
             attributes: ["gender": "f", "age": 25]
         )
         
-        // First decision cache into user profile
+        
         user.decideAsync(key: "feature_1") { decision in
             XCTAssertEqual(decision.variationKey, "a")
             XCTAssertEqual(self.mockCmabService.decisionCallCount, 1)
             expectation1.fulfill()
             
-            // Second decision (should use cache)
+            // Second decision, ignore UPS, fetch decision again
             user.decideAsync(key: "feature_1") { decision in
                 XCTAssertEqual(decision.variationKey, "a")
-                // Call count should still be 1 (cached)
-                XCTAssertEqual(self.mockCmabService.decisionCallCount, 1)
+                // Call count should be increased by 1
+                XCTAssertEqual(self.mockCmabService.decisionCallCount, 2)
                 expectation2.fulfill()
             }
         }
@@ -228,17 +228,17 @@ class OptimizelyUserContextTests_Decide_CMAB: XCTestCase {
             userId: kUserId,
             attributes: ["gender": "f", "age": 25]
         )
-        user.decideAsync(key: "feature_1", options: [.ignoreUserProfileService, .ignoreCmabCache]) { decision in
+        user.decideAsync(key: "feature_1", options: [.ignoreCmabCache]) { decision in
             XCTAssertEqual(decision.variationKey, "a")
             XCTAssertTrue(self.mockCmabService.ignoreCacheUsed)
             exp1.fulfill()
         }
-        user.decideAsync(key: "feature_1", options: [.ignoreUserProfileService, .resetCmabCache]) { decision in
+        user.decideAsync(key: "feature_1", options: [.resetCmabCache]) { decision in
             XCTAssertEqual(decision.variationKey, "a")
             XCTAssertTrue(self.mockCmabService.resetCacheCache)
             exp2.fulfill()
         }
-        user.decideAsync(key: "feature_1", options: [.ignoreUserProfileService, .invalidateUserCmabCache]) { decision in
+        user.decideAsync(key: "feature_1", options: [.invalidateUserCmabCache]) { decision in
             XCTAssertEqual(decision.variationKey, "a")
             XCTAssertTrue(self.mockCmabService.invalidateUserCmabCache)
             exp3.fulfill()
@@ -263,7 +263,7 @@ class OptimizelyUserContextTests_Decide_CMAB: XCTestCase {
             attributes: ["gender": "f", "age": 25]
         )
         
-        user.decideAsync(key: "feature_1", options: [.ignoreUserProfileService, .includeReasons]) { decision in
+        user.decideAsync(key: "feature_1", options: [.includeReasons]) { decision in
             XCTAssertTrue(decision.reasons.contains(LogMessage.cmabFetchFailed("exp_with_audience").reason))
             expectation.fulfill()
         }

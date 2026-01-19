@@ -26,7 +26,7 @@ jobs:
             os_type: "iOS"
             simulator_xcode_version: 15.3
           - os: 17.4
-            device: "iPhone SE"
+            device: "iPad Pro 11-inch (M4)"
             scheme: "OptimizelySwiftSDK-iOS"
             test_sdk: "iphonesimulator"
             platform: "iOS Simulator"

@@ -29,6 +29,11 @@ class EventDispatcherTests: XCTestCase {
         XCTAssertEqual(MockUrlSession.validSessions, 0, "all MockUrlSession must be invalidated")
     }
 
+    func waitForFlush() {
+        eventDispatcher?.queueLock.sync {}
+        _ = eventDispatcher?.notify.wait(timeout: .now() + 10.0)
+    }
+
     func testDefaultDispatcher() {
         eventDispatcher = DefaultEventDispatcher(timerInterval: 10)
         let pEventD: OPTEventDispatcher = eventDispatcher!
@@ -43,8 +48,7 @@ class EventDispatcherTests: XCTestCase {
  
         XCTAssert(eventDispatcher?.eventQueue.count == 1)
         eventDispatcher?.flushEvents()
-        
-        eventDispatcher?.queueLock.sync {}
+        waitForFlush()
         
         XCTAssert(eventDispatcher?.eventQueue.count == 0)
         
@@ -86,15 +90,15 @@ class EventDispatcherTests: XCTestCase {
         }
 
         pEventD.flushEvents()
-        wait()
+        waitForFlush()
         
         pEventD.dispatchEvent(event: EventForDispatch(body: Data()), completionHandler: nil)
-        wait()
+        waitForFlush()
         
         XCTAssert(eventDispatcher?.eventQueue.count == 1)
 
         eventDispatcher?.flushEvents()
-        wait()
+        waitForFlush()
         
         XCTAssert(eventDispatcher?.eventQueue.count == 0)
         
@@ -111,15 +115,15 @@ class EventDispatcherTests: XCTestCase {
         }
 
         pEventD.flushEvents()
-        wait()
+        waitForFlush()
         
         pEventD.dispatchEvent(event: EventForDispatch(body: Data()), completionHandler: nil)
-        wait()
+        waitForFlush()
         
         XCTAssert(eventDispatcher?.eventQueue.count == 1)
 
         eventDispatcher?.flushEvents()
-        wait()
+        waitForFlush()
         
         XCTAssert(eventDispatcher?.eventQueue.count == 0)
         
@@ -136,15 +140,15 @@ class EventDispatcherTests: XCTestCase {
         }
 
         pEventD.flushEvents()
-        wait()
+        waitForFlush()
         
         pEventD.dispatchEvent(event: EventForDispatch(body: Data()), completionHandler: nil)
-        wait()
+        waitForFlush()
         
         XCTAssert(eventDispatcher?.eventQueue.count == 1)
 
         eventDispatcher?.flushEvents()
-        wait()
+        waitForFlush()
         
         XCTAssert(eventDispatcher?.eventQueue.count == 0)
         
@@ -198,11 +202,11 @@ class EventDispatcherTests: XCTestCase {
         eventDispatcher = DefaultEventDispatcher(timerInterval: 1)
         
         eventDispatcher?.flushEvents()
-        eventDispatcher?.queueLock.sync {}
+        waitForFlush()
         
         eventDispatcher?.dispatchEvent(event: EventForDispatch(body: Data()), completionHandler: nil)
         
-        eventDispatcher?.queueLock.sync {}
+        waitForFlush()
         
         eventDispatcher?.applicationDidBecomeActive()
         eventDispatcher?.applicationDidEnterBackground()
@@ -298,6 +302,7 @@ class EventDispatcherTests: XCTestCase {
         XCTAssert(dispatcher.eventQueue.count == 2)
         dispatcher.flushEvents()
         dispatcher.queueLock.sync {}
+        _ = dispatcher.notify.wait(timeout: .now() + 10.0)
         XCTAssert(dispatcher.eventQueue.count == 0)
     }
 

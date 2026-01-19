@@ -98,7 +98,7 @@ extension Array where Element == EventForDispatch {
             // no batched event since the first event is invalid. notify so that it can be removed.
             return (1, nil)
         }
-
+        
         return (eventsBatched.count, makeBatchEvent(base: eventsBatched.first!, visitors: visitors, url: url))
     }
     
@@ -112,7 +112,7 @@ extension Array where Element == EventForDispatch {
                                     anonymizeIP: base.anonymizeIP,
                                     enrichDecisions: true,
                                     region: base.region)
-        
+
         guard let data = try? JSONEncoder().encode(batchEvent) else {
             return nil
         }

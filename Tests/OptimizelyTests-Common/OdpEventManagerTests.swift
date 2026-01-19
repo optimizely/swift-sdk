@@ -49,6 +49,12 @@ class OdpEventManagerTests: XCTestCase {
         manager.maxQueueSize = originalMaxQueueSize
     }
     
+    func waitForFlush(_ manager: OdpEventManager? = nil) {
+        let mgr = manager ?? self.manager!
+        mgr.queueLock.sync {}
+        _ = mgr.notify.wait(timeout: .now() + 10.0)
+    }
+    
     // MARK: - save and restore events
     
     func testSaveAndRestoreEvents() {
@@ -77,7 +83,7 @@ class OdpEventManagerTests: XCTestCase {
                           data: customData)
 
         XCTAssertEqual(1, manager.eventQueue.count)
-        sleep(1)
+        waitForFlush()
         XCTAssertEqual(1, manager.eventQueue.count, "not flushed since apiKey is not ready")
         
         let evt = manager.eventQueue.getFirstItem()!
@@ -138,7 +144,7 @@ class OdpEventManagerTests: XCTestCase {
                           data: customData)
         
         XCTAssertEqual(1, manager.eventQueue.count)
-        sleep(1)
+        waitForFlush()
         XCTAssertEqual(0, manager.eventQueue.count, "flushed since apiKey is ready")
     }
     
@@ -154,7 +160,7 @@ class OdpEventManagerTests: XCTestCase {
         manager.sendEvent(type: "t1", action: "a1", identifiers: [:], data: [:])
 
         XCTAssertEqual(3, manager.eventQueue.count)
-        sleep(1)
+        waitForFlush()
         XCTAssertEqual(3, manager.eventQueue.count, "not flushed since apiKey is not ready")
 
         // apiKey is available in datafile (so ODP integrated)
@@ -163,7 +169,7 @@ class OdpEventManagerTests: XCTestCase {
         XCTAssertTrue(manager.odpConfig.eventQueueingAllowed, "datafile ready and odp integrated. event queueing is allowed.")
         manager.flush()   // need manual flush here since OdpManager is not connected
         
-        sleep(1)
+        waitForFlush()
         XCTAssertEqual(0, manager.eventQueue.count)
         XCTAssertEqual(3, apiManager.totalDispatchedEvents)
         apiManager.dispatchedBatchEvents.removeAll()
@@ -174,7 +180,7 @@ class OdpEventManagerTests: XCTestCase {
         manager.dispatch(event)    // each of these will try to flush
 
         XCTAssertEqual(2, manager.eventQueue.count)
-        sleep(1)
+        waitForFlush()
         XCTAssertEqual(0, manager.eventQueue.count, "auto flushed since apiKey is ready")
         XCTAssertEqual(2, apiManager.totalDispatchedEvents)
     }
@@ -189,7 +195,7 @@ class OdpEventManagerTests: XCTestCase {
         manager.sendEvent(type: "t1", action: "a1", identifiers: [:], data: [:])
 
         XCTAssertEqual(3, manager.eventQueue.count)
-        sleep(1)
+        waitForFlush()
         XCTAssertEqual(3, manager.eventQueue.count, "not flushed since apiKey is not ready")
         
         // apiKey is not available in datafile (so ODP not integrated)
@@ -205,7 +211,7 @@ class OdpEventManagerTests: XCTestCase {
         manager.dispatch(event)    // each of these will try to flush
 
         XCTAssertEqual(0, manager.eventQueue.count)
-        sleep(1)
+        waitForFlush()
         XCTAssertEqual(0, manager.eventQueue.count, "all news events are discarded since event queueing not allowed")
         XCTAssertEqual(0, apiManager.totalDispatchedEvents, "all events discarded")
     }
@@ -219,7 +225,7 @@ class OdpEventManagerTests: XCTestCase {
         manager.identifyUser(vuid: "v1", userId: "u1")
         manager.sendEvent(type: "t1", action: "a1", identifiers: [:], data: [:])
 
-        sleep(1)
+        waitForFlush()
         XCTAssertEqual(2, manager.eventQueue.count, "an event discarded since queue overflowed")
                 
         // apiKey is available in datafile (so ODP integrated)
@@ -228,7 +234,7 @@ class OdpEventManagerTests: XCTestCase {
         
         manager.dispatch(event)    // each of these will try to flush
         
-        sleep(1)
+        waitForFlush()
         XCTAssertEqual(0, manager.eventQueue.count, "flush is called even when an event is discarded because queue is overflowed")
         XCTAssertEqual(2, apiManager.totalDispatchedEvents)
     }
@@ -241,7 +247,7 @@ class OdpEventManagerTests: XCTestCase {
         
         _ = odpConfig.update(apiKey: "valid", apiHost: "host", segmentsToCheck: [])
         manager.flush()
-        sleep(1)
+        waitForFlush()
         
         XCTAssertEqual(1, apiManager.dispatchedBatchEvents.count)
         XCTAssertEqual(1, apiManager.dispatchedBatchEvents[0].count)
@@ -261,7 +267,7 @@ class OdpEventManagerTests: XCTestCase {
 
         _ = odpConfig.update(apiKey: "valid", apiHost: "host", segmentsToCheck: [])
         manager.flush()
-        sleep(1)
+        waitForFlush()
         
         XCTAssertEqual(1, apiManager.dispatchedBatchEvents.count)
         XCTAssertEqual(3, apiManager.dispatchedBatchEvents[0].count)
@@ -277,7 +283,7 @@ class OdpEventManagerTests: XCTestCase {
         
         _ = odpConfig.update(apiKey: "valid", apiHost: "host", segmentsToCheck: [])
         manager.flush()
-        sleep(1)
+        waitForFlush()
         
         XCTAssertEqual(2, apiManager.dispatchedBatchEvents.count)
         XCTAssertEqual(10, apiManager.dispatchedBatchEvents[0].count)
@@ -288,7 +294,7 @@ class OdpEventManagerTests: XCTestCase {
     func testFlush_emptyQueue() {
         _ = odpConfig.update(apiKey: "valid", apiHost: "host", segmentsToCheck: [])
         manager.flush()
-        sleep(1)
+        waitForFlush()
         
         XCTAssertEqual(0, apiManager.dispatchedBatchEvents.count)
     }
@@ -322,7 +328,7 @@ class OdpEventManagerTests: XCTestCase {
 
         _ = odpConfig1.update(apiKey: "valid", apiHost: "host", segmentsToCheck: [])
         manager1.flush()
-        sleep(1)
+        waitForFlush(manager1)
 
         XCTAssertEqual(1, apiManager1.dispatchedBatchEvents.count)
         XCTAssertEqual(2, apiManager1.dispatchedBatchEvents[0].count)
@@ -330,7 +336,7 @@ class OdpEventManagerTests: XCTestCase {
 
         _ = odpConfig2.update(apiKey: "valid", apiHost: "host", segmentsToCheck: [])
         manager2.flush()
-        sleep(1)
+        waitForFlush(manager2)
 
         XCTAssertEqual(1, apiManager1.dispatchedBatchEvents.count)
         XCTAssertEqual(2, apiManager1.dispatchedBatchEvents[0].count)
@@ -345,7 +351,7 @@ class OdpEventManagerTests: XCTestCase {
         
         _ = odpConfig.update(apiKey: "invalid-key-no-retry", apiHost: "host", segmentsToCheck: [])
         manager.flush()
-        sleep(1)
+        waitForFlush()
         
         XCTAssertEqual(1, apiManager.dispatchedBatchEvents.count, "should not be retried for 4xx error")
         XCTAssertEqual(0, manager.eventQueue.count, "the events should be discarded")
@@ -358,7 +364,7 @@ class OdpEventManagerTests: XCTestCase {
         apiManager.maxCountWithErrorResponse = failCnt
         manager.dispatch(event)
         manager.flush()
-        sleep(1)
+        waitForFlush()
         
         XCTAssertEqual(failCnt + 1, apiManager.dispatchedBatchEvents.count, "should be retried max for 5xx error")
         XCTAssertEqual(0, manager.eventQueue.count, "the events should be removed after success")
@@ -371,7 +377,7 @@ class OdpEventManagerTests: XCTestCase {
         apiManager.maxCountWithErrorResponse = failCnt
         manager.dispatch(event)
         manager.flush()
-        sleep(1)
+        waitForFlush()
         
         XCTAssertEqual(failCnt + 1, apiManager.dispatchedBatchEvents.count, "should be retried for 5xx error")
         XCTAssertEqual(0, manager.eventQueue.count, "the events should be removed after success")
@@ -384,10 +390,10 @@ class OdpEventManagerTests: XCTestCase {
         apiManager.maxCountWithErrorResponse = failCnt
         manager.dispatch(event)
         manager.flush()
-        sleep(1)
+        waitForFlush()
         
         XCTAssertEqual(3, apiManager.dispatchedBatchEvents.count, "should be retried max 3 times for 5xx error")
-        XCTAssertEqual(0, manager.eventQueue.count, "the events should be discarded after 3 retries")
+        XCTAssertEqual(1, manager.eventQueue.count, "the events should be kept in queue after 3 retries")
     }
 
     // MARK: - reachability
@@ -398,7 +404,7 @@ class OdpEventManagerTests: XCTestCase {
 
         manager.dispatch(event)
         manager.flush()
-        sleep(1)
+        waitForFlush()
         
         XCTAssertEqual(1, apiManager.dispatchedBatchEvents.count)
         XCTAssertEqual(0, manager.eventQueue.count)
@@ -410,7 +416,7 @@ class OdpEventManagerTests: XCTestCase {
 
         manager.dispatch(event)
         manager.flush()
-        sleep(1)
+        waitForFlush()
 
         XCTAssertEqual(2, apiManager.dispatchedBatchEvents.count, "should not block event dispatch")
         XCTAssertEqual(0, manager.eventQueue.count)
@@ -423,10 +429,10 @@ class OdpEventManagerTests: XCTestCase {
 
         manager.dispatch(event)
         manager.flush()
-        sleep(1)
+        waitForFlush()
         
         XCTAssertEqual(3, apiManager.dispatchedBatchEvents.count, "should be retried max 3 times for 5xx error")
-        XCTAssertEqual(0, manager.eventQueue.count, "the events should be discarded after max retries")
+        XCTAssertEqual(1, manager.eventQueue.count, "the events should be kept in queue after max retries")
 
         // connected. should not block even if there is a previous error.
 
@@ -435,10 +441,10 @@ class OdpEventManagerTests: XCTestCase {
 
         manager.dispatch(event)
         manager.flush()
-        sleep(1)
+        waitForFlush()
 
         XCTAssertEqual(6, apiManager.dispatchedBatchEvents.count, "should dispatch if connected even if previous event discarded")
-        XCTAssertEqual(0, manager.eventQueue.count, "the events should be discarded after max retries")
+        XCTAssertEqual(2, manager.eventQueue.count, "the events should be kept in queue after max retries")
         XCTAssertFalse(manager.reachability.shouldBlockNetworkAccess())
     }
 
@@ -448,7 +454,7 @@ class OdpEventManagerTests: XCTestCase {
 
         manager.dispatch(event)
         manager.flush()
-        sleep(1)
+        waitForFlush()
         
         XCTAssertEqual(1, apiManager.dispatchedBatchEvents.count)
         XCTAssertEqual(0, manager.eventQueue.count)
@@ -460,7 +466,7 @@ class OdpEventManagerTests: XCTestCase {
 
         manager.dispatch(event)
         manager.flush()
-        sleep(1)
+        waitForFlush()
 
         XCTAssertEqual(2, apiManager.dispatchedBatchEvents.count)
         XCTAssertEqual(0, manager.eventQueue.count)
@@ -473,10 +479,10 @@ class OdpEventManagerTests: XCTestCase {
 
         manager.dispatch(event)
         manager.flush()
-        sleep(1)
+        waitForFlush()
         
         XCTAssertEqual(3, apiManager.dispatchedBatchEvents.count, "should be retried max 3 times for 5xx error")
-        XCTAssertEqual(0, manager.eventQueue.count, "the events should be discarded after max retries")
+        XCTAssertEqual(1, manager.eventQueue.count, "the events should be kept in queue after max retries")
 
         // disconnected. should block because there is a previous error and disconnected.
         
@@ -485,10 +491,10 @@ class OdpEventManagerTests: XCTestCase {
 
         manager.dispatch(event)
         manager.flush()
-        sleep(1)
+        waitForFlush()
 
         XCTAssertEqual(3, apiManager.dispatchedBatchEvents.count, "should not dispatch any more when not connected and previous event discarded")
-        XCTAssertEqual(1, manager.eventQueue.count, "the events should stay in the queue")
+        XCTAssertEqual(2, manager.eventQueue.count, "the events should stay in the queue")
         
         // connected again. should not block any more even if there is a previous error.
         
@@ -499,7 +505,7 @@ class OdpEventManagerTests: XCTestCase {
 
         manager.dispatch(event)
         manager.flush()
-        sleep(1)
+        waitForFlush()
 
         XCTAssertEqual(4, apiManager.dispatchedBatchEvents.count)
         XCTAssertEqual(0, manager.eventQueue.count)
@@ -512,7 +518,7 @@ class OdpEventManagerTests: XCTestCase {
 
         manager.dispatch(event)
         manager.flush()
-        sleep(1)
+        waitForFlush()
 
         XCTAssertEqual(5, apiManager.dispatchedBatchEvents.count)
         XCTAssertEqual(0, manager.eventQueue.count)
@@ -547,7 +553,7 @@ class OdpEventManagerTests: XCTestCase {
 
         let event = OdpEvent(type: "t1", action: "a1", identifiers: [:], data: [:])
         manager.dispatch(event)
-        sleep(1)
+        waitForFlush()
 
         XCTAssertEqual("test-host", apiManager.receivedApiHost)
         XCTAssertEqual("test-key", apiManager.receivedApiKey)

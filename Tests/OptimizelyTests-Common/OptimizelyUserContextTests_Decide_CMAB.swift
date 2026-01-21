@@ -315,10 +315,9 @@ fileprivate class MockCmabService: DefaultCmabService {
         }
     }
 
-    // Override the async version to intercept calls and inject mock behavior
-    // This respects the parent's locking mechanism in the sync version
-    override func getDecision(config: ProjectConfig, userContext: OptimizelyUserContext, ruleId: String, options: [OptimizelyDecideOption], completion: @escaping CmabDecisionCompletionHandler) {
+    // Override both sync and async versions to ensure all call paths are tracked
 
+    override func getDecision(config: ProjectConfig, userContext: OptimizelyUserContext, ruleId: String, options: [OptimizelyDecideOption]) -> Result<CmabDecision, any Error> {
         // Thread-safe state tracking
         optionsLock.sync {
             self.decisionCalled = true
@@ -332,21 +331,25 @@ fileprivate class MockCmabService: DefaultCmabService {
 
         // Return mock error if set
         if let error = error {
-            completion(.failure(error))
-            return
+            return .failure(error)
         }
 
         // Return mock decision if variationId is set
         if let variationId = variationId {
-            completion(.success(CmabDecision(
+            return .success(CmabDecision(
                 variationId: variationId,
                 cmabUUID: "test-uuid"
-            )))
-            return
+            ))
         }
 
         // Otherwise return error
-        completion(.failure(CmabClientError.fetchFailed("No variation set")))
+        return .failure(CmabClientError.fetchFailed("No variation set"))
+    }
+
+    override func getDecision(config: ProjectConfig, userContext: OptimizelyUserContext, ruleId: String, options: [OptimizelyDecideOption], completion: @escaping CmabDecisionCompletionHandler) {
+        // Use sync version to maintain consistency
+        let result = getDecision(config: config, userContext: userContext, ruleId: ruleId, options: options)
+        completion(result)
     }
 }
 

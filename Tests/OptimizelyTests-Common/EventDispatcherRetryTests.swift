@@ -22,6 +22,7 @@ class EventDispatcherRetryTests: XCTestCase {
 
     override func setUp() {
         OTUtils.createDocumentDirectoryIfNotAvailable()
+        OTUtils.clearAllEventQueues()
     }
 
     override func tearDown() {

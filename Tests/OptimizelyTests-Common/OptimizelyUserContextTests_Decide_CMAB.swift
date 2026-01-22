@@ -245,6 +245,10 @@ class OptimizelyUserContextTests_Decide_CMAB: XCTestCase {
         }
         wait(for: [exp1, exp2, exp3], timeout: 1)
 
+        // Ensure all queued decision work has completed before checking captured options
+        // decideAsync uses optimizely.decisionQueue, so sync on it to ensure all tasks finish
+        optimizely.decisionQueue.sync {}
+
         // Verify options were passed correctly for each call (thread-safe check after all async calls complete)
         XCTAssertEqual(self.mockCmabService.capturedOptions.count, 3, "Expected 3 calls to getDecision")
         XCTAssertTrue(self.mockCmabService.capturedOptions[0].contains(.ignoreCmabCache), "First call should have ignoreCmabCache option")

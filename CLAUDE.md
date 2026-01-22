@@ -26,7 +26,7 @@ pod install
 # Build the SDK
 swift build
 
-# Run tests to verify setup
+# Verify setup (see "Testing" section for detailed commands)
 swift test
 ```
 
@@ -88,9 +88,11 @@ swift test
 We follow the [Ray Wenderlich Swift Style Guide](https://github.com/raywenderlich/swift-style-guide) for readability and consistency.
 
 ### Linting
-- SwiftLint is enforced (see `.swiftlint.yml`)
-- Run `swiftlint` before committing changes
-- Fix all warnings and errors
+SwiftLint is enforced. Before committing:
+```bash
+swiftlint
+```
+Fix all warnings and errors. Configuration in `.swiftlint.yml`.
 
 ### Common Patterns
 
@@ -116,44 +118,20 @@ The SDK uses protocols for extensibility:
 - Log levels: debug, info, warning, error
 - Use appropriate log levels for different message types
 
-## Development Workflow
+## Testing
 
-### Branch Strategy
-- Main branch: `master`
-- Create feature branches: `YOUR_NAME/branch_name`
-- Don't commit on master branch, create new branch before committing any changes
+### Running Tests
 
-### Making Changes
+#### Using Swift Package Manager
+```bash
+# Run all tests
+swift test
 
-1. **Create a branch**
-   ```bash
-   git checkout -b YOUR_NAME/feature-name
-   ```
+# Run with verbose output
+swift test --verbose
+```
 
-2. **Make your changes**
-   - Follow coding standards
-   - Write or update tests
-   
-3. **Test your changes**
-   ```bash
-   # Run all tests
-   swift test
-
-   # Or use Xcode for specific tests
-   xcodebuild test \
-     -workspace OptimizelySwiftSDK.xcworkspace \
-     -scheme OptimizelySwiftSDK-iOS \
-     -destination 'platform=iOS Simulator,name=iPhone 16'
-   ```
-
-4. **Lint your code**
-   ```bash
-   swiftlint
-   ```
-
-### Testing
-
-#### Running Tests with Xcode
+#### Using Xcode
 ```bash
 # Run all tests for iOS
 xcodebuild test \
@@ -176,7 +154,7 @@ xcodebuild test \
   -only-testing:TestTarget/TestClass/testMethodName
 ```
 
-#### Test Targets
+### Test Targets
 - `OptimizelyTests-Common-iOS`: Common utilities and core functionality
 - `OptimizelyTests-APIs-iOS`: Public API tests
 - `OptimizelyTests-Batch-iOS`: Event batching and dispatching
@@ -188,7 +166,7 @@ xcodebuild test \
 
 Similar test targets exist for tvOS and other platforms.
 
-#### Testing Best Practices
+### Testing Best Practices
 - All code must have test coverage
 - Use XCTest framework
 - Use `.sortedKeys` for JSONEncoder in tests to ensure deterministic JSON output
@@ -196,12 +174,74 @@ Similar test targets exist for tvOS and other platforms.
 - Use JSON fixtures from `Tests/TestData/` for consistent test data
 - Each test should use unique file names for persistent storage
 
+## Development Workflow
+
+### Branch Strategy
+- Main branch: `master`
+- Create feature branches: `YOUR_NAME/branch_name`
+- Don't commit on master branch, create new branch before committing any changes
+
+### Making Changes
+
+1. **Create a branch** (see "Helpful Commands > Git Commands")
+2. **Make your changes** following coding standards
+3. **Write or update tests** (see "Testing" section)
+4. **Run linting** (see "Coding Standards > Linting")
+5. **Run tests** to verify changes (see "Testing" section)
+
 ### Pull Request Process
-1. Ensure all tests pass
-2. Run SwiftLint and fix issues
-3. Verify no merge conflicts with `master`
-4. Get review from maintainer
-5. Don't update SDK version (maintainers handle this)
+
+When creating a pull request, follow this checklist:
+
+1. **Ensure all tests pass** (see "Testing" section)
+2. **Run SwiftLint and fix all issues** (see "Coding Standards > Linting")
+3. **Verify no merge conflicts with `master`**
+   ```bash
+   git fetch origin
+   git merge origin/master
+   ```
+
+4. **Follow the PR template** (located at `pull_request_template.md`)
+
+   Your PR description MUST include:
+
+   **## Summary**
+   - Bullet points describing "what" changed (each logical change)
+   - Context explaining "why" the changes were made
+
+   **## Test plan**
+   - Describe how the changes were tested
+   - List specific test cases added or modified
+   - Include manual testing steps if applicable
+
+   **## Issues**
+   - Reference related issues: "THING-1234" or "Fixes #123"
+   - If no issue exists, explain why the change is needed
+
+   Example:
+   ```markdown
+   ## Summary
+   - Fixed flaky tests by replacing asyncAfter with DispatchGroup.wait()
+   - Updated MockCmabService to override both sync and async methods
+
+   Recent async retry refactoring introduced timing issues in tests. Tests
+   were using unreliable asyncAfter delays instead of proper synchronization.
+
+   ## Test plan
+   - Ran EventDispatcherRetryTests suite 20 times, all passed
+   - Verified on GitHub CI across multiple Xcode versions
+   - Added capturedOptions array to MockCmabService for thread-safe tracking
+
+   ## Issues
+   - Fixes #456
+   ```
+
+5. **Get review from maintainer**
+   - Request review from code owners
+   - Address all feedback and comments
+
+6. **Don't update SDK version**
+   - Version updates are handled by maintainers during release process
 
 ## Key APIs & Usage
 
@@ -262,7 +302,26 @@ grep -r "func functionName" Sources/ --include="*.swift"
 grep -r "TODO\|FIXME" Sources/ --include="*.swift"
 ```
 
-### Xcode & Testing
+### Git Commands
+```bash
+# Create a new branch
+git checkout -b YOUR_NAME/feature-name
+
+# View recent commits
+git log --oneline -10
+
+# Check what changed in a specific commit
+git show <commit-hash>
+
+# View file changes
+git diff <file-path>
+
+# Fetch and merge latest from master
+git fetch origin
+git merge origin/master
+```
+
+### Xcode
 ```bash
 # List available simulators
 xcrun simctl list devices available
@@ -273,19 +332,4 @@ xcodebuild -workspace OptimizelySwiftSDK.xcworkspace -list
 # Show build settings for a scheme
 xcodebuild -workspace OptimizelySwiftSDK.xcworkspace \
   -scheme OptimizelySwiftSDK-iOS -showBuildSettings
-```
-
-### Git Commands
-```bash
-# View recent commits
-git log --oneline -10
-
-# Check what changed in a specific commit
-git show <commit-hash>
-
-# View file changes
-git diff <file-path>
-
-# Create a new branch
-git checkout -b YOUR_NAME/feature-name
 ```

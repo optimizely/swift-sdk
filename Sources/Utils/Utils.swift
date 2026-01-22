@@ -79,7 +79,13 @@ class Utils {
         #endif
     }
 
-    private static let jsonEncoder = JSONEncoder()
+    private static let jsonEncoder: JSONEncoder = {
+        let encoder = JSONEncoder()
+        if #available(iOS 11.0, tvOS 11.0, watchOS 4.0, macOS 10.13, *) {
+            encoder.outputFormatting = .sortedKeys
+        }
+        return encoder
+    }()
     
     // @objc NSNumber can be casted either Bool, Int, or Double
     // more filtering required to avoid NSNumber(false, true) interpreted as Int(0, 1) instead of Bool

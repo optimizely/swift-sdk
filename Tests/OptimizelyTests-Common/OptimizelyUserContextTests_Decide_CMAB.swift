@@ -28,9 +28,10 @@ class OptimizelyUserContextTests_Decide_CMAB: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        
+
         let datafile = OTUtils.loadJSONDatafile("decide_datafile")!
         mockCmabService = MockCmabService()
+        mockCmabService.cmabCache.reset()
         decisionService = DefaultDecisionService(userProfileService: DefaultUserProfileService(), cmabService: mockCmabService)
         optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey,
                                       eventDispatcher: eventDispatcher,
@@ -39,8 +40,14 @@ class OptimizelyUserContextTests_Decide_CMAB: XCTestCase {
         self.config = self.optimizely.config
         try! optimizely.start(datafile: datafile)
     }
-    
+
     override func tearDown() {
+        super.tearDown()
+        // Reset mock service state
+        mockCmabService.cmabCache.reset()
+        mockCmabService?.reset()
+        // Clear event dispatcher to prevent state pollution
+        eventDispatcher.events.removeAll()
         optimizely = nil
         mockCmabService = nil
         decisionService = nil
@@ -215,36 +222,30 @@ class OptimizelyUserContextTests_Decide_CMAB: XCTestCase {
         let exp2 = XCTestExpectation(description: "Second call")
         let exp3 = XCTestExpectation(description: "Third call")
 
-        
         // Set up the CMAB experiment
         let cmab: Cmab = try! OTUtils.model(from: ["trafficAllocation": 10000, "attributeIds": ["10389729780"]])
         var experiments = optimizely.config!.project.experiments
         experiments[0].cmab = cmab
         optimizely.config?.project.experiments = experiments
-        mockCmabService.variationId = "10389729780" // corresponds to variation "a"
-        
+
         // Create user with attributes that match CMAB experiment
         let user = optimizely.createUserContext(
-            userId: kUserId,
+            userId: "user_id_321",
             attributes: ["gender": "f", "age": 25]
         )
         user.decideAsync(key: "feature_1", options: [.ignoreCmabCache]) { decision in
-            XCTAssertEqual(decision.variationKey, "a")
-            XCTAssertTrue(self.mockCmabService.ignoreCacheUsed)
+            XCTAssertEqual(decision.variationKey, "b")
             exp1.fulfill()
         }
         user.decideAsync(key: "feature_1", options: [.resetCmabCache]) { decision in
             XCTAssertEqual(decision.variationKey, "a")
-            XCTAssertTrue(self.mockCmabService.resetCacheCache)
             exp2.fulfill()
         }
         user.decideAsync(key: "feature_1", options: [.invalidateUserCmabCache]) { decision in
-            XCTAssertEqual(decision.variationKey, "a")
-            XCTAssertTrue(self.mockCmabService.invalidateUserCmabCache)
+            XCTAssertEqual(decision.variationKey, "b")
             exp3.fulfill()
         }
         wait(for: [exp1, exp2, exp3], timeout: 1)
-
     }
  
     func testDecideAsync_cmabError() {
@@ -279,33 +280,73 @@ fileprivate class MockCmabService: DefaultCmabService {
     var decisionCalled = false
     var decisionCallCount = 0
     var lastRuleId: String?
-    var ignoreCacheUsed = false
-    var resetCacheCache = false
-    var invalidateUserCmabCache = false
+    
+    // Thread-safe tracking of options for each call to avoid race conditions
+    private let optionsLock = DispatchQueue(label: "MockCmabService.optionsLock")
     
     init() {
         super.init(cmabClient: DefaultCmabClient(), cmabCache: CmabCache(size: 10, timeoutInSecs: 10))
     }
-    
-    override func getDecision(config: ProjectConfig, userContext: OptimizelyUserContext, ruleId: String, options: [OptimizelyDecideOption]) -> Result<CmabDecision, any Error> {
-        decisionCalled = true
-        lastRuleId = ruleId
-        ignoreCacheUsed = options.contains(.ignoreCmabCache)
-        resetCacheCache = options.contains(.resetCmabCache)
-        invalidateUserCmabCache = options.contains(.invalidateUserCmabCache)
-        decisionCallCount += 1
-        if let error = error {
-            return .failure(error)
+
+    func reset() {
+        optionsLock.sync {
+            self.variationId = nil
+            self.error = nil
+            self.decisionCalled = false
+            self.decisionCallCount = 0
+            self.lastRuleId = nil
         }
-        
+    }
+
+    override func getDecision(config: ProjectConfig, userContext: OptimizelyUserContext, ruleId: String, options: [OptimizelyDecideOption], completion: @escaping CmabDecisionCompletionHandler) {
+        optionsLock.sync {
+            self.decisionCalled = true
+            self.lastRuleId = ruleId
+            self.decisionCallCount += 1
+        }
+
+        // Return mock error if set
+        if let error = error {
+            completion(.failure(error))
+            return
+        }
+
+        // Return different variations based on cache options
+        if options.contains(.resetCmabCache) {
+            completion(.success(CmabDecision(
+                variationId: "10389729780",  // Variation "a"
+                cmabUUID: "test-uuid"
+            )))
+            return
+        }
+
+        if options.contains(.ignoreCmabCache) {
+            completion(.success(CmabDecision(
+                variationId: "10416523121",  // Variation "b"
+                cmabUUID: "test-uuid"
+            )))
+            return
+        }
+
+        if options.contains(.invalidateUserCmabCache) {
+            completion(.success(CmabDecision(
+                variationId: "10416523121",  // Variation "b"
+                cmabUUID: "test-uuid"
+            )))
+            return
+        }
+
+        // Return mock decision if variationId is set
         if let variationId = variationId {
-            return .success(CmabDecision(
+            completion(.success(CmabDecision(
                 variationId: variationId,
                 cmabUUID: "test-uuid"
-            ))
+            )))
+            return
         }
-        
-        return .failure(CmabClientError.fetchFailed("No variation set"))
+
+        // Otherwise return error
+        completion(.failure(CmabClientError.fetchFailed("No variation set")))
     }
 }
 

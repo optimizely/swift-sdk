@@ -670,7 +670,6 @@ extension EventDispatcherTests_Batch {
         var notifEvent: [String: Any]?
         
         _ = optimizely.notificationCenter!.addLogEventNotificationListener { (url, event) in
-            print("LogEvent Notification called")
             notifUrl = url
             notifEvent = event
         }
@@ -929,18 +928,18 @@ extension EventDispatcherTests_Batch {
     
     func makeEventForDispatch(url: String, event: BatchEvent) -> EventForDispatch {
         let encoder = JSONEncoder()
-//        if #available(iOS 11.0, tvOS 11.0, watchOS 4.0, macOS 10.13, *) {
-//            encoder.outputFormatting = .sortedKeys
-//        }
+        if #available(iOS 11.0, tvOS 11.0, watchOS 4.0, macOS 10.13, *) {
+            encoder.outputFormatting = .sortedKeys
+        }
         let data = try! encoder.encode(event)
         return EventForDispatch(url: URL(string: url), body: data)
     }
 
     func makeInvalidEventForDispatchWithNilUrl() -> EventForDispatch {
         let encoder = JSONEncoder()
-//        if #available(iOS 11.0, tvOS 11.0, watchOS 4.0, macOS 10.13, *) {
-//            encoder.outputFormatting = .sortedKeys
-//        }
+        if #available(iOS 11.0, tvOS 11.0, watchOS 4.0, macOS 10.13, *) {
+            encoder.outputFormatting = .sortedKeys
+        }
         let data = try! encoder.encode(batchEventA)
         return EventForDispatch(url: nil, body: data)
     }
@@ -1035,7 +1034,7 @@ class TestEventDispatcher: DefaultEventDispatcher {
     
     override func sendEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
         sendRequestedEvents.append(event)
-        
+
         do {
             let decodedEvent = try JSONDecoder().decode(BatchEvent.self, from: event.body)
             numReceivedVisitors += decodedEvent.visitors.count
@@ -1044,21 +1043,20 @@ class TestEventDispatcher: DefaultEventDispatcher {
             // invalid event format detected
             // - invalid events are supposed to be filtered out when batching (converting to nil, so silently dropped)
             // - an exeption is that an invalid event is alone in the queue, when validation is skipped for performance on common path
-            
+
             // pass through invalid events, so server can filter them out
         }
-
-        // must call completionHandler to complete synchronization
-        super.sendEvent(event: event) { _ in
-            if self.forceError {
-                completionHandler(.failure(.eventDispatchFailed("forced")))
-            } else {
-                // return success to clear store after sending events
-                completionHandler(.success(Data()))
-            }
-
-            self.exp?.fulfill()
+        NotificationCenter.default.post(name: .willSendOptimizelyEvents, object: event)
+        // Simulate network call completion immediately in tests to avoid timeouts
+        // Instead of making actual network requests to dummy URLs, directly call the completion handler
+        if self.forceError {
+            completionHandler(.failure(.eventDispatchFailed("forced")))
+        } else {
+            // return success to clear store after sending events
+            completionHandler(.success(Data()))
         }
+
+        self.exp?.fulfill()
     }
     
 }

@@ -22,6 +22,7 @@ class EventDispatcherRetryTests: XCTestCase {
 
     override func setUp() {
         OTUtils.createDocumentDirectoryIfNotAvailable()
+        OTUtils.clearAllEventQueues()
     }
 
     override func tearDown() {
@@ -158,12 +159,12 @@ class EventDispatcherRetryTests: XCTestCase {
 
         dispatcher.flushEvents()
 
-        // Wait for all retries to exhaust
-        let expectation = XCTestExpectation(description: "All retries exhausted")
-        dispatcher.queueLock.asyncAfter(deadline: .now() + 1.0) {
-            expectation.fulfill()
-        }
-        wait(for: [expectation], timeout: 2.0)
+        // Ensure flush async block has started
+        dispatcher.queueLock.sync {}
+
+        // Wait for all retries to complete using the notify DispatchGroup
+        // This is more reliable than asyncAfter as it actually waits for completion
+        _ = dispatcher.notify.wait(timeout: .now() + 5.0)
 
         // Should have 3 send attempts (1 initial + 2 retries)
         XCTAssertEqual(dispatcher.sendCount, 3)
@@ -260,9 +261,14 @@ class EventDispatcherRetryTests: XCTestCase {
         XCTAssertTrue(dispatcher.reachability.shouldBlockNetworkAccess())
 
         dispatcher.flushEvents()
+
+        // Ensure flush async block has started
         dispatcher.queueLock.sync {}
 
-        // When network is down, sendEvent returns early
+        // Wait for flush to complete using the notify DispatchGroup
+        _ = dispatcher.notify.wait(timeout: .now() + 5.0)
+
+        // When network is down, sendEvent should not be called
         // No retries should happen
         XCTAssertEqual(dispatcher.sendCount, 0)
     }

@@ -243,6 +243,109 @@ When creating a pull request, follow this checklist:
 6. **Don't update SDK version**
    - Version updates are handled by maintainers during release process
 
+## Release Process
+
+### Creating a Release (Maintainers Only)
+
+When preparing a new version release, follow these steps:
+
+#### 1. Determine Release Type
+- **Major** (X.0.0): Breaking changes, major new features
+- **Minor** (5.X.0): New features, enhancements, backwards compatible
+- **Patch** (5.2.X): Bug fixes only, no new features
+
+#### 2. Create Release Branch
+```bash
+# Create branch from master
+git checkout master
+git pull origin master
+git checkout -b prepare-release-X.Y.Z
+```
+
+#### 3. Update Version Files
+
+Update exactly **3 files**:
+
+**File 1: `.github/workflows/swift.yml`** (Line ~20)
+```diff
+ env:
+-  VERSION: 5.2.0
++  VERSION: 5.2.1
+```
+
+**File 2: `CHANGELOG.md`** (Add new section at top)
+```markdown
+## X.Y.Z
+Month Day, Year
+
+### New Features (if minor/major release)
+- **Feature Name**: Description ([#PR](link))
+
+### Bug Fixes (if patch release)
+- **Component**: Fix description ([#PR](link))
+
+### API Changes (if applicable)
+- **Breaking/New API**: Description ([#PR](link))
+```
+
+**Important:** Only include **user-facing changes**:
+- ✅ Include: New features, bug fixes, API changes, breaking changes
+- ❌ Exclude: Internal refactoring, test improvements, CI updates, documentation changes
+
+**File 3: `README.md`** (Line ~42)
+```diff
+-```pod 'OptimizelySwiftSDK', '~> 5.2.0'```
++```pod 'OptimizelySwiftSDK', '~> 5.2.1'```
+```
+
+#### 4. Create Release Commit
+```bash
+# Stage all changes
+git add .github/workflows/swift.yml CHANGELOG.md README.md
+
+# Create release commit
+git commit -m "chore: prepare release X.Y.Z
+
+Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
+```
+
+#### 5. Create Pull Request
+```bash
+# Push branch
+git push origin prepare-release-X.Y.Z
+
+# Create PR (adjust ticket number)
+gh pr create --title "[FSSDK-XXXXX] chore: prepare release X.Y.Z" --body "## Summary
+Prepare for Release X.Y.Z: [Brief description of changes]
+
+## Test plan
+- All tests passing on CI
+- No new functionality, version bump only
+
+## Issues
+- FSSDK-XXXXX"
+```
+
+#### 6. After PR Merge
+After the release PR is merged to master:
+1. Maintainers will tag the release
+2. GitHub Actions will build and publish to CocoaPods
+3. Release notes will be published automatically
+
+### Example Release PRs
+- **5.2.0 Release**: [PR #613](https://github.com/optimizely/swift-sdk/pull/613) (minor release with new features)
+- **5.2.1 Release**: [PR #XXX](https://github.com/optimizely/swift-sdk/pull/XXX) (patch release with bug fixes)
+
+### Release Checklist
+- [ ] Created release branch: `prepare-release-X.Y.Z`
+- [ ] Updated VERSION in `.github/workflows/swift.yml`
+- [ ] Added release notes to `CHANGELOG.md` (user-facing changes only)
+- [ ] Updated version in `README.md`
+- [ ] Created commit with message: `chore: prepare release X.Y.Z`
+- [ ] Created PR with proper title and description
+- [ ] All CI tests passing
+- [ ] PR approved and merged
+
 ## Key APIs & Usage
 
 ### Initialization

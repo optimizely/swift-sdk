@@ -1,5 +1,12 @@
 # Optimizely Swift SDK Changelog
 
+## 5.2.1
+January 23rd, 2026
+
+### Functionality Enhancement
+- **CMAB Decision**: Excluded CMAB decision from user profile service ([#620](https://github.com/optimizely/swift-sdk/pull/620))
+- **Event Retry Strategy**: Updated event dispatcher retry logic for improved reliability ([#618](https://github.com/optimizely/swift-sdk/pull/618))
+
 ## 5.2.0
 Dec 19th, 2025
 

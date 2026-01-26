@@ -39,7 +39,7 @@ If you have a name conflict with other swift packages when you add the Optimizel
 #### CocoaPods 
 1. Add the following lines to the _Podfile_:<pre>
 ```use_frameworks!```
-```pod 'OptimizelySwiftSDK', '~> 5.2.0'```
+```pod 'OptimizelySwiftSDK', '~> 5.2.1'```
 </pre>
 
 2. Run the following command: <pre>``` pod install ```</pre>

@@ -48,7 +48,7 @@ jobs:
     if: "${{ github.event.inputs.PREP == '' && github.event.inputs.RELEASE == '' }}" 
     uses: optimizely/swift-sdk/.github/workflows/unit_tests.yml@master
   prepare_for_release:
-    runs-on: macos-15
+    runs-on: macos-14
     if: "${{ github.event.inputs.PREP == 'true' && github.event_name == 'workflow_dispatch' }}"
     steps:
     - uses: actions/checkout@v3

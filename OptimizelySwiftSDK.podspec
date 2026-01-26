@@ -15,6 +15,7 @@ Pod::Spec.new do |s|
     :tag => "v"+s.version.to_s
   }
   s.source_files            = "Sources/**/*.swift"
+  s.exclude_files           = "CLAUDE.md"
   s.resource_bundles        = { 'OptimizelySwiftSDK' => ['Sources/Supporting Files/PrivacyInfo.xcprivacy'] }
   s.swift_version           = ["5.0", "5.1"]
   s.framework               = "Foundation"

@@ -33,9 +33,10 @@ struct Holdout: Codable, ExperimentCore {
     var audienceConditions: ConditionHolder?
     var includedFlags: [String]
     var excludedFlags: [String]
-    
+    var experiments: [String]
+
     enum CodingKeys: String, CodingKey {
-        case id, key, status, variations, trafficAllocation, audienceIds, audienceConditions, includedFlags, excludedFlags
+        case id, key, status, variations, trafficAllocation, audienceIds, audienceConditions, includedFlags, excludedFlags, experiments
     }
     
     var variationsMap: [String: OptimizelyVariation] = [:]
@@ -54,9 +55,10 @@ struct Holdout: Codable, ExperimentCore {
         trafficAllocation = try container.decode([TrafficAllocation].self, forKey: .trafficAllocation)
         audienceIds = try container.decode([String].self, forKey: .audienceIds)
         audienceConditions = try container.decodeIfPresent(ConditionHolder.self, forKey: .audienceConditions)
-        
+
         includedFlags = try container.decodeIfPresent([String].self, forKey: .includedFlags) ?? []
         excludedFlags = try container.decodeIfPresent([String].self, forKey: .excludedFlags) ?? []
+        experiments = try container.decodeIfPresent([String].self, forKey: .experiments) ?? []
     }
 }
 
@@ -70,12 +72,17 @@ extension Holdout: Equatable {
         lhs.audienceIds == rhs.audienceIds &&
         lhs.audienceConditions == rhs.audienceConditions &&
         lhs.includedFlags == rhs.includedFlags &&
-        lhs.excludedFlags == rhs.excludedFlags
+        lhs.excludedFlags == rhs.excludedFlags &&
+        lhs.experiments == rhs.experiments
     }
 }
 
 extension Holdout {
     var isActivated: Bool {
         return status == .running
+    }
+
+    var isLocal: Bool {
+        return !experiments.isEmpty
     }
 }

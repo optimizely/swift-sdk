@@ -27,6 +27,7 @@ struct HoldoutConfig {
     private(set) var flagHoldoutsMap: [String: [Holdout]] = [:]
     private(set) var includedHoldouts: [String: [Holdout]] = [:]
     private(set) var excludedHoldouts: [String: [Holdout]] = [:]
+    private(set) var experimentHoldoutsMap: [String: [Holdout]] = [:]
     
     init(allholdouts: [Holdout] = []) {
         self.allHoldouts = allholdouts
@@ -45,7 +46,8 @@ struct HoldoutConfig {
         global = []
         includedHoldouts = [:]
         excludedHoldouts = [:]
-        
+        experimentHoldoutsMap = [:]
+
         for holdout in allHoldouts {
             switch (holdout.includedFlags.isEmpty, holdout.excludedFlags.isEmpty) {
                 case (true, true):
@@ -74,8 +76,22 @@ struct HoldoutConfig {
                     }
             }
         }
+
+        // Build experiment-to-holdouts mapping
+        for holdout in allHoldouts {
+            if !holdout.experiments.isEmpty {
+                for experimentId in holdout.experiments {
+                    if var existing = experimentHoldoutsMap[experimentId] {
+                        existing.append(holdout)
+                        experimentHoldoutsMap[experimentId] = existing
+                    } else {
+                        experimentHoldoutsMap[experimentId] = [holdout]
+                    }
+                }
+            }
+        }
     }
-    
+
     /// Returns the applicable holdouts for the given flag ID by combining global holdouts (excluding any specified) and included holdouts, in that order.
     /// Caches the result for future calls.
     /// - Parameter id: The flag identifier.
@@ -109,7 +125,14 @@ struct HoldoutConfig {
         
         return flagHoldoutsMap[id] ?? []
     }
-    
+
+    /// Returns the holdouts applicable to the given experiment ID.
+    /// - Parameter experimentId: The experiment identifier.
+    /// - Returns: An array of `Holdout` objects targeting this experiment.
+    func getHoldoutsForExperiment(experimentId: String) -> [Holdout] {
+        return experimentHoldoutsMap[experimentId] ?? []
+    }
+
     /// Get a Holdout object for an Id.
     func getHoldout(id: String) -> Holdout? {
         return holdoutIdMap[id]

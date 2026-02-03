@@ -57,9 +57,18 @@ class HoldoutTests: XCTestCase {
                                                              "audienceIds": ["33333"],
                                                              "audienceConditions": HoldoutTests.conditionHolderData,
                                                              "excludedFlags": ["8888", "9999"]]
-    
-    
-    
+
+    static var sampleDataWithExperiments: [String: Any] = ["id": "1681267",
+                                                            "key": "experiment_holdout",
+                                                            "status": "Running",
+                                                            "variations": [HoldoutTests.variationData],
+                                                            "trafficAllocation": [HoldoutTests.trafficAllocationData],
+                                                            "audienceIds": ["33333"],
+                                                            "audienceConditions": HoldoutTests.conditionHolderData,
+                                                            "experiments": ["1681267", "1681268"]]
+
+
+
 }
 
 // MARK: - Decode
@@ -109,7 +118,31 @@ extension HoldoutTests {
         XCTAssertEqual(model.includedFlags, [])
         XCTAssertEqual(model.excludedFlags, ["8888", "9999"])
     }
-    
+
+    func testDecodeSuccessWithExperimentsField() {
+        let data: [String: Any] = HoldoutTests.sampleDataWithExperiments
+
+        let model: Holdout = try! OTUtils.model(from: data)
+
+        XCTAssert(model.id == "1681267")
+        XCTAssert(model.key == "experiment_holdout")
+        XCTAssert(model.status == .running)
+        XCTAssert(model.variations == [try! OTUtils.model(from: HoldoutTests.variationData)])
+        XCTAssert(model.trafficAllocation == [try! OTUtils.model(from: HoldoutTests.trafficAllocationData)])
+        XCTAssert(model.audienceIds == ["33333"])
+        XCTAssert(model.audienceConditions == (try! OTUtils.model(from: HoldoutTests.conditionHolderData)))
+        XCTAssertEqual(model.experiments, ["1681267", "1681268"])
+    }
+
+    func testDecodeSuccessWithoutExperimentsField() {
+        let data: [String: Any] = HoldoutTests.sampleData
+
+        let model: Holdout = try! OTUtils.model(from: data)
+
+        XCTAssert(model.id == "11111")
+        XCTAssert(model.key == "background")
+        XCTAssertEqual(model.experiments, [])
+    }
 
     func testDecodeSuccessWithMissingAudienceConditions() {
         var data: [String: Any] = HoldoutTests.sampleData
@@ -249,21 +282,55 @@ extension HoldoutTests {
 // MARK: - Test Utils
 
 extension HoldoutTests {
-    
+
     func testIsActivated() {
         let data: [String: Any] = HoldoutTests.sampleData
         var model: Holdout = try! OTUtils.model(from: data)
-        
+
         XCTAssertTrue(model.isActivated)
-        
+
         let allNotActiveStates: [Holdout.Status] = [.draft, .concluded, .archived]
         for status in allNotActiveStates {
             model.status = status
             XCTAssertFalse(model.isActivated)
         }
-        
+
         model.status = .running
         XCTAssertTrue(model.isActivated)
+    }
+
+    func testIsLocal() {
+        // Test with experiments field populated
+        let dataWithExperiments: [String: Any] = HoldoutTests.sampleDataWithExperiments
+        let modelWithExperiments: Holdout = try! OTUtils.model(from: dataWithExperiments)
+
+        XCTAssertTrue(modelWithExperiments.isLocal)
+
+        // Test with experiments field empty
+        let dataWithoutExperiments: [String: Any] = HoldoutTests.sampleData
+        let modelWithoutExperiments: Holdout = try! OTUtils.model(from: dataWithoutExperiments)
+
+        XCTAssertFalse(modelWithoutExperiments.isLocal)
+    }
+
+    func testEqualityIncludesExperimentsField() {
+        // Create two identical holdouts with experiments
+        let data1: [String: Any] = HoldoutTests.sampleDataWithExperiments
+        let model1: Holdout = try! OTUtils.model(from: data1)
+
+        let data2: [String: Any] = HoldoutTests.sampleDataWithExperiments
+        let model2: Holdout = try! OTUtils.model(from: data2)
+
+        // Verify they are equal
+        XCTAssertEqual(model1, model2)
+
+        // Change experiments on one
+        var data3 = HoldoutTests.sampleDataWithExperiments
+        data3["experiments"] = ["9999"]
+        let model3: Holdout = try! OTUtils.model(from: data3)
+
+        // Verify they are no longer equal
+        XCTAssertNotEqual(model1, model3)
     }
 }
 

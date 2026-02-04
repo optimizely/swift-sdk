@@ -27,6 +27,7 @@ struct HoldoutConfig {
     private(set) var flagHoldoutsMap: [String: [Holdout]] = [:]
     private(set) var includedHoldouts: [String: [Holdout]] = [:]
     private(set) var excludedHoldouts: [String: [Holdout]] = [:]
+    private(set) var experimentHoldoutsMap: [String: [Holdout]] = [:]
     
     init(allholdouts: [Holdout] = []) {
         self.allHoldouts = allholdouts
@@ -45,12 +46,27 @@ struct HoldoutConfig {
         global = []
         includedHoldouts = [:]
         excludedHoldouts = [:]
-        
+        experimentHoldoutsMap = [:]
+
         for holdout in allHoldouts {
+            // Handle experiment-specific holdouts (local holdouts)
+            if !holdout.experiments.isEmpty {
+                for experimentId in holdout.experiments {
+                    if var existing = experimentHoldoutsMap[experimentId] {
+                        existing.append(holdout)
+                        experimentHoldoutsMap[experimentId] = existing
+                    } else {
+                        experimentHoldoutsMap[experimentId] = [holdout]
+                    }
+                }
+                continue  // Skip flag-level logic for experiment-specific holdouts
+            }
+
+            // Handle flag-level holdouts (global holdouts)
             switch (holdout.includedFlags.isEmpty, holdout.excludedFlags.isEmpty) {
                 case (true, true):
                     global.append(holdout)
-                    
+
                 case (false, _):
                     holdout.includedFlags.forEach { flagId in
                         if var existing = includedHoldouts[flagId] {
@@ -60,10 +76,10 @@ struct HoldoutConfig {
                             includedHoldouts[flagId] = [holdout]
                         }
                     }
-                    
+
                 case (true, false):
                     global.append(holdout)
-                    
+
                     holdout.excludedFlags.forEach { flagId in
                         if var existing = excludedHoldouts[flagId] {
                             existing.append(holdout)
@@ -75,7 +91,7 @@ struct HoldoutConfig {
             }
         }
     }
-    
+
     /// Returns the applicable holdouts for the given flag ID by combining global holdouts (excluding any specified) and included holdouts, in that order.
     /// Caches the result for future calls.
     /// - Parameter id: The flag identifier.
@@ -109,7 +125,14 @@ struct HoldoutConfig {
         
         return flagHoldoutsMap[id] ?? []
     }
-    
+
+    /// Returns the holdouts applicable to the given experiment ID.
+    /// - Parameter experimentId: The experiment identifier.
+    /// - Returns: An array of `Holdout` objects targeting this experiment.
+    func getHoldoutsForExperiment(experimentId: String) -> [Holdout] {
+        return experimentHoldoutsMap[experimentId] ?? []
+    }
+
     /// Get a Holdout object for an Id.
     func getHoldout(id: String) -> Holdout? {
         return holdoutIdMap[id]

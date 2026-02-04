@@ -47,9 +47,27 @@ class HoldoutConfigTests: XCTestCase {
         
         XCTAssertEqual(holdoutConfig.includedHoldouts["4444"], [holdout1])
         XCTAssertEqual(holdoutConfig.excludedHoldouts["8888"], [holdout2])
-        
+
     }
-    
+
+    func testExperimentHoldoutsMap() {
+        var holdout0: Holdout = try! OTUtils.model(from: HoldoutTests.sampleDataWithExperiments)
+        holdout0.id = "exp_holdout_1"
+
+        var holdout1: Holdout = try! OTUtils.model(from: HoldoutTests.sampleData)
+        holdout1.id = "global_holdout"
+
+        let allHoldouts = [holdout0, holdout1]
+        let holdoutConfig = HoldoutConfig(allholdouts: allHoldouts)
+
+        // Verify experimentHoldoutsMap is populated correctly
+        XCTAssertEqual(holdoutConfig.experimentHoldoutsMap["1681267"], [holdout0])
+        XCTAssertEqual(holdoutConfig.experimentHoldoutsMap["1681268"], [holdout0])
+
+        // Global holdout should not appear in experimentHoldoutsMap
+        XCTAssertNil(holdoutConfig.experimentHoldoutsMap[holdout1.id])
+    }
+
     func testGetHoldoutById() {
         var holdout0: Holdout = try! OTUtils.model(from: HoldoutTests.sampleData)
         holdout0.id = "00000"
@@ -151,5 +169,136 @@ class HoldoutConfigTests: XCTestCase {
         XCTAssertEqual(config.flagHoldoutsMap.count, 1)
         XCTAssertEqual(cache_v, config.flagHoldoutsMap["f1"])
     }
-    
+
+    func testGetHoldoutsForExperiment_singleHoldout() {
+        var holdout: Holdout = try! OTUtils.model(from: HoldoutTests.sampleDataWithExperiments)
+        holdout.id = "holdout_1"
+
+        let config = HoldoutConfig(allholdouts: [holdout])
+
+        // Verify getHoldoutsForExperiment returns correct holdout for both experiments
+        XCTAssertEqual(config.getHoldoutsForExperiment(experimentId: "1681267"), [holdout])
+        XCTAssertEqual(config.getHoldoutsForExperiment(experimentId: "1681268"), [holdout])
+    }
+
+    func testGetHoldoutsForExperiment_multipleHoldouts() {
+        // Create multiple holdouts targeting same experiment
+        var holdout1: Holdout = try! OTUtils.model(from: HoldoutTests.sampleData)
+        holdout1.id = "holdout_1"
+        holdout1.experiments = ["exp1"]
+
+        var holdout2: Holdout = try! OTUtils.model(from: HoldoutTests.sampleData)
+        holdout2.id = "holdout_2"
+        holdout2.experiments = ["exp1"]
+
+        var holdout3: Holdout = try! OTUtils.model(from: HoldoutTests.sampleData)
+        holdout3.id = "holdout_3"
+        holdout3.experiments = ["exp1"]
+
+        let config = HoldoutConfig(allholdouts: [holdout1, holdout2, holdout3])
+
+        // Verify all are returned in correct order
+        let result = config.getHoldoutsForExperiment(experimentId: "exp1")
+        XCTAssertEqual(result.count, 3)
+        XCTAssertEqual(result[0].id, "holdout_1")
+        XCTAssertEqual(result[1].id, "holdout_2")
+        XCTAssertEqual(result[2].id, "holdout_3")
+    }
+
+    func testGetHoldoutsForExperiment_nonExistentExperiment() {
+        var holdout: Holdout = try! OTUtils.model(from: HoldoutTests.sampleDataWithExperiments)
+
+        let config = HoldoutConfig(allholdouts: [holdout])
+
+        // Verify returns empty array for non-existent experiment
+        XCTAssertEqual(config.getHoldoutsForExperiment(experimentId: "non_existent"), [])
+    }
+
+    func testExperimentMapping_oneHoldoutMultipleExperiments() {
+        var holdout: Holdout = try! OTUtils.model(from: HoldoutTests.sampleData)
+        holdout.id = "holdout_1"
+        holdout.experiments = ["exp1", "exp2", "exp3"]
+
+        let config = HoldoutConfig(allholdouts: [holdout])
+
+        // Verify holdout appears in map for all three experiments
+        XCTAssertEqual(config.getHoldoutsForExperiment(experimentId: "exp1"), [holdout])
+        XCTAssertEqual(config.getHoldoutsForExperiment(experimentId: "exp2"), [holdout])
+        XCTAssertEqual(config.getHoldoutsForExperiment(experimentId: "exp3"), [holdout])
+    }
+
+    func testExperimentMapping_multipleHoldoutsOneExperiment() {
+        var holdout1: Holdout = try! OTUtils.model(from: HoldoutTests.sampleData)
+        holdout1.id = "holdout_1"
+        holdout1.experiments = ["exp_shared"]
+
+        var holdout2: Holdout = try! OTUtils.model(from: HoldoutTests.sampleData)
+        holdout2.id = "holdout_2"
+        holdout2.experiments = ["exp_shared"]
+
+        var holdout3: Holdout = try! OTUtils.model(from: HoldoutTests.sampleData)
+        holdout3.id = "holdout_3"
+        holdout3.experiments = ["exp_shared"]
+
+        let config = HoldoutConfig(allholdouts: [holdout1, holdout2, holdout3])
+
+        // Verify all appear in the array for that experiment
+        let result = config.getHoldoutsForExperiment(experimentId: "exp_shared")
+        XCTAssertEqual(result.count, 3)
+        XCTAssertTrue(result.contains(holdout1))
+        XCTAssertTrue(result.contains(holdout2))
+        XCTAssertTrue(result.contains(holdout3))
+    }
+
+    func testUpdateHoldoutMapping_rebuildsExperimentMap() {
+        var holdout1: Holdout = try! OTUtils.model(from: HoldoutTests.sampleData)
+        holdout1.id = "holdout_1"
+        holdout1.experiments = ["exp1"]
+
+        var config = HoldoutConfig(allholdouts: [holdout1])
+
+        // Verify initial state
+        XCTAssertEqual(config.getHoldoutsForExperiment(experimentId: "exp1"), [holdout1])
+        XCTAssertEqual(config.getHoldoutsForExperiment(experimentId: "exp2"), [])
+
+        // Modify allHoldouts (triggers updateHoldoutMapping via didSet)
+        var holdout2: Holdout = try! OTUtils.model(from: HoldoutTests.sampleData)
+        holdout2.id = "holdout_2"
+        holdout2.experiments = ["exp2"]
+
+        config.allHoldouts = [holdout1, holdout2]
+
+        // Verify experimentHoldoutsMap is rebuilt correctly
+        XCTAssertEqual(config.getHoldoutsForExperiment(experimentId: "exp1"), [holdout1])
+        XCTAssertEqual(config.getHoldoutsForExperiment(experimentId: "exp2"), [holdout2])
+    }
+
+    func testLocalHoldouts_dontInterfereWithFlagMapping() {
+        // Create mix of flag-level and experiment-level holdouts
+        var flagHoldout: Holdout = try! OTUtils.model(from: HoldoutTests.sampleData)
+        flagHoldout.id = "flag_holdout"
+        flagHoldout.includedFlags = ["flag1"]
+
+        var expHoldout: Holdout = try! OTUtils.model(from: HoldoutTests.sampleData)
+        expHoldout.id = "exp_holdout"
+        expHoldout.experiments = ["exp1"]
+
+        var globalHoldout: Holdout = try! OTUtils.model(from: HoldoutTests.sampleData)
+        globalHoldout.id = "global_holdout"
+
+        var config = HoldoutConfig(allholdouts: [flagHoldout, expHoldout, globalHoldout])
+
+        // Verify flag mapping still works correctly
+        let flagResult = config.getHoldoutForFlag(id: "flag1")
+        XCTAssertTrue(flagResult.contains(globalHoldout))
+        XCTAssertTrue(flagResult.contains(flagHoldout))
+        XCTAssertFalse(flagResult.contains(expHoldout)) // Experiment holdout should not appear in flag mapping
+
+        // Verify experiment mapping works independently
+        let expResult = config.getHoldoutsForExperiment(experimentId: "exp1")
+        XCTAssertEqual(expResult, [expHoldout])
+        XCTAssertFalse(expResult.contains(flagHoldout))
+        XCTAssertFalse(expResult.contains(globalHoldout))
+    }
+
 }

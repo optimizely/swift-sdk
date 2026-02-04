@@ -49,36 +49,7 @@ struct HoldoutConfig {
         experimentHoldoutsMap = [:]
 
         for holdout in allHoldouts {
-            switch (holdout.includedFlags.isEmpty, holdout.excludedFlags.isEmpty) {
-                case (true, true):
-                    global.append(holdout)
-                    
-                case (false, _):
-                    holdout.includedFlags.forEach { flagId in
-                        if var existing = includedHoldouts[flagId] {
-                            existing.append(holdout)
-                            includedHoldouts[flagId] = existing
-                        } else {
-                            includedHoldouts[flagId] = [holdout]
-                        }
-                    }
-                    
-                case (true, false):
-                    global.append(holdout)
-                    
-                    holdout.excludedFlags.forEach { flagId in
-                        if var existing = excludedHoldouts[flagId] {
-                            existing.append(holdout)
-                            excludedHoldouts[flagId] = existing
-                        } else {
-                            excludedHoldouts[flagId] = [holdout]
-                        }
-                    }
-            }
-        }
-
-        // Build experiment-to-holdouts mapping
-        for holdout in allHoldouts {
+            // Handle experiment-specific holdouts (local holdouts)
             if !holdout.experiments.isEmpty {
                 for experimentId in holdout.experiments {
                     if var existing = experimentHoldoutsMap[experimentId] {
@@ -88,6 +59,35 @@ struct HoldoutConfig {
                         experimentHoldoutsMap[experimentId] = [holdout]
                     }
                 }
+                continue  // Skip flag-level logic for experiment-specific holdouts
+            }
+
+            // Handle flag-level holdouts (global holdouts)
+            switch (holdout.includedFlags.isEmpty, holdout.excludedFlags.isEmpty) {
+                case (true, true):
+                    global.append(holdout)
+
+                case (false, _):
+                    holdout.includedFlags.forEach { flagId in
+                        if var existing = includedHoldouts[flagId] {
+                            existing.append(holdout)
+                            includedHoldouts[flagId] = existing
+                        } else {
+                            includedHoldouts[flagId] = [holdout]
+                        }
+                    }
+
+                case (true, false):
+                    global.append(holdout)
+
+                    holdout.excludedFlags.forEach { flagId in
+                        if var existing = excludedHoldouts[flagId] {
+                            existing.append(holdout)
+                            excludedHoldouts[flagId] = existing
+                        } else {
+                            excludedHoldouts[flagId] = [holdout]
+                        }
+                    }
             }
         }
     }

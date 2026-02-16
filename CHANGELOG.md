@@ -1,5 +1,25 @@
 # Optimizely Swift SDK Changelog
 
+## 5.2.1
+January 23rd, 2026
+
+### Functionality Enhancement
+- **CMAB Decision**: Excluded CMAB decision from user profile service ([#620](https://github.com/optimizely/swift-sdk/pull/620))
+- **Event Retry Strategy**: Updated event dispatcher retry logic for improved reliability ([#618](https://github.com/optimizely/swift-sdk/pull/618))
+
+## 5.2.0
+Dec 19th, 2025
+
+### New Features
+- **CMAB (Contextual Multi-Armed Bandit) Support**: Added support for CMAB experiments with new configuration options and cache control ([#599](https://github.com/optimizely/swift-sdk/pull/599), [#600](https://github.com/optimizely/swift-sdk/pull/600), [#601](https://github.com/optimizely/swift-sdk/pull/601), [#602](https://github.com/optimizely/swift-sdk/pull/602), [#603](https://github.com/optimizely/swift-sdk/pull/603), [#609](https://github.com/optimizely/swift-sdk/pull/609), [#610](https://github.com/optimizely/swift-sdk/pull/610), [#614](https://github.com/optimizely/swift-sdk/pull/614))
+- **Add Holdouts Feature**: Add Holdout support for feature experimentation. ([#577](https://github.com/optimizely/swift-sdk/pull/577), [#577](https://github.com/optimizely/swift-sdk/pull/577), [#578](https://github.com/optimizely/swift-sdk/pull/578), [#587](https://github.com/optimizely/swift-sdk/pull/587))
+- **Multi-Region Support for Data Hosting**: Added SDK support for multi-region data hosting ([#606](https://github.com/optimizely/swift-sdk/pull/606))
+
+### API Changes
+- **Client Initialization**: Custom `CmabConfig` struct can be injected when initializing client. ([#610](https://github.com/optimizely/swift-sdk/pull/610))
+- **Decide Async support**: New `decideAsync` method added to support CMAB decision. ([#602](https://github.com/optimizely/swift-sdk/pull/602))
+- **New Decide Options**: `ignoreCmabCache`, `resetCmabCache`, `invalidateUserCmabCache` for CMAB cache control. ([#601](https://github.com/optimizely/swift-sdk/pull/601))
+  
 ## 5.1.1
 Jun 2th, 2025
 

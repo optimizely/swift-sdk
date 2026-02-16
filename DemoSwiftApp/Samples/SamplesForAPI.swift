@@ -427,4 +427,97 @@ class SamplesForAPI {
       
     }
 
+    // MARK:- CMAB Example
+    
+    static func CMAB_Basic() {
+        let SDK_KEY = "Q9LjjQmUn5pDCjKMc1jFC"
+        let FLAG_KEY = "cmab-flag"
+        let client = OptimizelyClient(
+            sdkKey: SDK_KEY
+        )
+        
+        if #available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *) {
+            Task {
+                try await client.start()
+                let user = OptimizelyUserContext(
+                    optimizely: client,
+                    userId: "USER_123",
+                    attributes: ["country": "us"]
+                )
+                let options: [OptimizelyDecideOption] = [.ignoreCmabCache]
+                let decision =  await user.decideAsync(key: FLAG_KEY, options: options)
+                print("CMAB decision: \(decision)")
+            }
+        } else {
+            guard let localDatafileUrl = Bundle.main.url(forResource: "demoTestDatafile", withExtension: "json"),
+                  let localDatafile = try? Data(contentsOf: localDatafileUrl)
+            else {
+                fatalError("Local datafile cannot be found")
+            }
+            
+            try? client.start(datafile: localDatafile)
+            
+            let user = OptimizelyUserContext(
+                optimizely: client,
+                userId: "USER_123",
+                attributes: ["country": "us"]
+            )
+            let options: [OptimizelyDecideOption] = [.ignoreCmabCache]
+            user.decideAsync(key: FLAG_KEY, options: options, completion: { decision in
+                print("CMAB decision: \(decision)")
+            })
+        }
+        
+    }
+    
+    static func CMAB_Custom_Config() {
+        let SDK_KEY = "Q9LjjQmUn5pDCjKMc1jFC"
+        let FLAG_KEY = "cmab-flag"
+        
+        var cmabConfig = CmabConfig(
+            cacheSize: 10,
+            cacheTimeoutInSecs: 120,
+            predictionEndpoint: "https://prediction.cmab.optimizely.com/predict/%@"
+        )
+        
+        // Initialize client with custom cmab config
+        let client = OptimizelyClient(
+            sdkKey: SDK_KEY,
+            cmabConfig: cmabConfig
+        )
+        
+        if #available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *) {
+            Task {
+                try await client.start()
+                let user = OptimizelyUserContext(
+                    optimizely: client,
+                    userId: "USER_123",
+                    attributes: ["country": "us"]
+                )
+                let options: [OptimizelyDecideOption] = [.ignoreCmabCache]
+                let decision =  await user.decideAsync(key: FLAG_KEY, options: options)
+                print("CMAB decision: \(decision)")
+            }
+        } else {
+            guard let localDatafileUrl = Bundle.main.url(forResource: "demoTestDatafile", withExtension: "json"),
+                  let localDatafile = try? Data(contentsOf: localDatafileUrl)
+            else {
+                fatalError("Local datafile cannot be found")
+            }
+            
+            try? client.start(datafile: localDatafile)
+            
+            let user = OptimizelyUserContext(
+                optimizely: client,
+                userId: "USER_123",
+                attributes: ["country": "us"]
+            )
+            let options: [OptimizelyDecideOption] = [.ignoreCmabCache]
+            user.decideAsync(key: FLAG_KEY, options: options, completion: { decision in
+                print("CMAB decision: \(decision)")
+            })
+        }
+        
+    }
+    
 }

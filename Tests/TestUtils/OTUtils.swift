@@ -23,7 +23,11 @@ class OTUtils {
     static let dummyClient = OptimizelyClient(sdkKey: "any-key")
 
     static func isEqualWithEncodeThenDecode<T: Codable & Equatable>(_ model: T) -> Bool {
-        let jsonData = try! JSONEncoder().encode(model)
+        let encoder = JSONEncoder()
+        if #available(iOS 11.0, tvOS 11.0, watchOS 4.0, macOS 10.13, *) {
+            encoder.outputFormatting = .sortedKeys
+        }
+        let jsonData = try! encoder.encode(model)
         let modelExp = try! JSONDecoder().decode(T.self, from: jsonData)
         return modelExp == model
     }
@@ -216,7 +220,11 @@ class OTUtils {
     
     static func makeEventForDispatch(url: String? = nil, event: BatchEvent? = nil) -> EventForDispatch {
         let targetUrl = URL(string: url ?? "https://a.b.c")
-        let data = try! JSONEncoder().encode(event ?? makeTestBatchEvent())
+        let encoder = JSONEncoder()
+        if #available(iOS 11.0, tvOS 11.0, watchOS 4.0, macOS 10.13, *) {
+            encoder.outputFormatting = .sortedKeys
+        }
+        let data = try! encoder.encode(event ?? makeTestBatchEvent())
         return EventForDispatch(url: targetUrl, body: data)
     }
     

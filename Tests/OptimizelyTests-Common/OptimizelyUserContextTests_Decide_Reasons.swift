@@ -109,8 +109,8 @@ extension OptimizelyUserContextTests_Decide_Reasons {
         let featureKey = "feature_1"
         let audienceId = "invalid_condition"
         setAudienceForFeatureTest(featureKey: featureKey, audienceId: audienceId)
-        
-        let condition = "{\"match\":\"gt\",\"value\":\"US\",\"name\":\"age\",\"type\":\"custom_attribute\"}"
+
+        let condition = "{\"match\":\"gt\",\"name\":\"age\",\"type\":\"custom_attribute\",\"value\":\"US\"}"
         user.setAttribute(key: "age", value: 25)
         
         var decision = user.decide(key: featureKey)
@@ -123,8 +123,8 @@ extension OptimizelyUserContextTests_Decide_Reasons {
         let featureKey = "feature_1"
         let audienceId = "13389130056"
         setAudienceForFeatureTest(featureKey: featureKey, audienceId: audienceId)
-        
-        let condition = "{\"match\":\"exact\",\"value\":\"US\",\"name\":\"country\",\"type\":\"custom_attribute\"}"
+
+        let condition = "{\"match\":\"exact\",\"name\":\"country\",\"type\":\"custom_attribute\",\"value\":\"US\"}"
         let attributeKey = "country"
         let attributeValue = 25
         user.setAttribute(key: attributeKey, value: attributeValue)
@@ -139,8 +139,8 @@ extension OptimizelyUserContextTests_Decide_Reasons {
         let featureKey = "feature_1"
         let audienceId = "age_18"
         setAudienceForFeatureTest(featureKey: featureKey, audienceId: audienceId)
-        
-        let condition = "{\"match\":\"gt\",\"value\":18,\"name\":\"age\",\"type\":\"custom_attribute\"}"
+
+        let condition = "{\"match\":\"gt\",\"name\":\"age\",\"type\":\"custom_attribute\",\"value\":18}"
         user.setAttribute(key: "age", value: pow(2,54) as Double)   // TOO-BIG value
         
         var decision = user.decide(key: featureKey)
@@ -153,8 +153,8 @@ extension OptimizelyUserContextTests_Decide_Reasons {
         let featureKey = "feature_1"
         let audienceId = "invalid_type"
         setAudienceForFeatureTest(featureKey: featureKey, audienceId: audienceId)
-        
-        let condition = "{\"match\":\"gt\",\"value\":18,\"name\":\"age\",\"type\":\"invalid\"}"
+
+        let condition = "{\"match\":\"gt\",\"name\":\"age\",\"type\":\"invalid\",\"value\":18}"
         user.setAttribute(key: "age", value: 25)
         
         var decision = user.decide(key: featureKey)
@@ -167,8 +167,8 @@ extension OptimizelyUserContextTests_Decide_Reasons {
         let featureKey = "feature_1"
         let audienceId = "invalid_match"
         setAudienceForFeatureTest(featureKey: featureKey, audienceId: audienceId)
-        
-        let condition = "{\"match\":\"invalid\",\"value\":18,\"name\":\"age\",\"type\":\"custom_attribute\"}"
+
+        let condition = "{\"match\":\"invalid\",\"name\":\"age\",\"type\":\"custom_attribute\",\"value\":18}"
         user.setAttribute(key: "age", value: 25)
         
         var decision = user.decide(key: featureKey)
@@ -181,8 +181,8 @@ extension OptimizelyUserContextTests_Decide_Reasons {
         let featureKey = "feature_1"
         let audienceId = "nil_value"
         setAudienceForFeatureTest(featureKey: featureKey, audienceId: audienceId)
-        
-        let condition = "{\"name\":\"age\",\"type\":\"custom_attribute\",\"match\":\"gt\"}"
+
+        let condition = "{\"match\":\"gt\",\"name\":\"age\",\"type\":\"custom_attribute\"}"
         user.setAttribute(key: "age", value: 25)
         
         var decision = user.decide(key: featureKey)
@@ -195,8 +195,8 @@ extension OptimizelyUserContextTests_Decide_Reasons {
         let featureKey = "feature_1"
         let audienceId = "invalid_name"
         setAudienceForFeatureTest(featureKey: featureKey, audienceId: audienceId)
-        
-        let condition = "{\"type\":\"custom_attribute\",\"match\":\"gt\",\"value\":18}"
+
+        let condition = "{\"match\":\"gt\",\"type\":\"custom_attribute\",\"value\":18}"
         user.setAttribute(key: "age", value: 25)
         
         var decision = user.decide(key: featureKey)
@@ -209,8 +209,8 @@ extension OptimizelyUserContextTests_Decide_Reasons {
         let featureKey = "feature_1"
         let audienceId = "age_18"
         setAudienceForFeatureTest(featureKey: featureKey, audienceId: audienceId)
-        
-        let condition = "{\"match\":\"gt\",\"value\":18,\"name\":\"age\",\"type\":\"custom_attribute\"}"
+
+        let condition = "{\"match\":\"gt\",\"name\":\"age\",\"type\":\"custom_attribute\",\"value\":18}"
         
         var decision = user.decide(key: featureKey)
         XCTAssert(decision.reasons.isEmpty)

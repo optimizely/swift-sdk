@@ -48,7 +48,7 @@ class OdpConfig {
             // disable future event queueing if datafile has no ODP integrations.
             self.odpServiceIntegrated = .notIntegrated
         }
-
+        
         if self.apiKey == apiKey, self.apiHost == apiHost, self.segmentsToCheck == segmentsToCheck {
             return false
         } else {

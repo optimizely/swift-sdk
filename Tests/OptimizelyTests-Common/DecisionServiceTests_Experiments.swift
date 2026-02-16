@@ -469,7 +469,7 @@ extension DecisionServiceTests_Experiments {
 extension DecisionServiceTests_Experiments {
     
     func testDoesMeetAudienceConditionsWithInvalidType() {
-        MockLogger.expectedLog = OptimizelyError.userAttributeInvalidType("{\"match\":\"gt\",\"value\":17,\"name\":\"age\",\"type\":\"\"}").localizedDescription
+        MockLogger.expectedLog = OptimizelyError.userAttributeInvalidType("{\"match\":\"gt\",\"name\":\"age\",\"type\":\"\",\"value\":17}").localizedDescription
         self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
         
         experiment = try! OTUtils.model(from: sampleExperimentData)
@@ -485,7 +485,7 @@ extension DecisionServiceTests_Experiments {
     }
     
     func testDoesMeetAudienceConditionsWithInvalidMatchType() {
-        MockLogger.expectedLog = OptimizelyError.userAttributeInvalidMatch("{\"match\":\"\",\"value\":17,\"name\":\"age\",\"type\":\"custom_attribute\"}").localizedDescription
+        MockLogger.expectedLog = OptimizelyError.userAttributeInvalidMatch("{\"match\":\"\",\"name\":\"age\",\"type\":\"custom_attribute\",\"value\":17}").localizedDescription
         self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
         
         experiment = try! OTUtils.model(from: sampleExperimentData)
@@ -501,7 +501,7 @@ extension DecisionServiceTests_Experiments {
     }
     
     func testDoesMeetAudienceConditionsWithInvalidName() {
-        MockLogger.expectedLog = OptimizelyError.userAttributeInvalidName("{\"type\":\"custom_attribute\",\"match\":\"gt\",\"value\":17}").localizedDescription
+        MockLogger.expectedLog = OptimizelyError.userAttributeInvalidName("{\"match\":\"gt\",\"type\":\"custom_attribute\",\"value\":17}").localizedDescription
         self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
         
         experiment = try! OTUtils.model(from: sampleExperimentData)
@@ -517,7 +517,7 @@ extension DecisionServiceTests_Experiments {
     }
     
     func testDoesMeetAudienceConditionsWithMissingAttributeValue() {
-        MockLogger.expectedLog = OptimizelyError.missingAttributeValue("{\"match\":\"gt\",\"value\":17,\"name\":\"age\",\"type\":\"custom_attribute\"}", "age").localizedDescription
+        MockLogger.expectedLog = OptimizelyError.missingAttributeValue("{\"match\":\"gt\",\"name\":\"age\",\"type\":\"custom_attribute\",\"value\":17}", "age").localizedDescription
         self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
         
         experiment = try! OTUtils.model(from: sampleExperimentData)
@@ -533,7 +533,7 @@ extension DecisionServiceTests_Experiments {
     }
     
     func testDoesMeetAudienceConditionsWithNilUserAttributeValue() {
-        MockLogger.expectedLog = OptimizelyError.userAttributeNilValue("{\"name\":\"age\",\"type\":\"custom_attribute\",\"match\":\"gt\"}").localizedDescription
+        MockLogger.expectedLog = OptimizelyError.userAttributeNilValue("{\"match\":\"gt\",\"name\":\"age\",\"type\":\"custom_attribute\"}").localizedDescription
         self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
         
         experiment = try! OTUtils.model(from: sampleExperimentData)
@@ -549,7 +549,7 @@ extension DecisionServiceTests_Experiments {
     }
     
     func testDoesMeetAudienceConditionsWithNilAttributeValue() {
-        MockLogger.expectedLog = OptimizelyError.nilAttributeValue("{\"match\":\"gt\",\"value\":17,\"name\":\"age\",\"type\":\"custom_attribute\"}", "age").localizedDescription
+        MockLogger.expectedLog = OptimizelyError.nilAttributeValue("{\"match\":\"gt\",\"name\":\"age\",\"type\":\"custom_attribute\",\"value\":17}", "age").localizedDescription
         self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
         
         experiment = try! OTUtils.model(from: sampleExperimentData)
@@ -565,7 +565,7 @@ extension DecisionServiceTests_Experiments {
     }
     
     func testDoesMeetAudienceConditionsWithExactMatchAndInvalidValue() {
-        MockLogger.expectedLog = OptimizelyError.evaluateAttributeInvalidCondition("{\"match\":\"exact\",\"value\":{\"invalid\":{}},\"name\":\"age\",\"type\":\"custom_attribute\"}").localizedDescription
+        MockLogger.expectedLog = OptimizelyError.evaluateAttributeInvalidCondition("{\"match\":\"exact\",\"name\":\"age\",\"type\":\"custom_attribute\",\"value\":{\"invalid\":{}}}").localizedDescription
         self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
         
         experiment = try! OTUtils.model(from: sampleExperimentData)
@@ -579,7 +579,7 @@ extension DecisionServiceTests_Experiments {
     }
     
     func testDoesMeetAudienceConditionsWithExactMatchAndInvalidAttributeValue() {
-        MockLogger.expectedLog = OptimizelyError.evaluateAttributeInvalidType("{\"match\":\"exact\",\"value\":\"us\",\"name\":\"country\",\"type\":\"custom_attribute\"}",["invalid"],"country").localizedDescription
+        MockLogger.expectedLog = OptimizelyError.evaluateAttributeInvalidType("{\"match\":\"exact\",\"name\":\"country\",\"type\":\"custom_attribute\",\"value\":\"us\"}",["invalid"],"country").localizedDescription
         self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
         
         experiment = try! OTUtils.model(from: sampleExperimentData)
@@ -595,7 +595,7 @@ extension DecisionServiceTests_Experiments {
     }
     
     func testDoesMeetAudienceConditionsWithExactMatchAndInfiniteAttributeValue() {
-        MockLogger.expectedLog = OptimizelyError.evaluateAttributeValueOutOfRange("{\"match\":\"exact\",\"value\":17,\"name\":\"age\",\"type\":\"custom_attribute\"}","age").localizedDescription
+        MockLogger.expectedLog = OptimizelyError.evaluateAttributeValueOutOfRange("{\"match\":\"exact\",\"name\":\"age\",\"type\":\"custom_attribute\",\"value\":17}","age").localizedDescription
         self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
         
         experiment = try! OTUtils.model(from: sampleExperimentData)
@@ -611,7 +611,7 @@ extension DecisionServiceTests_Experiments {
     }
     
     func testDoesMeetAudienceConditionsWithGreaterMatchAndInvalidValue() {
-        MockLogger.expectedLog = OptimizelyError.evaluateAttributeInvalidCondition("{\"match\":\"gt\",\"value\":{\"invalid\":{}},\"name\":\"age\",\"type\":\"custom_attribute\"}").localizedDescription
+        MockLogger.expectedLog = OptimizelyError.evaluateAttributeInvalidCondition("{\"match\":\"gt\",\"name\":\"age\",\"type\":\"custom_attribute\",\"value\":{\"invalid\":{}}}").localizedDescription
         self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
         
         experiment = try! OTUtils.model(from: sampleExperimentData)
@@ -626,7 +626,7 @@ extension DecisionServiceTests_Experiments {
     }
     
     func testDoesMeetAudienceConditionsWithGreaterMatchAndInvalidAttributeValue() {
-        MockLogger.expectedLog = OptimizelyError.evaluateAttributeInvalidType("{\"match\":\"gt\",\"value\":17,\"name\":\"age\",\"type\":\"custom_attribute\"}", ["invalid"], "age").localizedDescription
+        MockLogger.expectedLog = OptimizelyError.evaluateAttributeInvalidType("{\"match\":\"gt\",\"name\":\"age\",\"type\":\"custom_attribute\",\"value\":17}", ["invalid"], "age").localizedDescription
         self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
         
         experiment = try! OTUtils.model(from: sampleExperimentData)
@@ -642,7 +642,7 @@ extension DecisionServiceTests_Experiments {
     }
     
     func testDoesMeetAudienceConditionsWithLessMatchAndInvalidValue() {
-        MockLogger.expectedLog = OptimizelyError.evaluateAttributeInvalidCondition("{\"match\":\"lt\",\"value\":{\"invalid\":{}},\"name\":\"age\",\"type\":\"custom_attribute\"}").localizedDescription
+        MockLogger.expectedLog = OptimizelyError.evaluateAttributeInvalidCondition("{\"match\":\"lt\",\"name\":\"age\",\"type\":\"custom_attribute\",\"value\":{\"invalid\":{}}}").localizedDescription
         self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
         
         experiment = try! OTUtils.model(from: sampleExperimentData)
@@ -657,7 +657,7 @@ extension DecisionServiceTests_Experiments {
     }
     
     func testDoesMeetAudienceConditionsWithLessMatchAndInvalidAttributeValue() {
-        MockLogger.expectedLog = OptimizelyError.evaluateAttributeInvalidType("{\"match\":\"lt\",\"value\":17,\"name\":\"age\",\"type\":\"custom_attribute\"}", ["invalid"], "age").localizedDescription
+        MockLogger.expectedLog = OptimizelyError.evaluateAttributeInvalidType("{\"match\":\"lt\",\"name\":\"age\",\"type\":\"custom_attribute\",\"value\":17}", ["invalid"], "age").localizedDescription
         self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
         
         experiment = try! OTUtils.model(from: sampleExperimentData)
@@ -673,7 +673,7 @@ extension DecisionServiceTests_Experiments {
     }
     
     func testDoesMeetAudienceConditionsWithSubstringMatchAndInvalidValue() {
-        MockLogger.expectedLog = OptimizelyError.evaluateAttributeInvalidCondition("{\"match\":\"substring\",\"value\":151,\"name\":\"age\",\"type\":\"custom_attribute\"}").localizedDescription
+        MockLogger.expectedLog = OptimizelyError.evaluateAttributeInvalidCondition("{\"match\":\"substring\",\"name\":\"age\",\"type\":\"custom_attribute\",\"value\":151}").localizedDescription
         self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
         
         experiment = try! OTUtils.model(from: sampleExperimentData)
@@ -689,7 +689,7 @@ extension DecisionServiceTests_Experiments {
     }
     
     func testDoesMeetAudienceConditionsWithSubstringMatchAndInvalidAttributeValue() {
-        MockLogger.expectedLog = OptimizelyError.evaluateAttributeInvalidType("{\"match\":\"substring\",\"value\":\"twelve\",\"name\":\"age\",\"type\":\"custom_attribute\"}", ["invalid"], "age").localizedDescription
+        MockLogger.expectedLog = OptimizelyError.evaluateAttributeInvalidType("{\"match\":\"substring\",\"name\":\"age\",\"type\":\"custom_attribute\",\"value\":\"twelve\"}", ["invalid"], "age").localizedDescription
         self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
         
         experiment = try! OTUtils.model(from: sampleExperimentData)
@@ -731,6 +731,38 @@ extension DecisionServiceTests_Experiments {
         let variation = decision.result?.variation
         XCTAssertNotNil(variation)
         XCTAssertEqual(variation?.key, kVariationKeyA)
+    }
+    
+    func testCMABVariationDoesnotTrackByProfileTracker() {
+        self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
+        var cmabExperiment: Experiment = try! OTUtils.model(from: sampleExperimentData)
+        cmabExperiment.cmab = try! OTUtils.model(from: ["trafficAllocation": 10000, "attributeIds": ["10389729780"]])
+        self.config.project.experiments = [cmabExperiment]
+        let mocCmabService = MockCmabService()
+        mocCmabService.variationId = "10389729780" // kVariationKeyA
+        let ups = DefaultUserProfileService()
+        self.decisionService = DefaultDecisionService(userProfileService: ups, cmabService: mocCmabService)
+        
+        let user = optimizely.createUserContext(
+            userId: kUserId,
+            attributes: kAttributesCountryMatch
+        )
+        
+        let tracker = UserProfileTracker(userId: "user_1234", userProfileService: ups, logger: self.decisionService.logger)
+        tracker.loadUserProfile()
+        
+        let decision = self.decisionService.getVariation(config: config,
+                                                         experiment: cmabExperiment,
+                                                         user: user,
+                                                         options: nil,
+                                                         isAsync: true,
+                                                         userProfileTracker: tracker)
+        
+        let variation = decision.result?.variation
+        XCTAssertNotNil(variation)
+        XCTAssertEqual(variation?.key, kVariationKeyA)
+        XCTAssertFalse(tracker.profileUpdated)
+        XCTAssertTrue(tracker.userProfile!.isEmpty)
     }
 
     func testGetVariationWithCMABZeroTrafficAllocation() {
@@ -834,6 +866,7 @@ extension DecisionServiceTests_Experiments {
         self.config.project.experiments = [cmabExperiment]
         let mocCmabService = MockCmabService()
         mocCmabService.variationId = "unknown_var_id"
+        mocCmabService.cmabUUID = "test_UUID_1234"
         
         self.decisionService = DefaultDecisionService(userProfileService: DefaultUserProfileService(), cmabService: mocCmabService)
         
@@ -843,7 +876,9 @@ extension DecisionServiceTests_Experiments {
         )
         
         let expectedReasons = DecisionReasons()
+        expectedReasons.addInfo(LogMessage.cmabFetchSuccess("unknown_var_id", "test_UUID_1234", _expKey: cmabExperiment.key))
         expectedReasons.addInfo(LogMessage.userNotBucketedIntoVariation(user.userId))
+        
         
         let decision = self.decisionService.getVariation(config: config,
                                                          experiment: cmabExperiment,
@@ -885,6 +920,7 @@ fileprivate struct MockError: Error {
 fileprivate class MockCmabService: DefaultCmabService {
     var error: Error?
     var variationId: String?
+    var cmabUUID: String?
     
     init() {
         super.init(cmabClient: DefaultCmabClient(), cmabCache: CmabCache(size: 10, timeoutInSecs: 10))
@@ -892,7 +928,7 @@ fileprivate class MockCmabService: DefaultCmabService {
     
     override func getDecision(config: ProjectConfig, userContext: OptimizelyUserContext, ruleId: String, options: [OptimizelyDecideOption]) -> Result<CmabDecision, any Error> {
         if let variationId = self.variationId {
-            let cmabUUID = UUID().uuidString
+            let cmabUUID = self.cmabUUID ?? UUID().uuidString
             return .success(CmabDecision(variationId: variationId, cmabUUID: cmabUUID))
         } else {
             return .failure(self.error ?? MockError())

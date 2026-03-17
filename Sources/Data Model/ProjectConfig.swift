@@ -135,7 +135,24 @@ class ProjectConfig {
             project.rollouts.forEach { map[$0.id] = $0 }
             return map
         }()
-        
+
+        // Feature Rollout injection: for each feature flag, inject the "everyone else"
+        // variation into any experiment with type == .featureRollout
+        injectFeatureRolloutVariations()
+
+        // Rebuild experiment maps after injection so lookup maps contain injected variations
+        self.experimentKeyMap = {
+            var map = [String: Experiment]()
+            allExperiments.forEach { map[$0.key] = $0 }
+            return map
+        }()
+
+        self.experimentIdMap = {
+            var map = [String: Experiment]()
+            allExperiments.forEach { map[$0.id] = $0 }
+            return map
+        }()
+
         // all variations for each flag
         // - datafile does not contain a separate entity for this.
         // - we collect variations used in each rule (experiment rules and delivery rules)
@@ -177,6 +194,49 @@ class ProjectConfig {
         return rules
     }
 
+}
+
+// MARK: - Feature Rollout Injection
+
+extension ProjectConfig {
+    /// Injects the "everyone else" variation from a flag's rollout into any
+    /// experiment with type == .featureRollout. After injection the existing
+    /// decision logic evaluates feature rollouts without modification.
+    func injectFeatureRolloutVariations() {
+        for flag in project.featureFlags {
+            guard let everyoneElseVariation = getEveryoneElseVariation(for: flag) else {
+                continue
+            }
+
+            for experimentId in flag.experimentIds {
+                guard let index = allExperiments.firstIndex(where: { $0.id == experimentId }) else {
+                    continue
+                }
+
+                guard allExperiments[index].isFeatureRollout else {
+                    continue
+                }
+
+                allExperiments[index].variations.append(everyoneElseVariation)
+                allExperiments[index].trafficAllocation.append(
+                    TrafficAllocation(entityId: everyoneElseVariation.id, endOfRange: 10000)
+                )
+            }
+        }
+    }
+
+    /// Returns the first variation of the last experiment (the "everyone else"
+    /// rule) in the rollout associated with the given feature flag. Returns nil
+    /// if the rollout cannot be resolved or has no variations.
+    func getEveryoneElseVariation(for flag: FeatureFlag) -> Variation? {
+        guard !flag.rolloutId.isEmpty,
+              let rollout = rolloutIdMap[flag.rolloutId],
+              let everyoneElseRule = rollout.experiments.last,
+              let variation = everyoneElseRule.variations.first else {
+            return nil
+        }
+        return variation
+    }
 }
 
 // MARK: - Persistent Data

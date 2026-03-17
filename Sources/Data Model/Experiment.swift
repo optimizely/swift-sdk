@@ -17,6 +17,15 @@
 import Foundation
 
 struct Experiment: Codable, ExperimentCore {
+    /// Valid experiment type values from the datafile.
+    enum ExperimentType: String, Codable {
+        case ab = "ab"
+        case mab = "mab"
+        case cmab = "cmab"
+        case targetedDelivery = "td"
+        case featureRollout = "fr"
+    }
+
     enum Status: String, Codable {
         case running = "Running"
         case launched = "Launched"
@@ -24,7 +33,7 @@ struct Experiment: Codable, ExperimentCore {
         case notStarted = "Not started"
         case archived = "Archived"
     }
-    
+
     var id: String
     var key: String
     var status: Status
@@ -36,9 +45,10 @@ struct Experiment: Codable, ExperimentCore {
     // datafile spec defines this as [String: Any]. Supposed to be [ExperimentKey: VariationKey]
     var forcedVariations: [String: String]
     var cmab: Cmab?
-    
+    var type: ExperimentType?
+
     enum CodingKeys: String, CodingKey {
-        case id, key, status, layerId, variations, trafficAllocation, audienceIds, audienceConditions, forcedVariations, cmab
+        case id, key, status, layerId, variations, trafficAllocation, audienceIds, audienceConditions, forcedVariations, cmab, type
     }
 
     // MARK: - OptimizelyConfig
@@ -59,7 +69,8 @@ extension Experiment: Equatable {
             lhs.audienceIds == rhs.audienceIds &&
             lhs.audienceConditions == rhs.audienceConditions &&
             lhs.forcedVariations == rhs.forcedVariations &&
-            lhs.cmab == rhs.cmab
+            lhs.cmab == rhs.cmab &&
+            lhs.type == rhs.type
     }
 }
 
@@ -73,5 +84,9 @@ extension Experiment {
     
     var isCmab: Bool {
         return cmab != nil
+    }
+
+    var isFeatureRollout: Bool {
+        return type == .featureRollout
     }
 }

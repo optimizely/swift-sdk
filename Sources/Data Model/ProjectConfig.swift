@@ -71,6 +71,10 @@ class ProjectConfig {
         
         self.allExperiments = project.experiments + project.groups.map { $0.experiments }.flatMap { $0 }
         
+        // Feature Rollout injection: for each feature flag, inject the "everyone else"
+        // variation into any experiment with type == .featureRollout
+        injectFeatureRolloutVariations()
+        
         holdoutConfig.allHoldouts = project.holdouts
         
         self.experimentKeyMap = {
@@ -133,23 +137,6 @@ class ProjectConfig {
         self.rolloutIdMap = {
             var map = [String: Rollout]()
             project.rollouts.forEach { map[$0.id] = $0 }
-            return map
-        }()
-
-        // Feature Rollout injection: for each feature flag, inject the "everyone else"
-        // variation into any experiment with type == .featureRollout
-        injectFeatureRolloutVariations()
-
-        // Rebuild experiment maps after injection so lookup maps contain injected variations
-        self.experimentKeyMap = {
-            var map = [String: Experiment]()
-            allExperiments.forEach { map[$0.key] = $0 }
-            return map
-        }()
-
-        self.experimentIdMap = {
-            var map = [String: Experiment]()
-            allExperiments.forEach { map[$0.id] = $0 }
             return map
         }()
 

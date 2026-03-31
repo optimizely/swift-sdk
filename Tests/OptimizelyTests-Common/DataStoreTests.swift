@@ -182,7 +182,7 @@ class DataStoreTests: XCTestCase {
         
         var url = try XCTUnwrap(FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first)
             .appendingPathComponent("testFileStore", isDirectory: false)
-        XCTAssertTrue(FileManager.default.fileExists(atPath: url.path()))
+        XCTAssertTrue(FileManager.default.fileExists(atPath: url.path))
     }
 
     

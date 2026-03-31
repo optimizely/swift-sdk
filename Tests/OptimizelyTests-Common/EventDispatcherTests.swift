@@ -89,7 +89,7 @@ class EventDispatcherTests: XCTestCase {
     }
 
     func testEventDispatcherFile() {
-        eventDispatcher = DefaultEventDispatcher( backingStore: .file)
+        eventDispatcher = DefaultEventDispatcher( backingStore: .file(directory: nil))
         let pEventD: OPTEventDispatcher = eventDispatcher!
         eventDispatcher?.timerInterval = 1
         let wait = {() in

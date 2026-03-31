@@ -174,7 +174,7 @@ class DataStoreTests: XCTestCase {
     func testFileStoreCustomDirectory() throws {
         createDirectoryIfNeeded(directory: .applicationSupportDirectory)
         
-        let datastore = DataStoreFile<[String]>(storeName: "testFileStore")
+        let datastore = DataStoreFile<[String]>(storeName: "testFileStore", directory: .applicationSupportDirectory)
         
         datastore.saveItem(forKey: "testString", value: ["value"])
         let vj = datastore.getItem(forKey: "testString") as! [String]

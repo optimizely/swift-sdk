@@ -143,9 +143,33 @@ extension ExperimentTests {
     func testDecodeFailWithMissingForcedVariations() {
         var data: [String: Any] = ExperimentTests.sampleData
         data["forcedVariations"] = nil
-        
+
         let model: Experiment? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
+    }
+
+    func testDecodeSuccessWithUnknownType() {
+        var data: [String: Any] = ExperimentTests.sampleData
+        data["type"] = "new_unknown_type"
+
+        let model: Experiment = try! OTUtils.model(from: data)
+        XCTAssertEqual(model.type, "new_unknown_type")
+        XCTAssertEqual(model.id, "11111")
+        XCTAssertEqual(model.key, "background")
+    }
+
+    func testDecodeSuccessWithKnownType() {
+        var data: [String: Any] = ExperimentTests.sampleData
+        data["type"] = "fr"
+
+        let model: Experiment = try! OTUtils.model(from: data)
+        XCTAssertEqual(model.type, "fr")
+    }
+
+    func testDecodeSuccessWithNilType() {
+        let data: [String: Any] = ExperimentTests.sampleData
+        let model: Experiment = try! OTUtils.model(from: data)
+        XCTAssertNil(model.type)
     }
 
 }

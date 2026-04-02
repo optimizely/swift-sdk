@@ -36,9 +36,10 @@ struct Experiment: Codable, ExperimentCore {
     // datafile spec defines this as [String: Any]. Supposed to be [ExperimentKey: VariationKey]
     var forcedVariations: [String: String]
     var cmab: Cmab?
-    
+    var type: String?
+
     enum CodingKeys: String, CodingKey {
-        case id, key, status, layerId, variations, trafficAllocation, audienceIds, audienceConditions, forcedVariations, cmab
+        case id, key, status, layerId, variations, trafficAllocation, audienceIds, audienceConditions, forcedVariations, cmab, type
     }
 
     // MARK: - OptimizelyConfig
@@ -59,7 +60,8 @@ extension Experiment: Equatable {
             lhs.audienceIds == rhs.audienceIds &&
             lhs.audienceConditions == rhs.audienceConditions &&
             lhs.forcedVariations == rhs.forcedVariations &&
-            lhs.cmab == rhs.cmab
+            lhs.cmab == rhs.cmab &&
+            lhs.type == rhs.type
     }
 }
 

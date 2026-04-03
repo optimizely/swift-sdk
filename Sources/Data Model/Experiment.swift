@@ -51,6 +51,22 @@ struct Experiment: Codable, ExperimentCore {
         case id, key, status, layerId, variations, trafficAllocation, audienceIds, audienceConditions, forcedVariations, cmab, type
     }
 
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        key = try container.decode(String.self, forKey: .key)
+        status = try container.decode(Status.self, forKey: .status)
+        layerId = try container.decode(String.self, forKey: .layerId)
+        variations = try container.decode([Variation].self, forKey: .variations)
+        trafficAllocation = try container.decode([TrafficAllocation].self, forKey: .trafficAllocation)
+        audienceIds = try container.decode([String].self, forKey: .audienceIds)
+        audienceConditions = try container.decodeIfPresent(ConditionHolder.self, forKey: .audienceConditions)
+        forcedVariations = try container.decode([String: String].self, forKey: .forcedVariations)
+        cmab = try container.decodeIfPresent(Cmab.self, forKey: .cmab)
+        // Gracefully handle unknown experiment types by dropping to nil
+        type = try? container.decodeIfPresent(ExperimentType.self, forKey: .type)
+    }
+
     // MARK: - OptimizelyConfig
     
     var variationsMap: [String: OptimizelyVariation] = [:]

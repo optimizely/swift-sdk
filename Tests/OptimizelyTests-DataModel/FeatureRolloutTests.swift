@@ -266,6 +266,16 @@ class FeatureRolloutTests: XCTestCase {
         }
     }
 
+    func testUnknownExperimentTypeDecodesAsNil() {
+        var data = makeExperiment(id: "exp_unknown", key: "exp_key_unknown")
+        data["type"] = "new_unknown_type"
+        let model: Experiment = try! OTUtils.model(from: data)
+
+        XCTAssertNil(model.type, "Unknown type should be gracefully dropped to nil")
+        XCTAssertFalse(model.isFeatureRollout,
+                       "Unknown type should not be treated as feature rollout")
+    }
+
     func testExperimentIsFeatureRolloutProperty() {
         var frData = makeExperiment(id: "fr_1", key: "fr_key_1")
         frData["type"] = "fr"

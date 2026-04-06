@@ -17,6 +17,15 @@
 import Foundation
 
 struct Experiment: Codable, ExperimentCore {
+    /// Valid experiment type values from the datafile.
+    enum ExperimentType: String, Codable {
+        case ab = "ab"
+        case mab = "mab"
+        case cmab = "cmab"
+        case targetedDelivery = "td"
+        case featureRollout = "fr"
+    }
+
     enum Status: String, Codable {
         case running = "Running"
         case launched = "Launched"
@@ -24,7 +33,7 @@ struct Experiment: Codable, ExperimentCore {
         case notStarted = "Not started"
         case archived = "Archived"
     }
-    
+
     var id: String
     var key: String
     var status: Status
@@ -36,9 +45,26 @@ struct Experiment: Codable, ExperimentCore {
     // datafile spec defines this as [String: Any]. Supposed to be [ExperimentKey: VariationKey]
     var forcedVariations: [String: String]
     var cmab: Cmab?
-    
+    var type: ExperimentType?
+
     enum CodingKeys: String, CodingKey {
-        case id, key, status, layerId, variations, trafficAllocation, audienceIds, audienceConditions, forcedVariations, cmab
+        case id, key, status, layerId, variations, trafficAllocation, audienceIds, audienceConditions, forcedVariations, cmab, type
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        key = try container.decode(String.self, forKey: .key)
+        status = try container.decode(Status.self, forKey: .status)
+        layerId = try container.decode(String.self, forKey: .layerId)
+        variations = try container.decode([Variation].self, forKey: .variations)
+        trafficAllocation = try container.decode([TrafficAllocation].self, forKey: .trafficAllocation)
+        audienceIds = try container.decode([String].self, forKey: .audienceIds)
+        audienceConditions = try container.decodeIfPresent(ConditionHolder.self, forKey: .audienceConditions)
+        forcedVariations = try container.decode([String: String].self, forKey: .forcedVariations)
+        cmab = try container.decodeIfPresent(Cmab.self, forKey: .cmab)
+        // Gracefully handle unknown experiment types by dropping to nil
+        type = try? container.decodeIfPresent(ExperimentType.self, forKey: .type)
     }
 
     // MARK: - OptimizelyConfig
@@ -59,7 +85,8 @@ extension Experiment: Equatable {
             lhs.audienceIds == rhs.audienceIds &&
             lhs.audienceConditions == rhs.audienceConditions &&
             lhs.forcedVariations == rhs.forcedVariations &&
-            lhs.cmab == rhs.cmab
+            lhs.cmab == rhs.cmab &&
+            lhs.type == rhs.type
     }
 }
 
@@ -73,5 +100,9 @@ extension Experiment {
     
     var isCmab: Bool {
         return cmab != nil
+    }
+
+    var isFeatureRollout: Bool {
+        return type == .featureRollout
     }
 }

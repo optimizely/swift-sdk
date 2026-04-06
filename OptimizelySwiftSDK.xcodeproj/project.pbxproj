@@ -2053,6 +2053,8 @@
 		98261A472EDDC35900F7230A /* OptimizelyClientTests_Cmab_Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98261A462EDDC35900F7230A /* OptimizelyClientTests_Cmab_Config.swift */; };
 		982C071F2D8C82AE0068B1FF /* HoldoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 982C071E2D8C82AE0068B1FF /* HoldoutTests.swift */; };
 		982C07202D8C82AE0068B1FF /* HoldoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 982C071E2D8C82AE0068B1FF /* HoldoutTests.swift */; };
+		983F81842F801E7500CDBC8D /* FeatureRolloutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 983F81832F801E7500CDBC8D /* FeatureRolloutTests.swift */; };
+		983F81852F801E7500CDBC8D /* FeatureRolloutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 983F81832F801E7500CDBC8D /* FeatureRolloutTests.swift */; };
 		9841590F2E13013E0042C01E /* OptimizelyUserContextTests_Decide_Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9841590E2E13013E0042C01E /* OptimizelyUserContextTests_Decide_Async.swift */; };
 		984159102E13013E0042C01E /* OptimizelyUserContextTests_Decide_Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9841590E2E13013E0042C01E /* OptimizelyUserContextTests_Decide_Async.swift */; };
 		984159122E141B640042C01E /* OptimizelyUserContextTests_Decide_CMAB.swift in Sources */ = {isa = PBXBuildFile; fileRef = 984159112E141B640042C01E /* OptimizelyUserContextTests_Decide_CMAB.swift */; };
@@ -2620,6 +2622,7 @@
 		98261A172ED89A8500F7230A /* CmabConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CmabConfig.swift; sourceTree = "<group>"; };
 		98261A462EDDC35900F7230A /* OptimizelyClientTests_Cmab_Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelyClientTests_Cmab_Config.swift; sourceTree = "<group>"; };
 		982C071E2D8C82AE0068B1FF /* HoldoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoldoutTests.swift; sourceTree = "<group>"; };
+		983F81832F801E7500CDBC8D /* FeatureRolloutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureRolloutTests.swift; sourceTree = "<group>"; };
 		9841590E2E13013E0042C01E /* OptimizelyUserContextTests_Decide_Async.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelyUserContextTests_Decide_Async.swift; sourceTree = "<group>"; };
 		984159112E141B640042C01E /* OptimizelyUserContextTests_Decide_CMAB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelyUserContextTests_Decide_CMAB.swift; sourceTree = "<group>"; };
 		984159362E16A7C50042C01E /* BucketTests_BucketToEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BucketTests_BucketToEntity.swift; sourceTree = "<group>"; };
@@ -3218,6 +3221,7 @@
 				6E75199E22C5211100B2B157 /* FeatureVariableTests.swift */,
 				6E75199F22C5211100B2B157 /* AttributeTests.swift */,
 				6E7519A022C5211100B2B157 /* VariableTests.swift */,
+				983F81832F801E7500CDBC8D /* FeatureRolloutTests.swift */,
 				6E7519A122C5211100B2B157 /* FeatureFlagTests.swift */,
 				6E7519A222C5211100B2B157 /* AudienceTests.swift */,
 				84640880281320F000CCF97D /* IntegrationTests.swift */,
@@ -5340,6 +5344,7 @@
 				6E7518CE22C520D400B2B157 /* Audience.swift in Sources */,
 				6E75189222C520D400B2B157 /* Project.swift in Sources */,
 				6E7516F822C520D400B2B157 /* OptimizelyError.swift in Sources */,
+				983F81842F801E7500CDBC8D /* FeatureRolloutTests.swift in Sources */,
 				980A40742F112EFF00F25D38 /* RetryStrategy.swift in Sources */,
 				84B4D75E27E2A7550078CDA4 /* OptimizelySegmentOption.swift in Sources */,
 				848617E82863E21200B7F41B /* OdpSegmentApiManager.swift in Sources */,
@@ -5561,6 +5566,7 @@
 				6E75193522C520D500B2B157 /* OPTDataStore.swift in Sources */,
 				6EC6DD4824ABF89B0017D296 /* OptimizelyUserContext.swift in Sources */,
 				6E75182122C520D400B2B157 /* BatchEventBuilder.swift in Sources */,
+				983F81852F801E7500CDBC8D /* FeatureRolloutTests.swift in Sources */,
 				6E86CEA924FDC847005DAFED /* OptimizelyUserContext+ObjC.swift in Sources */,
 				6E9B118322C5488100C22D81 /* UserAttributeTests_Evaluate.swift in Sources */,
 				98F28A1D2E01940500A86546 /* Cmab.swift in Sources */,

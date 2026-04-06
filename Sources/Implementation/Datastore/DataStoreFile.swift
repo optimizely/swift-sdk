@@ -30,21 +30,27 @@ open class DataStoreFile<T>: OPTDataStore where T: Codable {
         return threadSafeLogger.logger
     }
 
-    public init(storeName: String, async: Bool = true) {
-        self.async = async
-        dataStoreName = storeName
-        lock = DispatchQueue(label: storeName)
+    public convenience init(storeName: String, async: Bool = true) {
         #if os(tvOS) || os(macOS)
         let directory = FileManager.SearchPathDirectory.cachesDirectory
         #else
         let directory = FileManager.SearchPathDirectory.documentDirectory
         #endif
+        
+        self.init(storeName: storeName, directory: directory, async: async)
+    }
+    
+    public init(storeName: String, directory: FileManager.SearchPathDirectory, async: Bool = true) {
+        self.async = async
+        
+        dataStoreName = storeName
+        lock = DispatchQueue(label: storeName)
+        
         if let url = FileManager.default.urls(for: directory, in: .userDomainMask).first {
             self.url = url.appendingPathComponent(storeName, isDirectory: false)
         } else {
             self.url = URL(fileURLWithPath: storeName)
         }
-        
     }
     
     func isArray() -> Bool {

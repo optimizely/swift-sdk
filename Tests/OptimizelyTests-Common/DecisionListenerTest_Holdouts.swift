@@ -55,9 +55,7 @@ class DecisionListenerTests_Holdouts: XCTestCase {
                     "id": "id_holdout_variation",
                     "key": "key_holdout_variation"
                 ]
-            ],
-            "includedFlags": [],
-            "excludedFlags": []
+            ]
         ]
     }
     
@@ -118,7 +116,8 @@ class DecisionListenerTests_Holdouts: XCTestCase {
     
     func testDecisionListenerDecideWithIncludedFlags() {
         var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
-        holdout.includedFlags = [kFeatureId]
+        // Include all rules in feature_1: experiment + delivery rules
+        holdout.includedRules = ["10390977673", "3332020515", "3332020494", "18322080788"]
         optimizely.config!.project.holdouts = [holdout]
         
         let exp = expectation(description: "x")
@@ -140,7 +139,7 @@ class DecisionListenerTests_Holdouts: XCTestCase {
     
     func testDecisionListenerDecideWithExcludedFlags() {
         var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
-        holdout.excludedFlags = [kFeatureId]
+        holdout.includedRules = []  // Empty array = local holdout targeting no rules (excludes feature_1)
         optimizely.config!.project.holdouts = [holdout]
         
         let exp = expectation(description: "x")
@@ -162,13 +161,14 @@ class DecisionListenerTests_Holdouts: XCTestCase {
     
     func testDecisionListenerDecideWithMultipleHoldouts() {
         var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
-        holdout.excludedFlags = [kFeatureId]
-        
+        holdout.includedRules = []  // Empty array = local holdout targeting no rules (excludes feature_1)
+
         var holdout_2 = holdout
         holdout_2.key = "holdout_key_2"
         holdout_2.id = "holdout_id_2"
-        holdout_2.includedFlags = [kFeatureId]
-        
+        // Include all rules in feature_1: experiment + delivery rules
+        holdout_2.includedRules = ["10390977673", "3332020515", "3332020494", "18322080788"]
+
         optimizely.config!.project.holdouts = [holdout, holdout_2]
         
         let exp = expectation(description: "x")

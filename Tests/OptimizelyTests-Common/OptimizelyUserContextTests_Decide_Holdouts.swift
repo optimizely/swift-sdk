@@ -39,9 +39,7 @@ class OptimizelyUserContextTests_Decide_Holdouts: XCTestCase {
                     "id": "id_holdout_variation",
                     "key": "key_holdout_variation"
                 ]
-            ],
-            "includedFlags": [],
-            "excludedFlags": []
+            ]
         ]
     }
     
@@ -161,9 +159,9 @@ class OptimizelyUserContextTests_Decide_Holdouts: XCTestCase {
     func testDecide_defaultDecideOption() {
         let featureKey = "feature_2"
         let feature_id = "4482920078"
-        
+
         var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
-        holdout.includedFlags = [feature_id]
+        holdout.includedRules = ["10420810910"]  // Experiment rule in feature_2
         optimizely.config!.project.holdouts = [holdout]
         
         let mockDecisionService = DefaultDecisionService(userProfileService: OTUtils.createClearUserProfileService(), bucketer: MockBucketer(mockBucketValue: 400))
@@ -200,7 +198,8 @@ class OptimizelyUserContextTests_Decide_Holdouts: XCTestCase {
         let feature1_Id = "4482920077"
         
         var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
-        holdout.includedFlags = [feature1_Id]
+        // Include all rules in feature_1: experiment + delivery rules
+        holdout.includedRules = ["10390977673", "3332020515", "3332020494", "18322080788"]
         optimizely.config!.project.holdouts = [holdout]
         
         let mockDecisionService = DefaultDecisionService(userProfileService: OTUtils.createClearUserProfileService(), bucketer: MockBucketer(mockBucketValue: 400))
@@ -226,7 +225,8 @@ class OptimizelyUserContextTests_Decide_Holdouts: XCTestCase {
         let featureKey2 = "feature_2"
         
         var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
-        holdout.includedFlags = [feature1_Id]
+        // Include all rules in feature_1: experiment + delivery rules
+        holdout.includedRules = ["10390977673", "3332020515", "3332020494", "18322080788"]
         optimizely.config!.project.holdouts = [holdout]
         
         let mockDecisionService = DefaultDecisionService(userProfileService: OTUtils.createClearUserProfileService(), bucketer: MockBucketer(mockBucketValue: 400))
@@ -311,7 +311,7 @@ extension OptimizelyUserContextTests_Decide_Holdouts {
         let featureKey3 = "feature_3"
         
         var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
-        holdout.includedFlags = [feature2_id]
+        holdout.includedRules = ["10420810910"]  // Experiment rule in feature_2
         optimizely.config!.project.holdouts = [holdout]
         
         let mockDecisionService = DefaultDecisionService(userProfileService: OTUtils.createClearUserProfileService(), bucketer: MockBucketer(mockBucketValue: 400))
@@ -356,7 +356,7 @@ extension OptimizelyUserContextTests_Decide_Holdouts {
         let featureKey3 = "feature_3"
         
         var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
-        holdout.excludedFlags = [feature2_id]
+        holdout.includedRules = []  // Empty array = local holdout targeting no rules (excludes feature_2)
         optimizely.config!.project.holdouts = [holdout]
         
         let mockDecisionService = DefaultDecisionService(userProfileService: OTUtils.createClearUserProfileService(), bucketer: MockBucketer(mockBucketValue: 400))
@@ -407,13 +407,13 @@ extension OptimizelyUserContextTests_Decide_Holdouts {
         includedHoldout.key = "holdout_key_included"
         includedHoldout.trafficAllocation[0].endOfRange = 2000
         /// Applicable to feature 2
-        includedHoldout.includedFlags = [feature2.id]
+        includedHoldout.includedRules = ["10420810910"]  // Experiment rule in feature_2
         
         var excludedHoldout = gHoldout
         excludedHoldout.id = "holdout_id_excluded"
         excludedHoldout.key = "holdout_key_excluded"
         /// Applicable to feature 3
-        excludedHoldout.excludedFlags = [feature1.id, feature2.id]
+        excludedHoldout.includedRules = []  // Empty array = local holdout targeting no rules (excludes all features)
         excludedHoldout.trafficAllocation[0].endOfRange = 2000
         
         optimizely.config!.project.holdouts = [gHoldout, includedHoldout, excludedHoldout]

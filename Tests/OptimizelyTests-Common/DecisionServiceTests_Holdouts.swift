@@ -122,8 +122,7 @@ class DecisionServiceTests_Holdouts: XCTestCase {
                     "key": "holdout_a"
                 ]
             ],
-            "includedFlags": ["flag_id_1234"],
-            "excludedFlags": []
+            "includedRules": ["country11"]  // Target the experiment rule in flag_id_1234
         ]
     }
     
@@ -142,12 +141,10 @@ class DecisionServiceTests_Holdouts: XCTestCase {
                     "id": "holdout_global_variation",
                     "key": "global_variation"
                 ]
-            ],
-            "includedFlags": [],
-            "excludedFlags": []
+            ]
         ]
     }
-    
+
     var sampleHoldoutIncluded: [String: Any] {
         return [
             "status": "Running",
@@ -164,11 +161,10 @@ class DecisionServiceTests_Holdouts: XCTestCase {
                     "key": "included_variation"
                 ]
             ],
-            "includedFlags": ["flag_id_1234"],
-            "excludedFlags": []
+            "includedRules": ["country11"]  // Target the experiment rule in flag_id_1234
         ]
     }
-    
+
     var sampleHoldoutExcluded: [String: Any] {
         return [
             "status": "Running",
@@ -185,8 +181,7 @@ class DecisionServiceTests_Holdouts: XCTestCase {
                     "key": "excluded_variation"
                 ]
             ],
-            "includedFlags": [],
-            "excludedFlags": ["flag_id_1234"]
+            "includedRules": []  // Empty array = local holdout targeting no rules (excludes flag_id_1234)
         ]
     }
     
@@ -476,8 +471,7 @@ extension DecisionServiceTests_Holdouts {
     func testGetVariationForFeatureExperiment_HoldoutExcludedFlag() {
         // Modify holdout to exclude the feature flag
         var modifiedHoldoutData = sampleHoldout
-        modifiedHoldoutData["includedFlags"] = []
-        modifiedHoldoutData["excludedFlags"] = ["flag_id_1234"]
+        modifiedHoldoutData["includedRules"] = []  // Empty array = local holdout targeting no rules (excludes flag_id_1234)
         let excludedHoldout = try! OTUtils.model(from: modifiedHoldoutData) as Holdout
         self.config.project.holdouts = [excludedHoldout]
         

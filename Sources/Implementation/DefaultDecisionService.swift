@@ -392,8 +392,8 @@ class DefaultDecisionService: OPTDecisionService {
                             isAsync: Bool,
                             options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<FeatureDecision> {
         let reasons = DecisionReasons(options: options)
-        
-        let holdouts = config.getHoldoutForFlag(id: featureFlag.id)
+
+        let holdouts = config.getGlobalHoldouts()
         for holdout in holdouts {
             let holdoutDecision = getVariationForHoldout(config: config,
                                                          flagKey: featureFlag.key,
@@ -637,7 +637,23 @@ class DefaultDecisionService: OPTDecisionService {
             let variationDecision = VariationDecision(variation: variation)
             return DecisionResponse(result: variationDecision, reasons: reasons)
         }
-        
+
+        // check local holdouts targeting this rule
+        let localHoldouts = config.getHoldoutsForRule(ruleId: rule.id)
+        for holdout in localHoldouts {
+            let holdoutDecision = getVariationForHoldout(config: config,
+                                                         flagKey: flagKey,
+                                                         holdout: holdout,
+                                                         user: user,
+                                                         options: options)
+            reasons.merge(holdoutDecision.reasons)
+            if let variation = holdoutDecision.result {
+                // User is in holdout — return holdout variation immediately, skip this rule
+                let variationDecision = VariationDecision(variation: variation)
+                return DecisionResponse(result: variationDecision, reasons: reasons)
+            }
+        }
+
         let decisionResponse = getVariation(config: config,
                                             experiment: rule,
                                             user: user,
@@ -678,7 +694,22 @@ class DefaultDecisionService: OPTDecisionService {
         if let variation = forcedDecisionResponse.result {
             return DecisionResponse(result: (variation, skipToEveryoneElse), reasons: reasons)
         }
-        
+
+        // check local holdouts targeting this delivery rule
+        let localHoldouts = config.getHoldoutsForRule(ruleId: rule.id)
+        for holdout in localHoldouts {
+            let holdoutDecision = getVariationForHoldout(config: config,
+                                                         flagKey: flagKey,
+                                                         holdout: holdout,
+                                                         user: user,
+                                                         options: options)
+            reasons.merge(holdoutDecision.reasons)
+            if let variation = holdoutDecision.result {
+                // User is in holdout — return holdout variation, skip this delivery rule
+                return DecisionResponse(result: (variation, skipToEveryoneElse), reasons: reasons)
+            }
+        }
+
         // regular decision
         
         let userId = user.userId

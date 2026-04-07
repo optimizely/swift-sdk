@@ -444,17 +444,22 @@ extension DecisionServiceTests_Holdouts {
         modifiedFeatureFlagData["experimentIds"] = []
         featureFlag = try! OTUtils.model(from: modifiedFeatureFlagData)
         self.config.project.featureFlags = [featureFlag]
-        
+
+        // Use global holdout since there are no valid experiments
+        let globalHoldout = try! OTUtils.model(from: sampleHoldoutGlobal) as Holdout
+        self.config.project.holdouts = [globalHoldout]
+        self.config.holdoutConfig.allHoldouts = [globalHoldout]
+
         let decision = mockDecisionService.getVariationForFeature(
             config: config,
             featureFlag: featureFlag,
             user: optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryMatch)
         ).result
-        
+
         // Should return holdout decision
         XCTAssertNotNil(decision, "Decision should not be nil")
-        XCTAssertEqual(decision?.experiment?.id, holdout.id, "Should return holdout experiment")
-        XCTAssertEqual(decision?.variation?.key, "holdout_a", "Should return holdout variation")
+        XCTAssertEqual(decision?.experiment?.id, globalHoldout.id, "Should return holdout experiment")
+        XCTAssertEqual(decision?.variation?.key, "global_variation", "Should return holdout variation")
         XCTAssertEqual(decision?.source, Constants.DecisionSource.holdout.rawValue, "Source should be holdout")
     }
     
@@ -464,17 +469,22 @@ extension DecisionServiceTests_Holdouts {
         modifiedFeatureFlagData["experimentIds"] = ["invalid_experiment_id"]
         featureFlag = try! OTUtils.model(from: modifiedFeatureFlagData)
         self.config.project.featureFlags = [featureFlag]
-        
+
+        // Use global holdout since there are no valid experiments
+        let globalHoldout = try! OTUtils.model(from: sampleHoldoutGlobal) as Holdout
+        self.config.project.holdouts = [globalHoldout]
+        self.config.holdoutConfig.allHoldouts = [globalHoldout]
+
         let decision = mockDecisionService.getVariationForFeature(
             config: config,
             featureFlag: featureFlag,
             user: optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryMatch)
         ).result
-        
+
         // Should return holdout decision
         XCTAssertNotNil(decision, "Decision should not be nil")
-        XCTAssertEqual(decision?.experiment?.id, holdout.id, "Should return holdout experiment")
-        XCTAssertEqual(decision?.variation?.key, "holdout_a", "Should return holdout variation")
+        XCTAssertEqual(decision?.experiment?.id, globalHoldout.id, "Should return holdout experiment")
+        XCTAssertEqual(decision?.variation?.key, "global_variation", "Should return holdout variation")
         XCTAssertEqual(decision?.source, Constants.DecisionSource.holdout.rawValue, "Source should be holdout")
     }
     

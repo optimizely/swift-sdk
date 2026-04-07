@@ -71,11 +71,12 @@ class DecisionListenerTests_Holdouts: XCTestCase {
         var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
         //  Audience "13389130056" requires "country" = "US"
         holdout.audienceIds = ["13389130056"]
-        
+
         let mockDecisionService = DefaultDecisionService(userProfileService: OTUtils.createClearUserProfileService(), bucketer: MockBucketer(mockBucketValue: 400))
         optimizely.decisionService = mockDecisionService
         optimizely.config!.project.holdouts = [holdout]
-        
+        optimizely.config!.holdoutConfig.allHoldouts = [holdout]
+
         self.notificationCenter = self.optimizely.notificationCenter!
     }
     

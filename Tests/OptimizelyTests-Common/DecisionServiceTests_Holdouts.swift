@@ -450,7 +450,11 @@ extension DecisionServiceTests_Holdouts {
         self.config.project.holdouts = [globalHoldout]
         self.config.holdoutConfig.allHoldouts = [globalHoldout]
 
-        let decision = mockDecisionService.getVariationForFeature(
+        // Use bucket value 400 which is within globalHoldout range (0-500)
+        let mockBucketer = MockBucketer(mockBucketValue: 400)
+        let testDecisionService = MockDecisionService(bucketer: mockBucketer)
+
+        let decision = testDecisionService.getVariationForFeature(
             config: config,
             featureFlag: featureFlag,
             user: optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryMatch)
@@ -475,7 +479,11 @@ extension DecisionServiceTests_Holdouts {
         self.config.project.holdouts = [globalHoldout]
         self.config.holdoutConfig.allHoldouts = [globalHoldout]
 
-        let decision = mockDecisionService.getVariationForFeature(
+        // Use bucket value 400 which is within globalHoldout range (0-500)
+        let mockBucketer = MockBucketer(mockBucketValue: 400)
+        let testDecisionService = MockDecisionService(bucketer: mockBucketer)
+
+        let decision = testDecisionService.getVariationForFeature(
             config: config,
             featureFlag: featureFlag,
             user: optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryMatch)

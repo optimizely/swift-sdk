@@ -170,8 +170,12 @@ class ProjectConfig {
         
     }
     
-    func getHoldoutForFlag(id: String) -> [Holdout] {
-        return holdoutConfig.getHoldoutForFlag(id: id)
+    func getGlobalHoldouts() -> [Holdout] {
+        return holdoutConfig.getGlobalHoldouts()
+    }
+
+    func getHoldoutsForRule(ruleId: String) -> [Holdout] {
+        return holdoutConfig.getHoldoutsForRule(ruleId: ruleId)
     }
         
     func getAllRulesForFlag(_ flag: FeatureFlag) -> [Experiment] {

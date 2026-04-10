@@ -24,90 +24,48 @@ struct HoldoutConfig {
     }
     private(set) var global: [Holdout] = []
     private(set) var holdoutIdMap: [String: Holdout] = [:]
-    private(set) var flagHoldoutsMap: [String: [Holdout]] = [:]
-    private(set) var includedHoldouts: [String: [Holdout]] = [:]
-    private(set) var excludedHoldouts: [String: [Holdout]] = [:]
+    private(set) var ruleHoldoutsMap: [String: [Holdout]] = [:]
     
     init(allholdouts: [Holdout] = []) {
         self.allHoldouts = allholdouts
         updateHoldoutMapping()
     }
     
-    /// Updates internal mappings of holdouts including the id map, global list, and per-flag inclusion/exclusion maps.
+    /// Updates internal mappings of holdouts including the id map, global list, and per-rule maps.
     mutating func updateHoldoutMapping() {
         holdoutIdMap = {
             var map = [String: Holdout]()
             allHoldouts.forEach { map[$0.id] = $0 }
             return map
         }()
-        
-        flagHoldoutsMap = [:]
+
         global = []
-        includedHoldouts = [:]
-        excludedHoldouts = [:]
-        
+        ruleHoldoutsMap = [:]
+
         for holdout in allHoldouts {
-            switch (holdout.includedFlags.isEmpty, holdout.excludedFlags.isEmpty) {
-                case (true, true):
-                    global.append(holdout)
-                    
-                case (false, _):
-                    holdout.includedFlags.forEach { flagId in
-                        if var existing = includedHoldouts[flagId] {
-                            existing.append(holdout)
-                            includedHoldouts[flagId] = existing
-                        } else {
-                            includedHoldouts[flagId] = [holdout]
-                        }
-                    }
-                    
-                case (true, false):
-                    global.append(holdout)
-                    
-                    holdout.excludedFlags.forEach { flagId in
-                        if var existing = excludedHoldouts[flagId] {
-                            existing.append(holdout)
-                            excludedHoldouts[flagId] = existing
-                        } else {
-                            excludedHoldouts[flagId] = [holdout]
-                        }
-                    }
+            if holdout.isGlobal {
+                // includedRules == nil → global holdout
+                global.append(holdout)
+            } else {
+                // includedRules == [ruleId, ...] → local holdout
+                for ruleId in holdout.includedRules! {
+                    ruleHoldoutsMap[ruleId, default: []].append(holdout)
+                }
             }
         }
     }
     
-    /// Returns the applicable holdouts for the given flag ID by combining global holdouts (excluding any specified) and included holdouts, in that order.
-    /// Caches the result for future calls.
-    /// - Parameter id: The flag identifier.
-    /// - Returns: An array of `Holdout` objects relevant to the given flag.
-    mutating func getHoldoutForFlag(id: String) -> [Holdout] {
-        guard !allHoldouts.isEmpty else { return [] }
-        
-        // Check cache and return persistent holdouts
-        if let holdouts = flagHoldoutsMap[id] {
-            return holdouts
-        }
-        
-        // Prioritize global holdouts first 
-        var activeHoldouts: [Holdout] = []
-        
-        let excluded = excludedHoldouts[id] ?? []
-        
-        if !excluded.isEmpty {
-            activeHoldouts = global.filter { holdout in
-                return !excluded.contains(holdout)
-            }
-        } else {
-            activeHoldouts = global
-        }
-        
-        let includedHoldouts = includedHoldouts[id] ?? []
-        
-        activeHoldouts += includedHoldouts
-        
-        flagHoldoutsMap[id] = activeHoldouts
-        
-        return flagHoldoutsMap[id] ?? []
+    /// Returns local holdouts targeting a specific rule.
+    /// - Parameter ruleId: The rule identifier.
+    /// - Returns: An array of `Holdout` objects targeting the given rule.
+    func getHoldoutsForRule(ruleId: String) -> [Holdout] {
+        return ruleHoldoutsMap[ruleId] ?? []
+    }
+
+    /// Returns all global holdouts.
+    /// - Returns: An array of global `Holdout` objects.
+    func getGlobalHoldouts() -> [Holdout] {
+        return global
     }
     
     /// Get a Holdout object for an Id.

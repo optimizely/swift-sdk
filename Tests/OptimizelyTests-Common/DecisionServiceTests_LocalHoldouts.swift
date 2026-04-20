@@ -396,7 +396,7 @@ class DecisionServiceTests_LocalHoldouts: XCTestCase {
 
         // Create inactive holdout
         var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
-        holdout.status = .paused  // Not running
+        holdout.status = .draft  // Not running
         holdout.includedRules = [experimentRuleId]
         config.project.holdouts = [holdout]
         config.holdoutConfig.allHoldouts = [holdout]
@@ -417,14 +417,10 @@ class DecisionServiceTests_LocalHoldouts: XCTestCase {
         // Test that holdout with empty includedRules array is NOT treated as global
         // Only includedRules == nil should be global
 
-        var holdout = Holdout(id: "test_holdout",
-                             key: "test",
-                             status: .running,
-                             variations: [],
-                             trafficAllocation: [],
-                             audienceIds: [],
-                             audienceConditions: nil,
-                             includedRules: [])  // Empty array, NOT nil
+        // Create holdout with empty array
+        var holdoutData = sampleHoldout
+        holdoutData["includedRules"] = []  // Empty array, NOT nil
+        var holdout = try! OTUtils.model(from: holdoutData) as Holdout
 
         // Empty array means local holdout with no rules targeted (effectively inactive)
         XCTAssertFalse(holdout.isGlobal, "Empty includedRules array should NOT be global")

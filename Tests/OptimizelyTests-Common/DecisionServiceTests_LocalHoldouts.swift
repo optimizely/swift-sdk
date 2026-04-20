@@ -89,14 +89,14 @@ class DecisionServiceTests_LocalHoldouts: XCTestCase {
         // 2. Global holdout match returns immediately
         // 3. No experiment or delivery rules are evaluated
 
-        XCTAssertTrue(true, "Test implementation requires proper datafile setup")
+        XCTFail("Test not implemented - requires proper datafile setup and assertion logic")
     }
 
     func testGlobalHoldout_MissAllowsRuleEvaluation() {
         // Test that when user misses global holdout bucket, rule evaluation continues
         // Expected: Global holdout checked, user not bucketed, experiment rule evaluated
 
-        XCTAssertTrue(true, "Test implementation requires proper datafile setup")
+        XCTFail("Test not implemented - requires proper datafile setup and assertion logic")
     }
 
     // MARK: - Local Holdouts - Experiment Rules
@@ -110,21 +110,21 @@ class DecisionServiceTests_LocalHoldouts: XCTestCase {
         // 2. Local holdout match returns immediately
         // 3. Normal experiment bucketing is skipped
 
-        XCTAssertTrue(true, "Test implementation requires proper datafile setup")
+        XCTFail("Test not implemented - requires proper datafile setup and assertion logic")
     }
 
     func testLocalHoldout_ExperimentRule_UserNotBucketed() {
         // Test that when user misses local holdout, normal experiment evaluation continues
         // Expected: Local holdout checked, user not bucketed, normal experiment logic runs
 
-        XCTAssertTrue(true, "Test implementation requires proper datafile setup")
+        XCTFail("Test not implemented - requires proper datafile setup and assertion logic")
     }
 
     func testLocalHoldout_ExperimentRule_AudienceMismatch() {
         // Test that local holdout with audience condition skips users not matching audience
         // Expected: User doesn't match audience, holdout skipped, normal experiment runs
 
-        XCTAssertTrue(true, "Test implementation requires proper datafile setup")
+        XCTFail("Test not implemented - requires proper datafile setup and assertion logic")
     }
 
     // MARK: - Local Holdouts - Delivery Rules
@@ -138,14 +138,14 @@ class DecisionServiceTests_LocalHoldouts: XCTestCase {
         // 2. Local holdout match returns immediately
         // 3. Normal delivery rule bucketing is skipped
 
-        XCTAssertTrue(true, "Test implementation requires proper datafile setup")
+        XCTFail("Test not implemented - requires proper datafile setup and assertion logic")
     }
 
     func testLocalHoldout_DeliveryRule_UserNotBucketed() {
         // Test that when user misses local holdout, normal delivery rule evaluation continues
         // Expected: Local holdout checked, user not bucketed, normal delivery logic runs
 
-        XCTAssertTrue(true, "Test implementation requires proper datafile setup")
+        XCTFail("Test not implemented - requires proper datafile setup and assertion logic")
     }
 
     // MARK: - Multiple Local Holdouts
@@ -154,14 +154,14 @@ class DecisionServiceTests_LocalHoldouts: XCTestCase {
         // Test that when multiple local holdouts target the same rule, first match wins
         // Expected: User bucketed into first matching holdout, second holdout not evaluated
 
-        XCTAssertTrue(true, "Test implementation requires proper datafile setup")
+        XCTFail("Test not implemented - requires proper datafile setup and assertion logic")
     }
 
     func testMultipleLocalHoldouts_DifferentRules_EachEvaluated() {
         // Test that local holdouts targeting different rules are each evaluated independently
         // Expected: Each rule checks its own local holdouts
 
-        XCTAssertTrue(true, "Test implementation requires proper datafile setup")
+        XCTFail("Test not implemented - requires proper datafile setup and assertion logic")
     }
 
     // MARK: - Cross-Flag Local Holdouts
@@ -170,7 +170,7 @@ class DecisionServiceTests_LocalHoldouts: XCTestCase {
         // Test that a local holdout targeting rules from multiple flags only affects those specific rules
         // Expected: Only the targeted rule in this flag is affected, other rules work normally
 
-        XCTAssertTrue(true, "Test implementation requires proper datafile setup")
+        XCTFail("Test not implemented - requires proper datafile setup and assertion logic")
     }
 
     // MARK: - Global + Local Interaction
@@ -185,14 +185,14 @@ class DecisionServiceTests_LocalHoldouts: XCTestCase {
         //    a. Check local holdouts for this rule
         //    b. If no match, normal rule evaluation
 
-        XCTAssertTrue(true, "Test implementation requires proper datafile setup")
+        XCTFail("Test not implemented - requires proper datafile setup and assertion logic")
     }
 
     func testLocalHoldout_EvaluatedAfterForcedDecision() {
         // Test that forced decisions take precedence over local holdouts
         // Expected: Forced decision checked first, if no match then local holdout
 
-        XCTAssertTrue(true, "Test implementation requires proper datafile setup")
+        XCTFail("Test not implemented - requires proper datafile setup and assertion logic")
     }
 
     // MARK: - Edge Cases
@@ -211,7 +211,7 @@ class DecisionServiceTests_LocalHoldouts: XCTestCase {
         // Test that local holdouts with status != running are not evaluated
         // Expected: Only running holdouts are checked
 
-        XCTAssertTrue(true, "Test implementation requires proper datafile setup")
+        XCTFail("Test not implemented - requires proper datafile setup and assertion logic")
     }
 
     func testLocalHoldout_EmptyIncludedRules_TreatedAsGlobal() {

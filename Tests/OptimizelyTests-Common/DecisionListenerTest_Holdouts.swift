@@ -55,9 +55,7 @@ class DecisionListenerTests_Holdouts: XCTestCase {
                     "id": "id_holdout_variation",
                     "key": "key_holdout_variation"
                 ]
-            ],
-            "includedFlags": [],
-            "excludedFlags": []
+            ]
         ]
     }
     
@@ -73,11 +71,12 @@ class DecisionListenerTests_Holdouts: XCTestCase {
         var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
         //  Audience "13389130056" requires "country" = "US"
         holdout.audienceIds = ["13389130056"]
-        
+
         let mockDecisionService = DefaultDecisionService(userProfileService: OTUtils.createClearUserProfileService(), bucketer: MockBucketer(mockBucketValue: 400))
         optimizely.decisionService = mockDecisionService
         optimizely.config!.project.holdouts = [holdout]
-        
+        optimizely.config!.holdoutConfig.allHoldouts = [holdout]
+
         self.notificationCenter = self.optimizely.notificationCenter!
     }
     
@@ -118,8 +117,10 @@ class DecisionListenerTests_Holdouts: XCTestCase {
     
     func testDecisionListenerDecideWithIncludedFlags() {
         var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
-        holdout.includedFlags = [kFeatureId]
+        // Include all rules in feature_1: experiment + delivery rules
+        holdout.includedRules = ["10390977673", "3332020515", "3332020494", "18322080788"]
         optimizely.config!.project.holdouts = [holdout]
+        optimizely.config!.holdoutConfig.allHoldouts = [holdout]
         
         let exp = expectation(description: "x")
         let user = optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryMatch)
@@ -140,8 +141,9 @@ class DecisionListenerTests_Holdouts: XCTestCase {
     
     func testDecisionListenerDecideWithExcludedFlags() {
         var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
-        holdout.excludedFlags = [kFeatureId]
+        holdout.includedRules = []  // Empty array = local holdout targeting no rules (excludes feature_1)
         optimizely.config!.project.holdouts = [holdout]
+        optimizely.config!.holdoutConfig.allHoldouts = [holdout]
         
         let exp = expectation(description: "x")
         let user = optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryMatch)
@@ -162,15 +164,17 @@ class DecisionListenerTests_Holdouts: XCTestCase {
     
     func testDecisionListenerDecideWithMultipleHoldouts() {
         var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
-        holdout.excludedFlags = [kFeatureId]
-        
+        holdout.includedRules = []  // Empty array = local holdout targeting no rules (excludes feature_1)
+
         var holdout_2 = holdout
         holdout_2.key = "holdout_key_2"
         holdout_2.id = "holdout_id_2"
-        holdout_2.includedFlags = [kFeatureId]
-        
+        // Include all rules in feature_1: experiment + delivery rules
+        holdout_2.includedRules = ["10390977673", "3332020515", "3332020494", "18322080788"]
+
         optimizely.config!.project.holdouts = [holdout, holdout_2]
-        
+        optimizely.config!.holdoutConfig.allHoldouts = [holdout, holdout_2]
+
         let exp = expectation(description: "x")
         let user = optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryMatch)
         

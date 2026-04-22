@@ -28,6 +28,13 @@ struct VariationDecision {
     var variation: Variation?
     var cmabError: Bool = false
     var cmabUUID: String?
+    var holdout: ExperimentCore? = nil  // If variation came from a holdout, store the holdout here
+}
+
+struct DeliveryRuleDecision {
+    var variation: Variation?
+    var skipToEveryoneElse: Bool
+    var holdout: ExperimentCore? = nil  // If variation came from a holdout, store the holdout here
 }
 
 typealias UserProfile = OPTUserProfileService.UPProfile
@@ -392,8 +399,8 @@ class DefaultDecisionService: OPTDecisionService {
                             isAsync: Bool,
                             options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<FeatureDecision> {
         let reasons = DecisionReasons(options: options)
-        
-        let holdouts = config.getHoldoutForFlag(id: featureFlag.id)
+
+        let holdouts = config.getGlobalHoldouts()
         for holdout in holdouts {
             let holdoutDecision = getVariationForHoldout(config: config,
                                                          flagKey: featureFlag.key,
@@ -468,8 +475,14 @@ class DefaultDecisionService: OPTDecisionService {
                         let featureDecision = FeatureDecision(experiment: experiment, variation: nil, source: Constants.DecisionSource.featureTest.rawValue, error: true)
                         return DecisionResponse(result: featureDecision, reasons: reasons)
                     } else if let variation = result.variation {
-                        let featureDecision = FeatureDecision(experiment: experiment, variation: variation, source: Constants.DecisionSource.featureTest.rawValue, cmabUUID: result.cmabUUID)
-                        return DecisionResponse(result: featureDecision, reasons: reasons)
+                        // Check if this variation came from a holdout
+                        if let holdout = result.holdout {
+                            let featureDecision = FeatureDecision(experiment: holdout, variation: variation, source: Constants.DecisionSource.holdout.rawValue, cmabUUID: result.cmabUUID)
+                            return DecisionResponse(result: featureDecision, reasons: reasons)
+                        } else {
+                            let featureDecision = FeatureDecision(experiment: experiment, variation: variation, source: Constants.DecisionSource.featureTest.rawValue, cmabUUID: result.cmabUUID)
+                            return DecisionResponse(result: featureDecision, reasons: reasons)
+                        }
                     }
                 }
             }
@@ -524,16 +537,22 @@ class DefaultDecisionService: OPTDecisionService {
                                                                 user: user,
                                                                 options: options)
             reasons.merge(decisionResponse.reasons)
-            let (variation, skipToEveryoneElse) = decisionResponse.result!
-            
-            if let variation = variation {
+            let result = decisionResponse.result!
+
+            if let variation = result.variation {
                 let rule = rolloutRules[index]
-                let featureDecision = FeatureDecision(experiment: rule, variation: variation, source: Constants.DecisionSource.rollout.rawValue)
-                return DecisionResponse(result: featureDecision, reasons: reasons)
+                // Check if this variation came from a holdout
+                if let holdout = result.holdout {
+                    let featureDecision = FeatureDecision(experiment: holdout, variation: variation, source: Constants.DecisionSource.holdout.rawValue)
+                    return DecisionResponse(result: featureDecision, reasons: reasons)
+                } else {
+                    let featureDecision = FeatureDecision(experiment: rule, variation: variation, source: Constants.DecisionSource.rollout.rawValue)
+                    return DecisionResponse(result: featureDecision, reasons: reasons)
+                }
             }
-            
+
             // the last rule is special for "Everyone Else"
-            index = skipToEveryoneElse ? (rolloutRules.count - 1) : (index + 1)
+            index = result.skipToEveryoneElse ? (rolloutRules.count - 1) : (index + 1)
         }
         
         return DecisionResponse(result: nil, reasons: reasons)
@@ -637,7 +656,23 @@ class DefaultDecisionService: OPTDecisionService {
             let variationDecision = VariationDecision(variation: variation)
             return DecisionResponse(result: variationDecision, reasons: reasons)
         }
-        
+
+        // check local holdouts targeting this rule
+        let localHoldouts = config.getHoldoutsForRule(ruleId: rule.id)
+        for holdout in localHoldouts {
+            let holdoutDecision = getVariationForHoldout(config: config,
+                                                         flagKey: flagKey,
+                                                         holdout: holdout,
+                                                         user: user,
+                                                         options: options)
+            reasons.merge(holdoutDecision.reasons)
+            if let variation = holdoutDecision.result {
+                // User is in holdout — return holdout variation immediately, skip this rule
+                let variationDecision = VariationDecision(variation: variation, holdout: holdout)
+                return DecisionResponse(result: variationDecision, reasons: reasons)
+            }
+        }
+
         let decisionResponse = getVariation(config: config,
                                             experiment: rule,
                                             user: user,
@@ -657,13 +692,13 @@ class DefaultDecisionService: OPTDecisionService {
     ///   - ruleIndex: The index of the rule to evaluate.
     ///   - user: The user context.
     ///   - options: Optional decision options.
-    /// - Returns: A `DecisionResponse` with the variation (if any), a flag indicating whether to skip to the "Everyone Else" rule, and reasons.
+    /// - Returns: A `DecisionResponse` with the delivery rule decision and reasons.
     func getVariationFromDeliveryRule(config: ProjectConfig,
                                       flagKey: String,
                                       rules: [Experiment],
                                       ruleIndex: Int,
                                       user: OptimizelyUserContext,
-                                      options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<(Variation?, Bool)> {
+                                      options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<DeliveryRuleDecision> {
         let reasons = DecisionReasons(options: options)
         var skipToEveryoneElse = false
         
@@ -676,9 +711,26 @@ class DefaultDecisionService: OPTDecisionService {
         reasons.merge(forcedDecisionResponse.reasons)
         
         if let variation = forcedDecisionResponse.result {
-            return DecisionResponse(result: (variation, skipToEveryoneElse), reasons: reasons)
+            let decision = DeliveryRuleDecision(variation: variation, skipToEveryoneElse: skipToEveryoneElse)
+            return DecisionResponse(result: decision, reasons: reasons)
         }
-        
+
+        // check local holdouts targeting this delivery rule
+        let localHoldouts = config.getHoldoutsForRule(ruleId: rule.id)
+        for holdout in localHoldouts {
+            let holdoutDecision = getVariationForHoldout(config: config,
+                                                         flagKey: flagKey,
+                                                         holdout: holdout,
+                                                         user: user,
+                                                         options: options)
+            reasons.merge(holdoutDecision.reasons)
+            if let variation = holdoutDecision.result {
+                // User is in holdout — return holdout variation with holdout info
+                let decision = DeliveryRuleDecision(variation: variation, skipToEveryoneElse: skipToEveryoneElse, holdout: holdout)
+                return DecisionResponse(result: decision, reasons: reasons)
+            }
+        }
+
         // regular decision
         
         let userId = user.userId
@@ -725,8 +777,9 @@ class DefaultDecisionService: OPTDecisionService {
             logger.d(info)
             reasons.addInfo(info)
         }
-        
-        return DecisionResponse(result: (bucketedVariation, skipToEveryoneElse), reasons: reasons)
+
+        let decision = DeliveryRuleDecision(variation: bucketedVariation, skipToEveryoneElse: skipToEveryoneElse)
+        return DecisionResponse(result: decision, reasons: reasons)
     }
     
     // MARK: - Audience Evaluation

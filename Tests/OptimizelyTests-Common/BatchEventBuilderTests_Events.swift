@@ -498,6 +498,7 @@ extension BatchEventBuilderTests_Events {
         
         let holdout: Holdout = try! OTUtils.model(from: sampleHoldout)
         optimizely.config?.project.holdouts = [holdout]
+        optimizely.config?.holdoutConfig.allHoldouts = [holdout]
         
         let exp = expectation(description: "Wait for event to dispatch")
         let user = optimizely.createUserContext(userId: userId)
@@ -533,8 +534,9 @@ extension BatchEventBuilderTests_Events {
         try! optimizely.start(datafile: datafile)
         
         var holdout: Holdout = try! OTUtils.model(from: sampleHoldout)
-        holdout.includedFlags = ["4482920077"]
+        holdout.includedRules = ["10390977673"]  // exp_no_audience rule in feature_1
         optimizely.config?.project.holdouts = [holdout]
+        optimizely.config?.holdoutConfig.allHoldouts = [holdout]
         
         let exp = expectation(description: "Wait for event to dispatch")
         
@@ -574,8 +576,9 @@ extension BatchEventBuilderTests_Events {
         try! optimizely.start(datafile: datafile)
         
         var holdout: Holdout = try! OTUtils.model(from: sampleHoldout)
-        holdout.excludedFlags = ["4482920077"]
+        holdout.includedRules = []  // Empty array = local holdout targeting no rules (excludes feature_1)
         optimizely.config?.project.holdouts = [holdout]
+        optimizely.config?.holdoutConfig.allHoldouts = [holdout]
         
         let exp = expectation(description: "Wait for event to dispatch")
         
@@ -614,8 +617,9 @@ extension BatchEventBuilderTests_Events {
         var holdout: Holdout = try! OTUtils.model(from: sampleHoldout)
         /// Set traffic allocation to gero
         holdout.trafficAllocation[0].endOfRange = 0
-        holdout.includedFlags = ["4482920077"]
+        holdout.includedRules = ["10390977673"]  // exp_with_audience rule in feature_1
         optimizely.config?.project.holdouts = [holdout]
+        optimizely.config?.holdoutConfig.allHoldouts = [holdout]
         
         let exp = expectation(description: "Wait for event to dispatch")
         

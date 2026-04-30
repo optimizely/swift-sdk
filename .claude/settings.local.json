@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__jira__getConfluencePage",
+      "mcp__jira__createJiraIssue",
+      "mcp__jira__searchConfluenceUsingCql",
+      "Bash(open:*)"
+    ]
+  },
+  "enabledMcpjsonServers": [
+    "jira",
+    "github"
+  ]
+}

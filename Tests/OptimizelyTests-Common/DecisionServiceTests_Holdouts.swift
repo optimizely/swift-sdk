@@ -189,7 +189,7 @@ class DecisionServiceTests_Holdouts: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        
+        FeatureGates.localHoldouts = true
         self.optimizely = OTUtils.createOptimizely(datafileName: "empty_datafile",
                                                    clearUserProfileService: true)
         self.config = self.optimizely.config!
@@ -210,6 +210,10 @@ class DecisionServiceTests_Holdouts: XCTestCase {
         self.config.project.featureFlags = [featureFlag]
         self.config.project.holdouts = [holdout]
         self.config.holdoutConfig.allHoldouts = [holdout]
+    }
+    
+    override func tearDown() {
+        FeatureGates.localHoldouts = false
     }
     
 }

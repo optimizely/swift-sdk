@@ -61,13 +61,14 @@ class DecisionListenerTests_Holdouts: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        
+        FeatureGates.localHoldouts = true
+
         optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey,
                                       eventDispatcher: eventDispatcher,
                                       userProfileService: OTUtils.createClearUserProfileService())
-        
+
         try! optimizely.start(datafile: OTUtils.loadJSONDatafile("decide_datafile")!)
-        
+
         var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
         //  Audience "13389130056" requires "country" = "US"
         holdout.audienceIds = ["13389130056"]
@@ -78,6 +79,11 @@ class DecisionListenerTests_Holdouts: XCTestCase {
         optimizely.config!.holdoutConfig.allHoldouts = [holdout]
 
         self.notificationCenter = self.optimizely.notificationCenter!
+    }
+
+    override func tearDown() {
+        FeatureGates.localHoldouts = false
+        super.tearDown()
     }
     
     func testDecisionListenerDecideWithUserInHoldout() {

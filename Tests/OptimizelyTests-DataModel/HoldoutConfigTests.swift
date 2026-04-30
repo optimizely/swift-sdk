@@ -17,6 +17,16 @@
 import XCTest
 
 class HoldoutConfigTests: XCTestCase {
+    override func setUp() {
+        super.setUp()
+        FeatureGates.localHoldouts = true
+    }
+
+    override func tearDown() {
+        FeatureGates.localHoldouts = false
+        super.tearDown()
+    }
+
     func testEmptyHoldouts_shouldHaveEmptyMaps() {
         let config = HoldoutConfig(allholdouts: [])
 

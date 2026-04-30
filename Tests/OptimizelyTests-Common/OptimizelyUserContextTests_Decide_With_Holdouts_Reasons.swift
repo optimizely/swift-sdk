@@ -44,11 +44,17 @@ class OptimizelyUserContextTests_Decide_With_Holdouts_Reasons: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        
+        FeatureGates.localHoldouts = true
+
         optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey,
                                       userProfileService: OTUtils.createClearUserProfileService())
-        
+
         try! optimizely.start(datafile: OTUtils.loadJSONDatafile("decide_datafile")!)
+    }
+
+    override func tearDown() {
+        FeatureGates.localHoldouts = false
+        super.tearDown()
     }
     
     /// Test when user is bucketed into the global holdout

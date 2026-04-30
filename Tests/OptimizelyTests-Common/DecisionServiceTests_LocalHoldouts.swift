@@ -52,12 +52,18 @@ class DecisionServiceTests_LocalHoldouts: XCTestCase {
 
     override func setUp() {
         super.setUp()
+        FeatureGates.localHoldouts = true
 
         // Load a real datafile for testing
         optimizely = OTUtils.createOptimizely(datafileName: "decide_datafile",
                                              clearUserProfileService: true)
         config = optimizely.config!
         decisionService = optimizely.decisionService as? DefaultDecisionService
+    }
+
+    override func tearDown() {
+        FeatureGates.localHoldouts = false
+        super.tearDown()
     }
 
     // MARK: - Global Holdouts Tests

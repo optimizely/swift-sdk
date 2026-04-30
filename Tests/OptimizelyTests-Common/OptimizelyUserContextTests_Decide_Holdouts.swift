@@ -45,12 +45,18 @@ class OptimizelyUserContextTests_Decide_Holdouts: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        
+        FeatureGates.localHoldouts = true
+
         optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey,
                                       eventDispatcher: eventDispatcher,
                                       userProfileService: OTUtils.createClearUserProfileService())
-        
+
         try! optimizely.start(datafile: OTUtils.loadJSONDatafile("decide_datafile")!)
+    }
+
+    override func tearDown() {
+        FeatureGates.localHoldouts = false
+        super.tearDown()
     }
     
     func test_decide_with_global_holdout_audience_matched() {

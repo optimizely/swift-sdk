@@ -214,6 +214,7 @@ class DecisionServiceTests_Holdouts: XCTestCase {
     
     override func tearDown() {
         FeatureGates.localHoldouts = false
+        super.tearDown()
     }
     
 }

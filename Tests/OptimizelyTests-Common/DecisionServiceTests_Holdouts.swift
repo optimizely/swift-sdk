@@ -16,7 +16,7 @@
 
 import XCTest
 
-class DecisionServiceTests_Holdouts: XCTestCase {
+class DecisionServiceTests_Holdouts: BaseHoldoutTests {
     
     var optimizely: OptimizelyClient!
     var config: ProjectConfig!
@@ -189,7 +189,6 @@ class DecisionServiceTests_Holdouts: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        FeatureGates.localHoldouts = true
         self.optimizely = OTUtils.createOptimizely(datafileName: "empty_datafile",
                                                    clearUserProfileService: true)
         self.config = self.optimizely.config!
@@ -213,7 +212,6 @@ class DecisionServiceTests_Holdouts: XCTestCase {
     }
     
     override func tearDown() {
-        FeatureGates.localHoldouts = false
         super.tearDown()
     }
     

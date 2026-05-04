@@ -17,7 +17,6 @@
 import XCTest
 
 class HoldoutConfigTests: XCTestCase {
-    
     func testEmptyHoldouts_shouldHaveEmptyMaps() {
         let config = HoldoutConfig(allholdouts: [])
 

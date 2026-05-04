@@ -16,7 +16,7 @@
 
 import XCTest
 
-class DecisionListenerTests_Holdouts: XCTestCase {
+class DecisionListenerTests_Holdouts: BaseHoldoutTests {
     let kUserId = "11111"
     var optimizely: OptimizelyClient!
     var notificationCenter: OPTNotificationCenter!
@@ -61,8 +61,6 @@ class DecisionListenerTests_Holdouts: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        FeatureGates.localHoldouts = true
-
         optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey,
                                       eventDispatcher: eventDispatcher,
                                       userProfileService: OTUtils.createClearUserProfileService())
@@ -82,7 +80,6 @@ class DecisionListenerTests_Holdouts: XCTestCase {
     }
 
     override func tearDown() {
-        FeatureGates.localHoldouts = false
         super.tearDown()
     }
     

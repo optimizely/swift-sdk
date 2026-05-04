@@ -16,7 +16,7 @@
 
 import XCTest
 
-class OptimizelyUserContextTests_Decide_Holdouts: XCTestCase {
+class OptimizelyUserContextTests_Decide_Holdouts: BaseHoldoutTests {
     let kUserId = "tester"
     var optimizely: OptimizelyClient!
     var eventDispatcher = MockEventDispatcher()
@@ -45,8 +45,6 @@ class OptimizelyUserContextTests_Decide_Holdouts: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        FeatureGates.localHoldouts = true
-
         optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey,
                                       eventDispatcher: eventDispatcher,
                                       userProfileService: OTUtils.createClearUserProfileService())
@@ -55,7 +53,6 @@ class OptimizelyUserContextTests_Decide_Holdouts: XCTestCase {
     }
 
     override func tearDown() {
-        FeatureGates.localHoldouts = false
         super.tearDown()
     }
     

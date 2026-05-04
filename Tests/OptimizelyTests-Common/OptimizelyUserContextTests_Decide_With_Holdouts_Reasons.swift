@@ -16,7 +16,7 @@
 
 import XCTest
 
-class OptimizelyUserContextTests_Decide_With_Holdouts_Reasons: XCTestCase {
+class OptimizelyUserContextTests_Decide_With_Holdouts_Reasons: BaseHoldoutTests {
     let kUserId = "tester"
     var optimizely: OptimizelyClient!
     
@@ -44,7 +44,6 @@ class OptimizelyUserContextTests_Decide_With_Holdouts_Reasons: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        FeatureGates.localHoldouts = true
 
         optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey,
                                       userProfileService: OTUtils.createClearUserProfileService())
@@ -53,7 +52,6 @@ class OptimizelyUserContextTests_Decide_With_Holdouts_Reasons: XCTestCase {
     }
 
     override func tearDown() {
-        FeatureGates.localHoldouts = false
         super.tearDown()
     }
     

@@ -19,7 +19,7 @@ import XCTest
 /// Integration tests for Local Holdouts functionality
 /// Tests that local holdouts are correctly evaluated at the rule level
 /// and global holdouts are evaluated at the flag level before any rules
-class DecisionServiceTests_LocalHoldouts: XCTestCase {
+class DecisionServiceTests_LocalHoldouts: BaseHoldoutTests {
 
     var optimizely: OptimizelyClient!
     var config: ProjectConfig!
@@ -52,8 +52,6 @@ class DecisionServiceTests_LocalHoldouts: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        FeatureGates.localHoldouts = true
-
         // Load a real datafile for testing
         optimizely = OTUtils.createOptimizely(datafileName: "decide_datafile",
                                              clearUserProfileService: true)
@@ -62,7 +60,6 @@ class DecisionServiceTests_LocalHoldouts: XCTestCase {
     }
 
     override func tearDown() {
-        FeatureGates.localHoldouts = false
         super.tearDown()
     }
 

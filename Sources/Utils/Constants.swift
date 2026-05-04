@@ -16,6 +16,10 @@
 
 import Foundation
 
+struct FeatureGates {
+    static var localHoldouts = false
+}
+
 struct Constants {
     struct Attributes {
         static let reservedBucketIdAttribute = "$opt_bucketing_id"

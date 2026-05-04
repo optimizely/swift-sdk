@@ -16,7 +16,7 @@
 
 import XCTest
 
-class OptimizelyUserContextTests_Decide_Holdouts: XCTestCase {
+class OptimizelyUserContextTests_Decide_Holdouts: BaseHoldoutTests {
     let kUserId = "tester"
     var optimizely: OptimizelyClient!
     var eventDispatcher = MockEventDispatcher()
@@ -45,12 +45,15 @@ class OptimizelyUserContextTests_Decide_Holdouts: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        
         optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey,
                                       eventDispatcher: eventDispatcher,
                                       userProfileService: OTUtils.createClearUserProfileService())
-        
+
         try! optimizely.start(datafile: OTUtils.loadJSONDatafile("decide_datafile")!)
+    }
+
+    override func tearDown() {
+        super.tearDown()
     }
     
     func test_decide_with_global_holdout_audience_matched() {

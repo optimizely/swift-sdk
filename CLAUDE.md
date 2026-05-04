@@ -174,6 +174,22 @@ Similar test targets exist for tvOS and other platforms.
 - Use JSON fixtures from `Tests/TestData/` for consistent test data
 - Each test should use unique file names for persistent storage
 
+### Adding New Test Files
+
+**CRITICAL**: New test files must be manually added to `OptimizelySwiftSDK.xcodeproj/project.pbxproj` - file creation alone is insufficient.
+
+**Steps**:
+1. Create test file in appropriate directory (`Tests/OptimizelyTests-Common/`, etc.)
+2. Generate unique IDs: `uuidgen | tr 'A-F' 'a-f' | tr -d '-' | cut -c1-24 | awk '{print toupper($0)}'`
+3. Edit `project.pbxproj` following pattern of similar files (e.g., `DecisionServiceTests_LocalHoldouts.swift`):
+   - Add PBXBuildFile entries (~line 2120) - one per target (iOS, tvOS)
+   - Add PBXFileReference entry (~line 2640)
+   - Add to file group listing (~line 3180)
+   - Add to PBXSourcesBuildPhase for each target (~lines 5200, 5510)
+4. Verify: `swift build && swift test --filter YourTestClass`
+
+**Pattern**: Common tests need 2 targets (iOS + tvOS); base classes may need 4 targets.
+
 ## Development Workflow
 
 ### Branch Strategy

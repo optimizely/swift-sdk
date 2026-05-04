@@ -658,18 +658,20 @@ class DefaultDecisionService: OPTDecisionService {
         }
 
         // check local holdouts targeting this rule
-        let localHoldouts = config.getHoldoutsForRule(ruleId: rule.id)
-        for holdout in localHoldouts {
-            let holdoutDecision = getVariationForHoldout(config: config,
-                                                         flagKey: flagKey,
-                                                         holdout: holdout,
-                                                         user: user,
-                                                         options: options)
-            reasons.merge(holdoutDecision.reasons)
-            if let variation = holdoutDecision.result {
-                // User is in holdout — return holdout variation immediately, skip this rule
-                let variationDecision = VariationDecision(variation: variation, holdout: holdout)
-                return DecisionResponse(result: variationDecision, reasons: reasons)
+        if FeatureGates.localHoldouts {
+            let localHoldouts = config.getHoldoutsForRule(ruleId: rule.id)
+            for holdout in localHoldouts {
+                let holdoutDecision = getVariationForHoldout(config: config,
+                                                             flagKey: flagKey,
+                                                             holdout: holdout,
+                                                             user: user,
+                                                             options: options)
+                reasons.merge(holdoutDecision.reasons)
+                if let variation = holdoutDecision.result {
+                    // User is in holdout — return holdout variation immediately, skip this rule
+                    let variationDecision = VariationDecision(variation: variation, holdout: holdout)
+                    return DecisionResponse(result: variationDecision, reasons: reasons)
+                }
             }
         }
 
@@ -716,18 +718,20 @@ class DefaultDecisionService: OPTDecisionService {
         }
 
         // check local holdouts targeting this delivery rule
-        let localHoldouts = config.getHoldoutsForRule(ruleId: rule.id)
-        for holdout in localHoldouts {
-            let holdoutDecision = getVariationForHoldout(config: config,
-                                                         flagKey: flagKey,
-                                                         holdout: holdout,
-                                                         user: user,
-                                                         options: options)
-            reasons.merge(holdoutDecision.reasons)
-            if let variation = holdoutDecision.result {
-                // User is in holdout — return holdout variation with holdout info
-                let decision = DeliveryRuleDecision(variation: variation, skipToEveryoneElse: skipToEveryoneElse, holdout: holdout)
-                return DecisionResponse(result: decision, reasons: reasons)
+        if FeatureGates.localHoldouts {
+            let localHoldouts = config.getHoldoutsForRule(ruleId: rule.id)
+            for holdout in localHoldouts {
+                let holdoutDecision = getVariationForHoldout(config: config,
+                                                             flagKey: flagKey,
+                                                             holdout: holdout,
+                                                             user: user,
+                                                             options: options)
+                reasons.merge(holdoutDecision.reasons)
+                if let variation = holdoutDecision.result {
+                    // User is in holdout — return holdout variation with holdout info
+                    let decision = DeliveryRuleDecision(variation: variation, skipToEveryoneElse: skipToEveryoneElse, holdout: holdout)
+                    return DecisionResponse(result: decision, reasons: reasons)
+                }
             }
         }
 

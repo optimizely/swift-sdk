@@ -2121,6 +2121,12 @@
 		98AC985F2DBA6721001405DD /* OptimizelyUserContextTests_Decide_With_Holdouts_Reasons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98AC985D2DBA6721001405DD /* OptimizelyUserContextTests_Decide_With_Holdouts_Reasons.swift */; };
 		98C2DF242F900669003F2443 /* DecisionServiceTests_LocalHoldouts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C2DF232F900669003F2443 /* DecisionServiceTests_LocalHoldouts.swift */; };
 		98C2DF252F900669003F2443 /* DecisionServiceTests_LocalHoldouts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C2DF232F900669003F2443 /* DecisionServiceTests_LocalHoldouts.swift */; };
+		0921CDD1BC7F41F59B2D4CC3 /* FeatureGateTests_LocalHoldouts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C5D873BB4C44181B07ECC15 /* FeatureGateTests_LocalHoldouts.swift */; };
+		BB21E5C3E29D4F0C892E523C /* FeatureGateTests_LocalHoldouts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C5D873BB4C44181B07ECC15 /* FeatureGateTests_LocalHoldouts.swift */; };
+		98C2DF752FA8D055003F2443 /* BaseHoldoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C2DF742FA8D055003F2443 /* BaseHoldoutTests.swift */; };
+		98C2DF762FA8D055003F2443 /* BaseHoldoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C2DF742FA8D055003F2443 /* BaseHoldoutTests.swift */; };
+		98C2DF772FA8D1FF003F2443 /* BaseHoldoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C2DF742FA8D055003F2443 /* BaseHoldoutTests.swift */; };
+		98C2DF782FA8D207003F2443 /* BaseHoldoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C2DF742FA8D055003F2443 /* BaseHoldoutTests.swift */; };
 		98D5AE842DBB91C0000D5844 /* OptimizelyUserContextTests_Decide_Holdouts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98D5AE832DBB91C0000D5844 /* OptimizelyUserContextTests_Decide_Holdouts.swift */; };
 		98D5AE852DBB91C0000D5844 /* OptimizelyUserContextTests_Decide_Holdouts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98D5AE832DBB91C0000D5844 /* OptimizelyUserContextTests_Decide_Holdouts.swift */; };
 		98F28A1D2E01940500A86546 /* Cmab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98F28A1C2E01940500A86546 /* Cmab.swift */; };
@@ -2638,6 +2644,8 @@
 		98AC98482DB8FC29001405DD /* DecisionServiceTests_Holdouts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecisionServiceTests_Holdouts.swift; sourceTree = "<group>"; };
 		98AC985D2DBA6721001405DD /* OptimizelyUserContextTests_Decide_With_Holdouts_Reasons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelyUserContextTests_Decide_With_Holdouts_Reasons.swift; sourceTree = "<group>"; };
 		98C2DF232F900669003F2443 /* DecisionServiceTests_LocalHoldouts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecisionServiceTests_LocalHoldouts.swift; sourceTree = "<group>"; };
+		7C5D873BB4C44181B07ECC15 /* FeatureGateTests_LocalHoldouts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureGateTests_LocalHoldouts.swift; sourceTree = "<group>"; };
+		98C2DF742FA8D055003F2443 /* BaseHoldoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseHoldoutTests.swift; sourceTree = "<group>"; };
 		98D5AE832DBB91C0000D5844 /* OptimizelyUserContextTests_Decide_Holdouts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelyUserContextTests_Decide_Holdouts.swift; sourceTree = "<group>"; };
 		98F28A1C2E01940500A86546 /* Cmab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cmab.swift; sourceTree = "<group>"; };
 		98F28A2D2E01968000A86546 /* CmabTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CmabTests.swift; sourceTree = "<group>"; };
@@ -3169,6 +3177,7 @@
 				6E75198022C5211100B2B157 /* DecisionServiceTests_Experiments.swift */,
 				6E75199122C5211100B2B157 /* DecisionServiceTests_Features.swift */,
 				98AC98482DB8FC29001405DD /* DecisionServiceTests_Holdouts.swift */,
+				98C2DF742FA8D055003F2443 /* BaseHoldoutTests.swift */,
 				6E75199422C5211100B2B157 /* DecisionServiceTests_Others.swift */,
 				6E75198622C5211100B2B157 /* DecisionServiceTests_UserProfiles.swift */,
 				6E75198822C5211100B2B157 /* DefaultLoggerTests.swift */,
@@ -3181,6 +3190,7 @@
 				6E75198B22C5211100B2B157 /* NotificationCenterTests.swift */,
 				84861810286D0B8900B7F41B /* OdpEventManagerTests.swift */,
 				98C2DF232F900669003F2443 /* DecisionServiceTests_LocalHoldouts.swift */,
+				7C5D873BB4C44181B07ECC15 /* FeatureGateTests_LocalHoldouts.swift */,
 				8486180E286D0B8900B7F41B /* OdpManagerTests.swift */,
 				8486180D286D0B8900B7F41B /* OdpSegmentManagerTests.swift */,
 				98F28A512E02E81500A86546 /* CMABClientTests.swift */,
@@ -5124,6 +5134,7 @@
 				6E75192D22C520D500B2B157 /* DataStoreQueueStack.swift in Sources */,
 				6E7516D322C520D400B2B157 /* OPTLogger.swift in Sources */,
 				6E75180122C520D400B2B157 /* DataStoreUserDefaults.swift in Sources */,
+				98C2DF752FA8D055003F2443 /* BaseHoldoutTests.swift in Sources */,
 				98F28A672E05220300A86546 /* CmabServiceTests.swift in Sources */,
 				98AC98472DB7B762001405DD /* BucketTests_HoldoutToVariation.swift in Sources */,
 				6E75175722C520D400B2B157 /* LogMessage.swift in Sources */,
@@ -5196,6 +5207,7 @@
 				6E75187922C520D400B2B157 /* Variation.swift in Sources */,
 				6E75191522C520D500B2B157 /* BackgroundingCallbacks.swift in Sources */,
 				98C2DF242F900669003F2443 /* DecisionServiceTests_LocalHoldouts.swift in Sources */,
+				0921CDD1BC7F41F59B2D4CC3 /* FeatureGateTests_LocalHoldouts.swift in Sources */,
 				6E75195D22C520D500B2B157 /* OPTBucketer.swift in Sources */,
 				6E9B117622C5487100C22D81 /* DatafileHandlerTests.swift in Sources */,
 				84E2E97F2855875E001114AB /* OdpEventManager.swift in Sources */,
@@ -5294,6 +5306,7 @@
 				6E7516EC22C520D400B2B157 /* OPTEventDispatcher.swift in Sources */,
 				6E75181A22C520D400B2B157 /* DataStoreQueueStackImpl.swift in Sources */,
 				6EF8DE2624BD1BB2008B9488 /* OptimizelyDecideOption.swift in Sources */,
+				98C2DF782FA8D207003F2443 /* BaseHoldoutTests.swift in Sources */,
 				8464087E28130D3200CCF97D /* Integration.swift in Sources */,
 				6E9B119722C5488300C22D81 /* ConditionLeafTests.swift in Sources */,
 				6E75184A22C520D400B2B157 /* Event.swift in Sources */,
@@ -5428,6 +5441,7 @@
 				6E75193322C520D500B2B157 /* OPTDataStore.swift in Sources */,
 				84861811286D0B8900B7F41B /* OdpSegmentManagerTests.swift in Sources */,
 				6E7517EF22C520D400B2B157 /* DataStoreMemory.swift in Sources */,
+				98C2DF762FA8D055003F2443 /* BaseHoldoutTests.swift in Sources */,
 				98F28A682E05220300A86546 /* CmabServiceTests.swift in Sources */,
 				6E75194B22C520D500B2B157 /* OPTDatafileHandler.swift in Sources */,
 				6E75195722C520D500B2B157 /* OPTBucketer.swift in Sources */,
@@ -5500,6 +5514,7 @@
 				6E7516FD22C520D400B2B157 /* OptimizelyLogLevel.swift in Sources */,
 				6E75187322C520D400B2B157 /* Variation.swift in Sources */,
 				98C2DF252F900669003F2443 /* DecisionServiceTests_LocalHoldouts.swift in Sources */,
+				BB21E5C3E29D4F0C892E523C /* FeatureGateTests_LocalHoldouts.swift in Sources */,
 				6E7517E322C520D400B2B157 /* DefaultDecisionService.swift in Sources */,
 				6E75179922C520D400B2B157 /* DataStoreQueueStackImpl+Extension.swift in Sources */,
 				6E9B115C22C5486E00C22D81 /* DatafileHandlerTests.swift in Sources */,
@@ -5572,6 +5587,7 @@
 				6E75193522C520D500B2B157 /* OPTDataStore.swift in Sources */,
 				6EC6DD4824ABF89B0017D296 /* OptimizelyUserContext.swift in Sources */,
 				6E75182122C520D400B2B157 /* BatchEventBuilder.swift in Sources */,
+				98C2DF772FA8D1FF003F2443 /* BaseHoldoutTests.swift in Sources */,
 				983F81852F801E7500CDBC8D /* FeatureRolloutTests.swift in Sources */,
 				6E86CEA924FDC847005DAFED /* OptimizelyUserContext+ObjC.swift in Sources */,
 				6E9B118322C5488100C22D81 /* UserAttributeTests_Evaluate.swift in Sources */,

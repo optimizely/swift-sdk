@@ -12,7 +12,6 @@ and confidence intervals.
 See [Feature Rollout docs](https://support.optimizely.com/hc/en-us/articles/45552846481037-Run-Feature-Rollouts-in-Feature-Experimentation) for more information.
 
 - Add Feature Rollout support ([#626](https://github.com/optimizely/swift-sdk/pull/626))
-- Add local holdouts to swift-sdk (ref sdk) ([#628](https://github.com/optimizely/swift-sdk/pull/628))
 
 ## 5.2.1
 January 23rd, 2026

@@ -16,7 +16,7 @@
 
 import XCTest
 
-class DecisionServiceTests_Holdouts: XCTestCase {
+class DecisionServiceTests_Holdouts: BaseHoldoutTests {
     
     var optimizely: OptimizelyClient!
     var config: ProjectConfig!
@@ -122,8 +122,7 @@ class DecisionServiceTests_Holdouts: XCTestCase {
                     "key": "holdout_a"
                 ]
             ],
-            "includedFlags": ["flag_id_1234"],
-            "excludedFlags": []
+            "includedRules": ["country11"]  // Target the experiment rule in flag_id_1234
         ]
     }
     
@@ -142,12 +141,10 @@ class DecisionServiceTests_Holdouts: XCTestCase {
                     "id": "holdout_global_variation",
                     "key": "global_variation"
                 ]
-            ],
-            "includedFlags": [],
-            "excludedFlags": []
+            ]
         ]
     }
-    
+
     var sampleHoldoutIncluded: [String: Any] {
         return [
             "status": "Running",
@@ -164,11 +161,10 @@ class DecisionServiceTests_Holdouts: XCTestCase {
                     "key": "included_variation"
                 ]
             ],
-            "includedFlags": ["flag_id_1234"],
-            "excludedFlags": []
+            "includedRules": ["country11"]  // Target the experiment rule in flag_id_1234
         ]
     }
-    
+
     var sampleHoldoutExcluded: [String: Any] {
         return [
             "status": "Running",
@@ -185,8 +181,7 @@ class DecisionServiceTests_Holdouts: XCTestCase {
                     "key": "excluded_variation"
                 ]
             ],
-            "includedFlags": [],
-            "excludedFlags": ["flag_id_1234"]
+            "includedRules": []  // Empty array = local holdout targeting no rules (excludes flag_id_1234)
         ]
     }
     
@@ -194,7 +189,6 @@ class DecisionServiceTests_Holdouts: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        
         self.optimizely = OTUtils.createOptimizely(datafileName: "empty_datafile",
                                                    clearUserProfileService: true)
         self.config = self.optimizely.config!
@@ -214,6 +208,11 @@ class DecisionServiceTests_Holdouts: XCTestCase {
         featureFlag = try! OTUtils.model(from: sampleFeatureFlagData)
         self.config.project.featureFlags = [featureFlag]
         self.config.project.holdouts = [holdout]
+        self.config.holdoutConfig.allHoldouts = [holdout]
+    }
+    
+    override func tearDown() {
+        super.tearDown()
     }
     
 }
@@ -231,6 +230,7 @@ extension DecisionServiceTests_Holdouts {
         holdout.audienceConditions = try! OTUtils.model(from: ["or", kAudienceIdCountry])
         holdout.audienceIds = [kAudienceIdAge]
         self.config.project.holdouts = [holdout]
+        self.config.holdoutConfig.allHoldouts = [holdout]
         
         var result: Bool! = mockDecisionService.doesMeetAudienceConditions(config: config,
                                                                            experiment: holdout,
@@ -259,6 +259,7 @@ extension DecisionServiceTests_Holdouts {
         holdout.audienceConditions = nil
         holdout.audienceIds = [kAudienceIdCountry]
         self.config.project.holdouts = [holdout]
+        self.config.holdoutConfig.allHoldouts = [holdout]
         
         var result: Bool! = mockDecisionService.doesMeetAudienceConditions(config: config,
                                                                            experiment: holdout,
@@ -284,6 +285,7 @@ extension DecisionServiceTests_Holdouts {
         holdout.audienceConditions = try! OTUtils.model(from: [])
         holdout.audienceIds = [kAudienceIdAge]
         self.config.project.holdouts = [holdout]
+        self.config.holdoutConfig.allHoldouts = [holdout]
         
         let result: Bool! = self.mockDecisionService.doesMeetAudienceConditions(config: config,
                                                                                 experiment: holdout,
@@ -297,6 +299,7 @@ extension DecisionServiceTests_Holdouts {
         holdout.audienceConditions = nil
         holdout.audienceIds = []
         self.config.project.holdouts = [holdout]
+        self.config.holdoutConfig.allHoldouts = [holdout]
         
         let result: Bool! = mockDecisionService.doesMeetAudienceConditions(config: config,
                                                                            experiment: holdout,
@@ -315,6 +318,7 @@ extension DecisionServiceTests_Holdouts {
         holdout.audienceConditions = array[0]
         holdout.audienceIds = [kAudienceIdAge]
         self.config.project.holdouts = [holdout]
+        self.config.holdoutConfig.allHoldouts = [holdout]
         
         var result: Bool! = mockDecisionService.doesMeetAudienceConditions(config: config,
                                                                            experiment: holdout,
@@ -330,6 +334,7 @@ extension DecisionServiceTests_Holdouts {
         array = try! OTUtils.model(from: ["and"])
         holdout.audienceConditions = array[0]
         self.config.project.holdouts = [holdout]
+        self.config.holdoutConfig.allHoldouts = [holdout]
         
         result = self.mockDecisionService.doesMeetAudienceConditions(config: config,
                                                                      experiment: holdout,
@@ -340,6 +345,7 @@ extension DecisionServiceTests_Holdouts {
         holdout.audienceConditions = nil
         holdout.audienceIds = []
         self.config.project.holdouts = [holdout]
+        self.config.holdoutConfig.allHoldouts = [holdout]
         
         result = self.mockDecisionService.doesMeetAudienceConditions(config: config,
                                                                      experiment: holdout,
@@ -401,6 +407,7 @@ extension DecisionServiceTests_Holdouts {
         modifiedHoldoutData["status"] = "Draft"
         let inactiveHoldout = try! OTUtils.model(from: modifiedHoldoutData) as Holdout
         self.config.project.holdouts = [inactiveHoldout]
+        self.config.holdoutConfig.allHoldouts = [inactiveHoldout]
         
         let decision = mockDecisionService.getVariationForFeature(
             config: config,
@@ -419,6 +426,7 @@ extension DecisionServiceTests_Holdouts {
     func testGetVariationForFeatureExperiment_NoHoldouts() {
         // Remove holdouts
         self.config.project.holdouts = []
+        self.config.holdoutConfig.allHoldouts = []
         
         let decision = mockDecisionService.getVariationForFeature(
             config: config,
@@ -439,17 +447,26 @@ extension DecisionServiceTests_Holdouts {
         modifiedFeatureFlagData["experimentIds"] = []
         featureFlag = try! OTUtils.model(from: modifiedFeatureFlagData)
         self.config.project.featureFlags = [featureFlag]
-        
-        let decision = mockDecisionService.getVariationForFeature(
+
+        // Use global holdout since there are no valid experiments
+        let globalHoldout = try! OTUtils.model(from: sampleHoldoutGlobal) as Holdout
+        self.config.project.holdouts = [globalHoldout]
+        self.config.holdoutConfig.allHoldouts = [globalHoldout]
+
+        // Use bucket value 400 which is within globalHoldout range (0-500)
+        let mockBucketer = MockBucketer(mockBucketValue: 400)
+        let testDecisionService = MockDecisionService(bucketer: mockBucketer)
+
+        let decision = testDecisionService.getVariationForFeature(
             config: config,
             featureFlag: featureFlag,
             user: optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryMatch)
         ).result
-        
+
         // Should return holdout decision
         XCTAssertNotNil(decision, "Decision should not be nil")
-        XCTAssertEqual(decision?.experiment?.id, holdout.id, "Should return holdout experiment")
-        XCTAssertEqual(decision?.variation?.key, "holdout_a", "Should return holdout variation")
+        XCTAssertEqual(decision?.experiment?.id, globalHoldout.id, "Should return holdout experiment")
+        XCTAssertEqual(decision?.variation?.key, "global_variation", "Should return holdout variation")
         XCTAssertEqual(decision?.source, Constants.DecisionSource.holdout.rawValue, "Source should be holdout")
     }
     
@@ -459,27 +476,36 @@ extension DecisionServiceTests_Holdouts {
         modifiedFeatureFlagData["experimentIds"] = ["invalid_experiment_id"]
         featureFlag = try! OTUtils.model(from: modifiedFeatureFlagData)
         self.config.project.featureFlags = [featureFlag]
-        
-        let decision = mockDecisionService.getVariationForFeature(
+
+        // Use global holdout since there are no valid experiments
+        let globalHoldout = try! OTUtils.model(from: sampleHoldoutGlobal) as Holdout
+        self.config.project.holdouts = [globalHoldout]
+        self.config.holdoutConfig.allHoldouts = [globalHoldout]
+
+        // Use bucket value 400 which is within globalHoldout range (0-500)
+        let mockBucketer = MockBucketer(mockBucketValue: 400)
+        let testDecisionService = MockDecisionService(bucketer: mockBucketer)
+
+        let decision = testDecisionService.getVariationForFeature(
             config: config,
             featureFlag: featureFlag,
             user: optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryMatch)
         ).result
-        
+
         // Should return holdout decision
         XCTAssertNotNil(decision, "Decision should not be nil")
-        XCTAssertEqual(decision?.experiment?.id, holdout.id, "Should return holdout experiment")
-        XCTAssertEqual(decision?.variation?.key, "holdout_a", "Should return holdout variation")
+        XCTAssertEqual(decision?.experiment?.id, globalHoldout.id, "Should return holdout experiment")
+        XCTAssertEqual(decision?.variation?.key, "global_variation", "Should return holdout variation")
         XCTAssertEqual(decision?.source, Constants.DecisionSource.holdout.rawValue, "Source should be holdout")
     }
     
     func testGetVariationForFeatureExperiment_HoldoutExcludedFlag() {
         // Modify holdout to exclude the feature flag
         var modifiedHoldoutData = sampleHoldout
-        modifiedHoldoutData["includedFlags"] = []
-        modifiedHoldoutData["excludedFlags"] = ["flag_id_1234"]
+        modifiedHoldoutData["includedRules"] = []  // Empty array = local holdout targeting no rules (excludes flag_id_1234)
         let excludedHoldout = try! OTUtils.model(from: modifiedHoldoutData) as Holdout
         self.config.project.holdouts = [excludedHoldout]
+        self.config.holdoutConfig.allHoldouts = [excludedHoldout]
         
         let decision = mockDecisionService.getVariationForFeature(
             config: config,
@@ -506,6 +532,7 @@ extension DecisionServiceTests_Holdouts {
         excludedHoldout.trafficAllocation[0].endOfRange = tfAllocationRange
         
         self.config.project.holdouts = [globalHoldout, includedHoldout, excludedHoldout]
+        self.config.holdoutConfig.allHoldouts = [globalHoldout, includedHoldout, excludedHoldout]
         
         // Mock bucketer to bucket into the first valid holdout (global)
         let mockBucketer = MockBucketer(mockBucketValue: 1000) // Within all holdout ranges
@@ -530,6 +557,7 @@ extension DecisionServiceTests_Holdouts {
         let globalHoldout = try! OTUtils.model(from: sampleHoldoutGlobal) as Holdout
         let includedHoldout = try! OTUtils.model(from: sampleHoldoutIncluded) as Holdout
         self.config.project.holdouts = [globalHoldout, includedHoldout]
+        self.config.holdoutConfig.allHoldouts = [globalHoldout, includedHoldout]
         
         // Mock bucketer to fail global holdout bucketing, succeed for included
         let mockBucketer = MockBucketer(mockBucketValue: 700) // Outside global range, within included range
@@ -554,6 +582,7 @@ extension DecisionServiceTests_Holdouts {
         let includedHoldout = try! OTUtils.model(from: sampleHoldoutIncluded) as Holdout
         let excludedHoldout = try! OTUtils.model(from: sampleHoldoutExcluded) as Holdout
         self.config.project.holdouts = [globalHoldout, includedHoldout, excludedHoldout]
+        self.config.holdoutConfig.allHoldouts = [globalHoldout, includedHoldout, excludedHoldout]
         
         // Mock bucketer to fail all holdout bucketing
         let mockBucketer = MockBucketer(mockBucketValue: 1500) // Outside all holdout ranges
@@ -578,6 +607,7 @@ extension DecisionServiceTests_Holdouts {
         modifiedHoldoutData["trafficAllocation"] = []
         let noTrafficHoldout = try! OTUtils.model(from: modifiedHoldoutData) as Holdout
         self.config.project.holdouts = [noTrafficHoldout]
+        self.config.holdoutConfig.allHoldouts = [noTrafficHoldout]
         
         let decision = mockDecisionService.getVariationForFeature(
             config: config,
@@ -601,6 +631,7 @@ extension DecisionServiceTests_Holdouts {
         let includedHoldout = try! OTUtils.model(from: sampleHoldoutIncluded) as Holdout // Requires country: "us"
         
         self.config.project.holdouts = [globalHoldout, includedHoldout]
+        self.config.holdoutConfig.allHoldouts = [globalHoldout, includedHoldout]
         
         // Mock bucketer to fail included holdout bucketing
         let mockBucketer = MockBucketer(mockBucketValue: 1500) // Outside included holdout range
@@ -624,6 +655,7 @@ extension DecisionServiceTests_Holdouts {
         modifiedHoldoutData["variations"] = []
         let noVariationsHoldout = try! OTUtils.model(from: modifiedHoldoutData) as Holdout
         self.config.project.holdouts = [noVariationsHoldout]
+        self.config.holdoutConfig.allHoldouts = [noVariationsHoldout]
         
         let decision = mockDecisionService.getVariationForFeature(
             config: config,
@@ -643,6 +675,7 @@ extension DecisionServiceTests_Holdouts {
         let globalHoldout = try! OTUtils.model(from: sampleHoldoutGlobal) as Holdout
         let includedHoldout = try! OTUtils.model(from: sampleHoldoutIncluded) as Holdout
         self.config.project.holdouts = [globalHoldout, includedHoldout]
+        self.config.holdoutConfig.allHoldouts = [globalHoldout, includedHoldout]
         
         // First call
         let decision1 = mockDecisionService.getVariationForFeature(

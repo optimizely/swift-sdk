@@ -1,10 +1,10 @@
 //
-// Copyright 2019, 2021, 2023 Optimizely, Inc. and contributors
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
+// Copyright 2022, Optimizely, Inc. and contributors 
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");  
 // you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
+// You may obtain a copy of the License at   
+// 
 //    http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
@@ -14,7 +14,14 @@
 // limitations under the License.
 //
 
-/// Do not edit this field.
-/// - It is auto updated (Scripts/updated_version.sh) to reflect the current version
-/// - Do not put underscores in the name (Swiftlint can modify unexpectedly)
-let OPTIMIZELYSDKVERSION = "5.3.0"
+import XCTest
+
+class BaseHoldoutTests: XCTestCase {
+    override func setUp() {
+        FeatureGates.localHoldouts = true
+    }
+    
+    override func tearDown() {
+        FeatureGates.localHoldouts = false
+    }
+}

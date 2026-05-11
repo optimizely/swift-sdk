@@ -31,11 +31,10 @@ struct Holdout: Codable, ExperimentCore {
     var trafficAllocation: [TrafficAllocation]
     var audienceIds: [String]
     var audienceConditions: ConditionHolder?
-    var includedFlags: [String]
-    var excludedFlags: [String]
-    
+    var includedRules: [String]?
+
     enum CodingKeys: String, CodingKey {
-        case id, key, status, variations, trafficAllocation, audienceIds, audienceConditions, includedFlags, excludedFlags
+        case id, key, status, variations, trafficAllocation, audienceIds, audienceConditions, includedRules
     }
     
     var variationsMap: [String: OptimizelyVariation] = [:]
@@ -54,9 +53,8 @@ struct Holdout: Codable, ExperimentCore {
         trafficAllocation = try container.decode([TrafficAllocation].self, forKey: .trafficAllocation)
         audienceIds = try container.decode([String].self, forKey: .audienceIds)
         audienceConditions = try container.decodeIfPresent(ConditionHolder.self, forKey: .audienceConditions)
-        
-        includedFlags = try container.decodeIfPresent([String].self, forKey: .includedFlags) ?? []
-        excludedFlags = try container.decodeIfPresent([String].self, forKey: .excludedFlags) ?? []
+
+        includedRules = try container.decodeIfPresent([String].self, forKey: .includedRules)
     }
 }
 
@@ -69,13 +67,16 @@ extension Holdout: Equatable {
         lhs.trafficAllocation == rhs.trafficAllocation &&
         lhs.audienceIds == rhs.audienceIds &&
         lhs.audienceConditions == rhs.audienceConditions &&
-        lhs.includedFlags == rhs.includedFlags &&
-        lhs.excludedFlags == rhs.excludedFlags
+        lhs.includedRules == rhs.includedRules
     }
 }
 
 extension Holdout {
     var isActivated: Bool {
         return status == .running
+    }
+
+    var isGlobal: Bool {
+        return includedRules == nil
     }
 }

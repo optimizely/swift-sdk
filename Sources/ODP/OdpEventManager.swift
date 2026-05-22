@@ -47,7 +47,7 @@ open class OdpEventManager {
         self.queueLock = DispatchQueue(label: "event")
         
         // a separate event queue for each sdkKey (which may have own ODP public key)
-        let storeName = "OPTEvent-ODP-\(sdkKey)"
+        let storeName = "OPTEvent-ODP-\(sdkKey.sha256Hash)"
         self.eventQueue = DataStoreQueueStackImpl<OdpEvent>(queueStackName: "odp",
                                                             dataStore: DataStoreFile<[Data]>(storeName: storeName))
     }

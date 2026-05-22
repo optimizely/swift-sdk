@@ -20,6 +20,7 @@ class OdpEventManagerTests: XCTestCase {
     var manager: OdpEventManager!
     var odpConfig: OdpConfig!
     var apiManager = MockOdpEventApiManager()
+    let sdkKeyHash = "d6a7cd2a7371b1a15d543196979ff74fdb027023ebf187d5d329be11055c77fd"
 
     var options = [OptimizelySegmentOption]()
     
@@ -56,6 +57,13 @@ class OdpEventManagerTests: XCTestCase {
     }
     
     // MARK: - save and restore events
+
+    func testEventQueueUsesHashedPersistenceIdentifier() {
+        let dataStore = manager.eventQueue.dataStore as! DataStoreFile<[Data]>
+
+        XCTAssertEqual(dataStore.url.lastPathComponent, "OPTEvent-ODP-\(sdkKeyHash)")
+        XCTAssertFalse(dataStore.url.lastPathComponent.contains("any"))
+    }
     
     func testSaveAndRestoreEvents() {
         manager.sendEvent(type: "t1",

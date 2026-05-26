@@ -65,13 +65,18 @@ open class OdpEventManager {
     
     func identifyUser(vuid: String?, userId: String?) {
         var identifiers = [String: String]()
-        if let _vuid = vuid {
-            identifiers[Constants.ODP.keyForVuid] = _vuid
+        if let vuid = vuid, !vuid.isEmpty {
+            identifiers[Constants.ODP.keyForVuid] = vuid
         }
-        if let userId = userId {
+        if let userId = userId, !userId.isEmpty {
             identifiers[Constants.ODP.keyForUserId] = userId
         }
-        
+
+        guard identifiers.count >= 2 else {
+            logger.d("ODP identify event is not dispatched (only one identifier provided).")
+            return
+        }
+
         sendEvent(type: Constants.ODP.eventType,
                   action: "identified",
                   identifiers: identifiers,

@@ -73,7 +73,7 @@ open class OdpEventManager {
         }
 
         guard identifiers.count >= 2 else {
-            logger.d("ODP identify event is not dispatched (only one identifier provided).")
+            logger.d("ODP identify event is not dispatched (fewer than 2 valid identifiers).")
             return
         }
 

@@ -65,13 +65,20 @@ open class OdpEventManager {
     
     func identifyUser(vuid: String?, userId: String?) {
         var identifiers = [String: String]()
-        if let _vuid = vuid {
-            identifiers[Constants.ODP.keyForVuid] = _vuid
+        if let vuid = vuid, !vuid.isEmpty {
+            identifiers[Constants.ODP.keyForVuid] = vuid
         }
-        if let userId = userId {
+        if let userId = userId, !userId.isEmpty {
             identifiers[Constants.ODP.keyForUserId] = userId
         }
-        
+
+        // Identify requires 2+ identifiers to link (e.g., vuid + fs_user_id).
+        // A single identifier has no cross-reference value and generates unnecessary traffic.
+        guard identifiers.count >= 2 else {
+            logger.d("ODP identify event is not dispatched (fewer than 2 valid identifiers).")
+            return
+        }
+
         sendEvent(type: Constants.ODP.eventType,
                   action: "identified",
                   identifiers: identifiers,

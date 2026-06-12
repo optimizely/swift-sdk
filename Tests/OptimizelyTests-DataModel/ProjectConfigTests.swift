@@ -98,10 +98,12 @@ class ProjectConfigTests: XCTestCase {
         var holdout2 = HoldoutTests.sampleData
         var holdout3 = HoldoutTests.sampleData
         var holdout4 = HoldoutTests.sampleData
-        
-        holdout0["id"] = "3000" // Global holdout (includedRules == nil)
-        holdout1["id"] = "3001" // Global holdout (includedRules == nil)
-        holdout2["id"] = "3002" // Global holdout (includedRules == nil)
+
+        // FSSDK-12760: scope is determined by datafile section, not by `includedRules`.
+        // Entries in `holdouts` are global; entries in `localHoldouts` are local.
+        holdout0["id"] = "3000" // Global holdout (in `holdouts` section)
+        holdout1["id"] = "3001" // Global holdout (in `holdouts` section)
+        holdout2["id"] = "3002" // Global holdout (in `holdouts` section)
         holdout3["id"] = "3003" // Local holdout targeting rules in feature 2000 and 2002
         holdout4["id"] = "3004" // Local holdout targeting rules NOT in feature 2001
 
@@ -135,7 +137,9 @@ class ProjectConfigTests: XCTestCase {
         var projectData = ProjectTests.sampleData
         projectData["experiments"] = [exp0, exp1, exp2, exp3, exp4]
         projectData["featureFlags"] = [feature0, feature1, feature2, feature3]
-        projectData["holdouts"] = [holdout0, holdout1, holdout2, holdout3, holdout4]
+        // FSSDK-12760: globals go into `holdouts`, locals into `localHoldouts`.
+        projectData["holdouts"] = [holdout0, holdout1, holdout2]
+        projectData["localHoldouts"] = [holdout3, holdout4]
         
         // check experimentFeatureMap extracted properly
         

@@ -165,4 +165,163 @@ class HoldoutConfigTests: XCTestCase {
         XCTAssertEqual(config.global.count, 1)
         XCTAssertEqual(config.ruleHoldoutsMap["rule1"]?.count, 1)
     }
+
+    // MARK: - FSSDK-12760: localHoldouts section semantics
+
+    /// Section-aware init: entries in the global section are classified as
+    /// global regardless of any `includedRules` field on them.
+    func testSectionAwareInit_globalSectionEntriesAreGlobal() {
+        var globalWithStrayRules: Holdout = try! OTUtils.model(from: HoldoutTests.sampleDataWithIncludedRules)
+        globalWithStrayRules.id = "g_stray"
+        globalWithStrayRules.includedRules = ["rule_should_be_ignored"]
+
+        let config = HoldoutConfig(
+            globalHoldouts: [globalWithStrayRules],
+            localHoldouts: []
+        )
+
+        // Must be classified as global
+        XCTAssertEqual(config.global.count, 1)
+        XCTAssertEqual(config.global.first?.id, "g_stray")
+        // `includedRules` must be stripped — section membership is the sole signal
+        XCTAssertNil(config.global.first?.includedRules)
+        XCTAssertTrue(config.global.first!.isGlobal)
+        // The stray rule must NOT be registered in the rule map
+        XCTAssertTrue(config.getHoldoutsForRule(ruleId: "rule_should_be_ignored").isEmpty)
+        // Entity is still retrievable by id
+        XCTAssertNotNil(config.getHoldout(id: "g_stray"))
+    }
+
+    /// Section-aware init: entries in the local section register under each
+    /// rule in their `includedRules` list and never appear in `global`.
+    func testSectionAwareInit_localSectionEntriesAreLocal() {
+        var local: Holdout = try! OTUtils.model(from: HoldoutTests.sampleDataWithIncludedRules)
+        local.id = "l1"
+        local.includedRules = ["rule_x", "rule_y"]
+
+        let config = HoldoutConfig(
+            globalHoldouts: [],
+            localHoldouts: [local]
+        )
+
+        XCTAssertTrue(config.global.isEmpty)
+        XCTAssertEqual(config.getHoldoutsForRule(ruleId: "rule_x"), [local])
+        XCTAssertEqual(config.getHoldoutsForRule(ruleId: "rule_y"), [local])
+        XCTAssertTrue(config.getHoldoutsForRule(ruleId: "rule_z").isEmpty)
+    }
+
+    /// Local-section entries with `includedRules == nil` are invalid per spec.
+    /// They must be excluded from every map and must NOT fall back to global.
+    func testLocalSection_missingIncludedRules_isExcluded() {
+        var invalid: Holdout = try! OTUtils.model(from: HoldoutTests.sampleData)
+        invalid.id = "h_invalid"
+        invalid.includedRules = nil  // missing — invalid for local section
+
+        let config = HoldoutConfig(
+            globalHoldouts: [],
+            localHoldouts: [invalid]
+        )
+
+        // Not applied as global
+        XCTAssertTrue(config.global.isEmpty)
+        // Not applied as local for any rule
+        XCTAssertTrue(config.getHoldoutsForRule(ruleId: "any_rule").isEmpty)
+        // Not retrievable by id either
+        XCTAssertNil(config.getHoldout(id: "h_invalid"))
+    }
+
+    /// Local-section entries with an empty `includedRules` list are invalid per
+    /// spec (they target no rules). They must be excluded entirely.
+    func testLocalSection_emptyIncludedRules_isExcluded() {
+        var invalid: Holdout = try! OTUtils.model(from: HoldoutTests.sampleDataWithIncludedRules)
+        invalid.id = "h_empty"
+        invalid.includedRules = []
+
+        let config = HoldoutConfig(
+            globalHoldouts: [],
+            localHoldouts: [invalid]
+        )
+
+        XCTAssertTrue(config.global.isEmpty)
+        XCTAssertTrue(config.getHoldoutsForRule(ruleId: "any_rule").isEmpty)
+        XCTAssertNil(config.getHoldout(id: "h_empty"))
+    }
+
+    /// Both sections present: entries never cross over. Global stays global,
+    /// local stays local, even when both sections share a rule id space.
+    func testBothSections_partitionEnforced() {
+        var g1: Holdout = try! OTUtils.model(from: HoldoutTests.sampleData)
+        g1.id = "g1"
+        var g2: Holdout = try! OTUtils.model(from: HoldoutTests.sampleData)
+        g2.id = "g2"
+
+        var l1: Holdout = try! OTUtils.model(from: HoldoutTests.sampleDataWithIncludedRules)
+        l1.id = "l1"
+        l1.includedRules = ["rule_a"]
+        var l2: Holdout = try! OTUtils.model(from: HoldoutTests.sampleDataWithIncludedRules)
+        l2.id = "l2"
+        l2.includedRules = ["rule_b"]
+
+        let config = HoldoutConfig(
+            globalHoldouts: [g1, g2],
+            localHoldouts: [l1, l2]
+        )
+
+        // Global section
+        let globalIds = Set(config.getGlobalHoldouts().map { $0.id })
+        XCTAssertEqual(globalIds, Set(["g1", "g2"]))
+
+        // Local section — each rule resolves to its own holdout, never to a global one
+        XCTAssertEqual(config.getHoldoutsForRule(ruleId: "rule_a").map { $0.id }, ["l1"])
+        XCTAssertEqual(config.getHoldoutsForRule(ruleId: "rule_b").map { $0.id }, ["l2"])
+
+        // Both sections are retrievable by id
+        XCTAssertNotNil(config.getHoldout(id: "g1"))
+        XCTAssertNotNil(config.getHoldout(id: "l1"))
+    }
+
+    /// Backward compatibility: when the datafile has no `localHoldouts` section
+    /// (passed as an empty list), every entry in the `holdouts` section is
+    /// treated as global — exactly matching pre-FSSDK-12760 behavior.
+    func testBackwardCompat_noLocalHoldoutsSection() {
+        var g1: Holdout = try! OTUtils.model(from: HoldoutTests.sampleData)
+        g1.id = "g1"
+
+        let config = HoldoutConfig(
+            globalHoldouts: [g1],
+            localHoldouts: []
+        )
+
+        XCTAssertEqual(config.getGlobalHoldouts().count, 1)
+        XCTAssertEqual(config.getGlobalHoldouts().first?.id, "g1")
+        XCTAssertTrue(config.ruleHoldoutsMap.isEmpty)
+    }
+
+    /// Mixed-validity local section: valid entries are kept, invalid entries
+    /// are excluded without affecting the valid ones.
+    func testLocalSection_invalidEntriesDoNotAffectValidOnes() {
+        var valid: Holdout = try! OTUtils.model(from: HoldoutTests.sampleDataWithIncludedRules)
+        valid.id = "valid"
+        valid.includedRules = ["rule_x"]
+
+        var invalidNil: Holdout = try! OTUtils.model(from: HoldoutTests.sampleData)
+        invalidNil.id = "invalid_nil"
+        invalidNil.includedRules = nil
+
+        var invalidEmpty: Holdout = try! OTUtils.model(from: HoldoutTests.sampleDataWithIncludedRules)
+        invalidEmpty.id = "invalid_empty"
+        invalidEmpty.includedRules = []
+
+        let config = HoldoutConfig(
+            globalHoldouts: [],
+            localHoldouts: [valid, invalidNil, invalidEmpty]
+        )
+
+        // Only the valid local holdout is registered
+        XCTAssertEqual(config.getHoldoutsForRule(ruleId: "rule_x").map { $0.id }, ["valid"])
+        XCTAssertNotNil(config.getHoldout(id: "valid"))
+        XCTAssertNil(config.getHoldout(id: "invalid_nil"))
+        XCTAssertNil(config.getHoldout(id: "invalid_empty"))
+        XCTAssertTrue(config.global.isEmpty)
+    }
 }

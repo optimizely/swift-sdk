@@ -53,7 +53,11 @@ struct Project: Codable, Equatable {
     var sdkKey: String?
     var environmentKey: String?
     // Holdouts
+    // `holdouts` carries ONLY global holdouts. `localHoldouts` (new top-level
+    // section, FSSDK-12760) carries ONLY rule-scoped local holdouts. Section
+    // membership is the sole signal for scope; older SDKs ignore the new key.
     var holdouts: [Holdout]
+    var localHoldouts: [Holdout]
     // Region
     var region: Region?
     let logger = OPTLoggerFactory.getLogger()
@@ -65,7 +69,7 @@ struct Project: Codable, Equatable {
         // V3
         case anonymizeIP
         // V4
-        case rollouts, integrations, typedAudiences, featureFlags, botFiltering, sendFlagDecisions, sdkKey, environmentKey, holdouts, region
+        case rollouts, integrations, typedAudiences, featureFlags, botFiltering, sendFlagDecisions, sdkKey, environmentKey, holdouts, localHoldouts, region
     }
     
     init(from decoder: Decoder) throws {
@@ -96,6 +100,9 @@ struct Project: Codable, Equatable {
         environmentKey = try container.decodeIfPresent(String.self, forKey: .environmentKey)
         // Holdouts - defaults to empty array if key is not present
         holdouts = try container.decodeIfPresent([Holdout].self, forKey: .holdouts) ?? []
+        // Local holdouts (FSSDK-12760) - new top-level section; defaults to empty when absent
+        // so old datafiles continue to parse unchanged.
+        localHoldouts = try container.decodeIfPresent([Holdout].self, forKey: .localHoldouts) ?? []
         // Region - defaults to US if not present
         region = try container.decodeIfPresent(Region.self, forKey: .region)
     }
@@ -103,12 +110,13 @@ struct Project: Codable, Equatable {
     // Required since logger is not equatable
     static func == (lhs: Project, rhs: Project) -> Bool {
         return lhs.version == rhs.version && lhs.projectId == rhs.projectId && lhs.experiments == rhs.experiments && lhs.holdouts == rhs.holdouts &&
+            lhs.localHoldouts == rhs.localHoldouts &&
             lhs.audiences == rhs.audiences && lhs.groups == rhs.groups && lhs.attributes == rhs.attributes &&
             lhs.accountId == rhs.accountId && lhs.events == rhs.events && lhs.revision == rhs.revision &&
             lhs.anonymizeIP == rhs.anonymizeIP && lhs.rollouts == rhs.rollouts &&
             lhs.integrations == rhs.integrations && lhs.typedAudiences == rhs.typedAudiences &&
-            lhs.featureFlags == rhs.featureFlags && lhs.botFiltering == rhs.botFiltering && 
-            lhs.sendFlagDecisions == rhs.sendFlagDecisions && lhs.sdkKey == rhs.sdkKey && 
+            lhs.featureFlags == rhs.featureFlags && lhs.botFiltering == rhs.botFiltering &&
+            lhs.sendFlagDecisions == rhs.sendFlagDecisions && lhs.sdkKey == rhs.sdkKey &&
             lhs.environmentKey == rhs.environmentKey && lhs.region == rhs.region
     }
 }

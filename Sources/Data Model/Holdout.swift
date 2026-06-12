@@ -76,6 +76,10 @@ extension Holdout {
         return status == .running
     }
 
+    /// True when this holdout applies to every flag (global scope).
+    /// Scope is set by the datafile section (`holdouts` vs `localHoldouts`);
+    /// HoldoutConfig strips `includedRules` from `holdouts`-section entries so
+    /// this property stays consistent with section membership.
     var isGlobal: Bool {
         return includedRules == nil
     }

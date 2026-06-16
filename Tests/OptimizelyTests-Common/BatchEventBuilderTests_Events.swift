@@ -497,7 +497,6 @@ extension BatchEventBuilderTests_Events {
         try! optimizely.start(datafile: datafile)
         
         let holdout: Holdout = try! OTUtils.model(from: sampleHoldout)
-        optimizely.config?.project.holdouts = [holdout]
         optimizely.config?.holdoutConfig = HoldoutConfig(globalHoldouts: [holdout], localHoldouts: [])
 
         let exp = expectation(description: "Wait for event to dispatch")
@@ -535,15 +534,14 @@ extension BatchEventBuilderTests_Events {
         
         var holdout: Holdout = try! OTUtils.model(from: sampleHoldout)
         holdout.includedRules = ["10390977673"]  // exp_no_audience rule in feature_1
-        optimizely.config?.project.holdouts = [holdout]
         optimizely.config?.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [holdout])
-        
+
         let exp = expectation(description: "Wait for event to dispatch")
-        
+
         let user = optimizely.createUserContext(userId: userId)
         _  = user.decide(key: featureKey)
-        
-        
+
+
         // Add a delay before evaluating getFirstEventJSON
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             exp.fulfill() // Fulfill the expectation after the delay
@@ -577,7 +575,6 @@ extension BatchEventBuilderTests_Events {
         
         var holdout: Holdout = try! OTUtils.model(from: sampleHoldout)
         holdout.includedRules = []  // Empty array = local holdout targeting no rules (excludes feature_1)
-        optimizely.config?.project.holdouts = [holdout]
         optimizely.config?.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [holdout])
         
         let exp = expectation(description: "Wait for event to dispatch")
@@ -618,7 +615,6 @@ extension BatchEventBuilderTests_Events {
         /// Set traffic allocation to gero
         holdout.trafficAllocation[0].endOfRange = 0
         holdout.includedRules = ["10390977673"]  // exp_with_audience rule in feature_1
-        optimizely.config?.project.holdouts = [holdout]
         optimizely.config?.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [holdout])
         
         let exp = expectation(description: "Wait for event to dispatch")

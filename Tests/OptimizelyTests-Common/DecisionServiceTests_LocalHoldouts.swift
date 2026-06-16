@@ -69,7 +69,6 @@ class DecisionServiceTests_LocalHoldouts: XCTestCase {
         // Create global holdout (includedRules: nil)
         var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
         holdout.includedRules = nil  // Global holdout
-        config.project.holdouts = [holdout]
         config.holdoutConfig = HoldoutConfig(globalHoldouts: [holdout], localHoldouts: [])
 
         // Mock bucketer to ensure user buckets into holdout (50% traffic = endOfRange 5000)
@@ -92,7 +91,6 @@ class DecisionServiceTests_LocalHoldouts: XCTestCase {
         // Create global holdout
         var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
         holdout.includedRules = nil  // Global holdout
-        config.project.holdouts = [holdout]
         config.holdoutConfig = HoldoutConfig(globalHoldouts: [holdout], localHoldouts: [])
 
         // Mock bucketer to ensure user MISSES holdout (50% traffic = endOfRange 5000)
@@ -116,7 +114,6 @@ class DecisionServiceTests_LocalHoldouts: XCTestCase {
         // Create local holdout targeting specific experiment rule
         var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
         holdout.includedRules = [experimentRuleId]  // Target the experiment rule
-        config.project.holdouts = [holdout]
         config.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [holdout])
 
         // Mock bucketer to ensure user buckets into holdout
@@ -139,7 +136,6 @@ class DecisionServiceTests_LocalHoldouts: XCTestCase {
         // Create local holdout targeting experiment rule
         var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
         holdout.includedRules = [experimentRuleId]
-        config.project.holdouts = [holdout]
         config.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [holdout])
 
         // Mock bucketer to ensure user MISSES holdout
@@ -162,7 +158,6 @@ class DecisionServiceTests_LocalHoldouts: XCTestCase {
         var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
         holdout.includedRules = [experimentRuleId]
         holdout.audienceIds = ["13389130056"]  // Audience from decide_datafile
-        config.project.holdouts = [holdout]
         config.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [holdout])
 
         // Mock bucketer to ensure would bucket IF audience matched
@@ -187,7 +182,6 @@ class DecisionServiceTests_LocalHoldouts: XCTestCase {
         // Create local holdout targeting delivery rule
         var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
         holdout.includedRules = [deliveryRuleId]  // Target delivery rule from rollout
-        config.project.holdouts = [holdout]
         config.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [holdout])
 
         // Mock bucketer to ensure user buckets into holdout
@@ -210,7 +204,6 @@ class DecisionServiceTests_LocalHoldouts: XCTestCase {
         // Create local holdout targeting delivery rule
         var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
         holdout.includedRules = [deliveryRuleId]
-        config.project.holdouts = [holdout]
         config.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [holdout])
 
         // Mock bucketer to ensure user MISSES holdout
@@ -245,7 +238,6 @@ class DecisionServiceTests_LocalHoldouts: XCTestCase {
         holdout2.variations[0].id = "holdout_2_var_id"
         holdout2.variations[0].key = "holdout_2_variation"
 
-        config.project.holdouts = [holdout1, holdout2]
         config.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [holdout1, holdout2])
 
         // Mock bucketer to ensure user buckets into both
@@ -273,7 +265,6 @@ class DecisionServiceTests_LocalHoldouts: XCTestCase {
         holdout2.includedRules = [deliveryRuleId]
         holdout2.variations[0].id = "holdout_2_var_id"
 
-        config.project.holdouts = [holdout1, holdout2]
         config.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [holdout1, holdout2])
 
         // Mock bucketer
@@ -297,7 +288,6 @@ class DecisionServiceTests_LocalHoldouts: XCTestCase {
         // Create local holdout targeting specific rule in feature_1
         var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
         holdout.includedRules = [experimentRuleId]  // Only targets experiment in feature_1
-        config.project.holdouts = [holdout]
         config.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [holdout])
 
         // Mock bucketer
@@ -335,7 +325,6 @@ class DecisionServiceTests_LocalHoldouts: XCTestCase {
         localHoldout.variations[0].id = "local_var_id"
         localHoldout.variations[0].key = "local_variation"
 
-        config.project.holdouts = [globalHoldout, localHoldout]
         config.holdoutConfig = HoldoutConfig(globalHoldouts: [globalHoldout], localHoldouts: [localHoldout])
 
         // Mock bucketer to ensure user buckets into both
@@ -357,7 +346,6 @@ class DecisionServiceTests_LocalHoldouts: XCTestCase {
         // Create local holdout
         var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
         holdout.includedRules = [experimentRuleId]
-        config.project.holdouts = [holdout]
         config.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [holdout])
 
         // Mock bucketer to ensure would bucket into holdout
@@ -398,7 +386,6 @@ class DecisionServiceTests_LocalHoldouts: XCTestCase {
         var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
         holdout.status = .draft  // Not running
         holdout.includedRules = [experimentRuleId]
-        config.project.holdouts = [holdout]
         config.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [holdout])
 
         // Mock bucketer to ensure would bucket IF holdout was active

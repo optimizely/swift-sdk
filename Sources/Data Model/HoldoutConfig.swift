@@ -43,8 +43,10 @@ struct HoldoutConfig {
         var newGlobal: [Holdout] = []
         var newRuleMap: [String: [Holdout]] = [:]
 
-        // Strip `includedRules` so global entries are unambiguously global.
         for var holdout in globalHoldouts {
+            if holdout.includedRules != nil {
+                logger.w("Global holdout '\(holdout.key)' (id: \(holdout.id)) has 'includedRules' which will be ignored; global holdouts apply to all flags.")
+            }
             holdout.includedRules = nil
             newIdMap[holdout.id] = holdout
             newGlobal.append(holdout)

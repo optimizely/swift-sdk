@@ -169,4 +169,4 @@ for datafile refresh" code block to keep the SDK alive).
 
 ## Log bugs here
 
-https://episerver99-my.sharepoint.com/:x:/g/personal/matjaz_pirnovar_optimizely_com/IQCkcX_sg-ZeS7uNrKPc6wf8AVKqgPsQJrSjciNNJy035KM?e=doxfH4&nav=MTVfezAwMDAwMDAwLTAwMDEtMDAwMC0wMDAwLTAwMDAwMDAwMDAwMH0
+https://episerver99-my.sharepoint.com/:x:/g/personal/matjaz_pirnovar_optimizely_com/IQCkcX_sg-ZeS7uNrKPc6wf8AVKqgPsQJrSjciNNJy035KM?e=E1XPcA

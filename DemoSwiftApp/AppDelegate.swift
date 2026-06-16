@@ -476,6 +476,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     //     - What does decide return? Should be default off without crash
     //
     // ============================================================
+    // LOG BUGS HERE:
+    // https://episerver99-my.sharepoint.com/:x:/g/personal/matjaz_pirnovar_optimizely_com/IQCkcX_sg-ZeS7uNrKPc6wf8AVKqgPsQJrSjciNNJy035KM?e=E1XPcA
+    // ============================================================
 
     // ============================================================
     // HELPERS -- Used by the code above, no need to modify

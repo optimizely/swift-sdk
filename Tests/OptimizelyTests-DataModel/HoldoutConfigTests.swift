@@ -18,7 +18,7 @@ import XCTest
 
 class HoldoutConfigTests: XCTestCase {
     func testEmptyHoldouts_shouldHaveEmptyMaps() {
-        let config = HoldoutConfig(allholdouts: [])
+        let config = HoldoutConfig(globalHoldouts: [], localHoldouts: [])
 
         XCTAssertTrue(config.holdoutIdMap.isEmpty)
         XCTAssertTrue(config.global.isEmpty)
@@ -145,11 +145,10 @@ class HoldoutConfigTests: XCTestCase {
     }
 
     func testUpdateHoldoutMappingTriggeredOnAllHoldoutsChange() {
-        var config = HoldoutConfig(allholdouts: [])
+        var config = HoldoutConfig(globalHoldouts: [], localHoldouts: [])
         XCTAssertTrue(config.global.isEmpty)
         XCTAssertTrue(config.ruleHoldoutsMap.isEmpty)
 
-        // When allHoldouts changes, updateHoldoutMapping() should be called automatically
         var global: Holdout = try! OTUtils.model(from: HoldoutTests.sampleData)
         global.id = "g1"
 

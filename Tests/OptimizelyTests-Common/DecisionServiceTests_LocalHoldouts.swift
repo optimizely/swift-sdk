@@ -73,7 +73,7 @@ class DecisionServiceTests_LocalHoldouts: BaseHoldoutTests {
         var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
         holdout.includedRules = nil  // Global holdout
         config.project.holdouts = [holdout]
-        config.holdoutConfig.allHoldouts = [holdout]
+        config.holdoutConfig = HoldoutConfig(globalHoldouts: [holdout], localHoldouts: [])
 
         // Mock bucketer to ensure user buckets into holdout (50% traffic = endOfRange 5000)
         let mockBucketer = MockBucketer(mockBucketValue: 2500)
@@ -96,7 +96,7 @@ class DecisionServiceTests_LocalHoldouts: BaseHoldoutTests {
         var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
         holdout.includedRules = nil  // Global holdout
         config.project.holdouts = [holdout]
-        config.holdoutConfig.allHoldouts = [holdout]
+        config.holdoutConfig = HoldoutConfig(globalHoldouts: [holdout], localHoldouts: [])
 
         // Mock bucketer to ensure user MISSES holdout (50% traffic = endOfRange 5000)
         let mockBucketer = MockBucketer(mockBucketValue: 7000)
@@ -120,7 +120,7 @@ class DecisionServiceTests_LocalHoldouts: BaseHoldoutTests {
         var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
         holdout.includedRules = [experimentRuleId]  // Target the experiment rule
         config.project.holdouts = [holdout]
-        config.holdoutConfig.allHoldouts = [holdout]
+        config.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [holdout])
 
         // Mock bucketer to ensure user buckets into holdout
         let mockBucketer = MockBucketer(mockBucketValue: 2500)
@@ -143,7 +143,7 @@ class DecisionServiceTests_LocalHoldouts: BaseHoldoutTests {
         var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
         holdout.includedRules = [experimentRuleId]
         config.project.holdouts = [holdout]
-        config.holdoutConfig.allHoldouts = [holdout]
+        config.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [holdout])
 
         // Mock bucketer to ensure user MISSES holdout
         let mockBucketer = MockBucketer(mockBucketValue: 7000)
@@ -166,7 +166,7 @@ class DecisionServiceTests_LocalHoldouts: BaseHoldoutTests {
         holdout.includedRules = [experimentRuleId]
         holdout.audienceIds = ["13389130056"]  // Audience from decide_datafile
         config.project.holdouts = [holdout]
-        config.holdoutConfig.allHoldouts = [holdout]
+        config.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [holdout])
 
         // Mock bucketer to ensure would bucket IF audience matched
         let mockBucketer = MockBucketer(mockBucketValue: 2500)
@@ -191,7 +191,7 @@ class DecisionServiceTests_LocalHoldouts: BaseHoldoutTests {
         var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
         holdout.includedRules = [deliveryRuleId]  // Target delivery rule from rollout
         config.project.holdouts = [holdout]
-        config.holdoutConfig.allHoldouts = [holdout]
+        config.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [holdout])
 
         // Mock bucketer to ensure user buckets into holdout
         let mockBucketer = MockBucketer(mockBucketValue: 2500)
@@ -214,7 +214,7 @@ class DecisionServiceTests_LocalHoldouts: BaseHoldoutTests {
         var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
         holdout.includedRules = [deliveryRuleId]
         config.project.holdouts = [holdout]
-        config.holdoutConfig.allHoldouts = [holdout]
+        config.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [holdout])
 
         // Mock bucketer to ensure user MISSES holdout
         let mockBucketer = MockBucketer(mockBucketValue: 7000)
@@ -249,7 +249,7 @@ class DecisionServiceTests_LocalHoldouts: BaseHoldoutTests {
         holdout2.variations[0].key = "holdout_2_variation"
 
         config.project.holdouts = [holdout1, holdout2]
-        config.holdoutConfig.allHoldouts = [holdout1, holdout2]
+        config.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [holdout1, holdout2])
 
         // Mock bucketer to ensure user buckets into both
         let mockBucketer = MockBucketer(mockBucketValue: 2500)
@@ -277,7 +277,7 @@ class DecisionServiceTests_LocalHoldouts: BaseHoldoutTests {
         holdout2.variations[0].id = "holdout_2_var_id"
 
         config.project.holdouts = [holdout1, holdout2]
-        config.holdoutConfig.allHoldouts = [holdout1, holdout2]
+        config.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [holdout1, holdout2])
 
         // Mock bucketer
         let mockBucketer = MockBucketer(mockBucketValue: 2500)
@@ -339,7 +339,7 @@ class DecisionServiceTests_LocalHoldouts: BaseHoldoutTests {
         localHoldout.variations[0].key = "local_variation"
 
         config.project.holdouts = [globalHoldout, localHoldout]
-        config.holdoutConfig.allHoldouts = [globalHoldout, localHoldout]
+        config.holdoutConfig = HoldoutConfig(globalHoldouts: [globalHoldout], localHoldouts: [localHoldout])
 
         // Mock bucketer to ensure user buckets into both
         let mockBucketer = MockBucketer(mockBucketValue: 2500)
@@ -361,7 +361,7 @@ class DecisionServiceTests_LocalHoldouts: BaseHoldoutTests {
         var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
         holdout.includedRules = [experimentRuleId]
         config.project.holdouts = [holdout]
-        config.holdoutConfig.allHoldouts = [holdout]
+        config.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [holdout])
 
         // Mock bucketer to ensure would bucket into holdout
         let mockBucketer = MockBucketer(mockBucketValue: 2500)
@@ -387,7 +387,7 @@ class DecisionServiceTests_LocalHoldouts: BaseHoldoutTests {
         // Test that local holdout targeting non-existent rule doesn't break evaluation
         // Expected: Empty array returned from getHoldoutsForRule(), normal evaluation continues
 
-        let config = HoldoutConfig(allholdouts: [])
+        let config = HoldoutConfig(globalHoldouts: [], localHoldouts: [])
         let result = config.getHoldoutsForRule(ruleId: "nonexistent_rule")
 
         XCTAssertTrue(result.isEmpty, "Non-existent rule should return empty array")
@@ -402,7 +402,7 @@ class DecisionServiceTests_LocalHoldouts: BaseHoldoutTests {
         holdout.status = .draft  // Not running
         holdout.includedRules = [experimentRuleId]
         config.project.holdouts = [holdout]
-        config.holdoutConfig.allHoldouts = [holdout]
+        config.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [holdout])
 
         // Mock bucketer to ensure would bucket IF holdout was active
         let mockBucketer = MockBucketer(mockBucketValue: 2500)

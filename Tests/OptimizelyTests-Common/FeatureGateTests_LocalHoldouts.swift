@@ -72,7 +72,7 @@ class FeatureGateTests_LocalHoldouts: XCTestCase {
         var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
         holdout.includedRules = [experimentRuleId]
         config.project.holdouts = [holdout]
-        config.holdoutConfig.allHoldouts = [holdout]
+        config.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [holdout])
 
         // Mock bucketer to ensure user WOULD bucket into holdout if it were evaluated
         let mockBucketer = MockBucketer(mockBucketValue: 2500) // Within holdout range (0-5000)
@@ -101,7 +101,7 @@ class FeatureGateTests_LocalHoldouts: XCTestCase {
         var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
         holdout.includedRules = [deliveryRuleId]
         config.project.holdouts = [holdout]
-        config.holdoutConfig.allHoldouts = [holdout]
+        config.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [holdout])
 
         // Mock bucketer to ensure user WOULD bucket into holdout if it were evaluated
         let mockBucketer = MockBucketer(mockBucketValue: 2500)
@@ -132,7 +132,7 @@ class FeatureGateTests_LocalHoldouts: XCTestCase {
         var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
         holdout.includedRules = [experimentRuleId]
         config.project.holdouts = [holdout]
-        config.holdoutConfig.allHoldouts = [holdout]
+        config.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [holdout])
 
         // Mock bucketer to bucket user into holdout
         let mockBucketer = MockBucketer(mockBucketValue: 2500)
@@ -162,7 +162,7 @@ class FeatureGateTests_LocalHoldouts: XCTestCase {
         var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
         holdout.includedRules = [deliveryRuleId]
         config.project.holdouts = [holdout]
-        config.holdoutConfig.allHoldouts = [holdout]
+        config.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [holdout])
 
         // Mock bucketer to bucket user into holdout
         let mockBucketer = MockBucketer(mockBucketValue: 2500)
@@ -191,7 +191,7 @@ class FeatureGateTests_LocalHoldouts: XCTestCase {
         var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
         holdout.includedRules = nil  // Global holdout
         config.project.holdouts = [holdout]
-        config.holdoutConfig.allHoldouts = [holdout]
+        config.holdoutConfig = HoldoutConfig(globalHoldouts: [holdout], localHoldouts: [])
 
         // Mock bucketer to bucket user into holdout
         let mockBucketer = MockBucketer(mockBucketValue: 2500)

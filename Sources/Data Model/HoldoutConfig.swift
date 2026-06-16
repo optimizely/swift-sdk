@@ -24,14 +24,6 @@ import Foundation
 struct HoldoutConfig {
     private let logger = OPTLoggerFactory.getLogger()
 
-    /// Combined flat view of all holdouts. Setting this treats all entries as global.
-    var allHoldouts: [Holdout] {
-        get { return _allHoldouts }
-        set { applySections(globalHoldouts: newValue, localHoldouts: []) }
-    }
-
-    private var _allHoldouts: [Holdout] = []
-
     private(set) var global: [Holdout] = []
     private(set) var holdoutIdMap: [String: Holdout] = [:]
     private(set) var ruleHoldoutsMap: [String: [Holdout]] = [:]
@@ -40,10 +32,6 @@ struct HoldoutConfig {
 
     init() {}
 
-    init(allholdouts: [Holdout]) {
-        applySections(globalHoldouts: allholdouts, localHoldouts: [])
-    }
-
     init(globalHoldouts: [Holdout], localHoldouts: [Holdout]) {
         applySections(globalHoldouts: globalHoldouts, localHoldouts: localHoldouts)
     }
@@ -51,7 +39,6 @@ struct HoldoutConfig {
     // MARK: - Section application
 
     private mutating func applySections(globalHoldouts: [Holdout], localHoldouts: [Holdout]) {
-        var newAll: [Holdout] = []
         var newIdMap: [String: Holdout] = [:]
         var newGlobal: [Holdout] = []
         var newRuleMap: [String: [Holdout]] = [:]
@@ -59,7 +46,6 @@ struct HoldoutConfig {
         // Strip `includedRules` so global entries are unambiguously global.
         for var holdout in globalHoldouts {
             holdout.includedRules = nil
-            newAll.append(holdout)
             newIdMap[holdout.id] = holdout
             newGlobal.append(holdout)
         }
@@ -72,14 +58,12 @@ struct HoldoutConfig {
                 )
                 continue
             }
-            newAll.append(holdout)
             newIdMap[holdout.id] = holdout
             for ruleId in rules {
                 newRuleMap[ruleId, default: []].append(holdout)
             }
         }
 
-        self._allHoldouts = newAll
         self.holdoutIdMap = newIdMap
         self.global = newGlobal
         self.ruleHoldoutsMap = newRuleMap

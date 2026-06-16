@@ -74,7 +74,7 @@ class DecisionListenerTests_Holdouts: BaseHoldoutTests {
         let mockDecisionService = DefaultDecisionService(userProfileService: OTUtils.createClearUserProfileService(), bucketer: MockBucketer(mockBucketValue: 400))
         optimizely.decisionService = mockDecisionService
         optimizely.config!.project.holdouts = [holdout]
-        optimizely.config!.holdoutConfig.allHoldouts = [holdout]
+        optimizely.config!.holdoutConfig = HoldoutConfig(globalHoldouts: [holdout], localHoldouts: [])
 
         self.notificationCenter = self.optimizely.notificationCenter!
     }
@@ -123,7 +123,7 @@ class DecisionListenerTests_Holdouts: BaseHoldoutTests {
         // Include all rules in feature_1: experiment + delivery rules
         holdout.includedRules = ["10390977673", "3332020515", "3332020494", "18322080788"]
         optimizely.config!.project.holdouts = [holdout]
-        optimizely.config!.holdoutConfig.allHoldouts = [holdout]
+        optimizely.config!.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [holdout])
         
         let exp = expectation(description: "x")
         let user = optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryMatch)

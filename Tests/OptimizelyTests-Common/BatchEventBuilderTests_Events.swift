@@ -498,23 +498,23 @@ extension BatchEventBuilderTests_Events {
         
         let holdout: Holdout = try! OTUtils.model(from: sampleHoldout)
         optimizely.config?.project.holdouts = [holdout]
-        optimizely.config?.holdoutConfig.allHoldouts = [holdout]
-        
+        optimizely.config?.holdoutConfig = HoldoutConfig(globalHoldouts: [holdout], localHoldouts: [])
+
         let exp = expectation(description: "Wait for event to dispatch")
         let user = optimizely.createUserContext(userId: userId)
         _  = user.decide(key: featureKey)
-        
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             exp.fulfill()
         }
-        
+
         let result = XCTWaiter.wait(for: [exp], timeout: 0.2)
         if result == XCTWaiter.Result.completed {
             let event = getFirstEventJSON(client: optimizely)!
             let visitor = (event["visitors"] as! Array<Dictionary<String, Any>>)[0]
             let snapshot = (visitor["snapshots"] as! Array<Dictionary<String, Any>>)[0]
             let decision = (snapshot["decisions"]  as! Array<Dictionary<String, Any>>)[0]
-            
+
             let metaData = decision["metadata"] as! Dictionary<String, Any>
             XCTAssertEqual(metaData["rule_type"] as! String, Constants.DecisionSource.holdout.rawValue)
             XCTAssertEqual(metaData["rule_key"] as! String, "holdout_key")
@@ -524,9 +524,9 @@ extension BatchEventBuilderTests_Events {
         } else {
             XCTFail("No event found")
         }
-        
+
     }
-    
+
     func testImpressionEvent_UserInHoldout_IncludedFlags() {
         let eventDispatcher2 = MockEventDispatcher()
         var optimizely: OptimizelyClient! = OptimizelyClient(sdkKey: "12345", eventDispatcher: eventDispatcher2)
@@ -536,7 +536,7 @@ extension BatchEventBuilderTests_Events {
         var holdout: Holdout = try! OTUtils.model(from: sampleHoldout)
         holdout.includedRules = ["10390977673"]  // exp_no_audience rule in feature_1
         optimizely.config?.project.holdouts = [holdout]
-        optimizely.config?.holdoutConfig.allHoldouts = [holdout]
+        optimizely.config?.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [holdout])
         
         let exp = expectation(description: "Wait for event to dispatch")
         
@@ -619,7 +619,7 @@ extension BatchEventBuilderTests_Events {
         holdout.trafficAllocation[0].endOfRange = 0
         holdout.includedRules = ["10390977673"]  // exp_with_audience rule in feature_1
         optimizely.config?.project.holdouts = [holdout]
-        optimizely.config?.holdoutConfig.allHoldouts = [holdout]
+        optimizely.config?.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [holdout])
         
         let exp = expectation(description: "Wait for event to dispatch")
         

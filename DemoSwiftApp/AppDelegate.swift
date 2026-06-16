@@ -21,7 +21,11 @@ import Optimizely
 class AppDelegate: UIResponder, UIApplicationDelegate {
     let logLevel = OptimizelyLogLevel.debug
     
-    let sdkKey = "FCnSegiEkRry9rhVMroit4"
+    // ============================================================
+    // BUG BASH: Set your SDK key here
+    // Get it from Settings > Environments in the Optimizely UI
+    // ============================================================
+    let sdkKey = "YOUR_SDK_KEY_HERE"
     let datafileName = "demoTestDatafile"
     let featureKey = "decide_demo"
     let experimentKey = "background_experiment_decide"
@@ -147,6 +151,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
         
+        // ============================================================
+        // BUG BASH: Run local holdouts exploration
+        // See DemoSwiftApp/Samples/LocalHoldoutsBugBash.swift
+        // ============================================================
+        // LocalHoldoutsBugBash.run()
+
         // For sample codes for APIs, see "Samples/SamplesForAPI.swift"
         //SamplesForAPI.checkOptimizelyConfig(optimizely: self.optimizely)
         //SamplesForAPI.checkOptimizelyUserContext(optimizely: self.optimizely)

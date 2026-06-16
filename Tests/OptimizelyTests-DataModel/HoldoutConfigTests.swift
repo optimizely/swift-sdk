@@ -30,8 +30,7 @@ class HoldoutConfigTests: XCTestCase {
         let localHoldout1: Holdout = try! OTUtils.model(from: HoldoutTests.sampleDataWithIncludedRules)
         let localHoldout2: Holdout = try! OTUtils.model(from: HoldoutTests.sampleDataWithDifferentRules)
 
-        let allHoldouts = [globalHoldout, localHoldout1, localHoldout2]
-        let holdoutConfig = HoldoutConfig(allholdouts: allHoldouts)
+        let holdoutConfig = HoldoutConfig(globalHoldouts: [globalHoldout], localHoldouts: [localHoldout1, localHoldout2])
 
         // Verify holdoutIdMap
         XCTAssertEqual(holdoutConfig.holdoutIdMap["11111"]?.includedRules, nil)
@@ -56,8 +55,7 @@ class HoldoutConfigTests: XCTestCase {
         var holdout2: Holdout = try! OTUtils.model(from: HoldoutTests.sampleDataWithDifferentRules)
         holdout2.id = "22222"
 
-        let allHoldouts = [holdout0, holdout1, holdout2]
-        let holdoutConfig = HoldoutConfig(allholdouts: allHoldouts)
+        let holdoutConfig = HoldoutConfig(globalHoldouts: [holdout0], localHoldouts: [holdout1, holdout2])
 
         XCTAssertEqual(holdoutConfig.getHoldout(id: "00000"), holdout0)
         XCTAssertEqual(holdoutConfig.getHoldout(id: "11111"), holdout1)
@@ -74,7 +72,7 @@ class HoldoutConfigTests: XCTestCase {
         var local: Holdout = try! OTUtils.model(from: HoldoutTests.sampleDataWithIncludedRules)
         local.id = "l1"
 
-        let config = HoldoutConfig(allholdouts: [local, global1, global2])
+        let config = HoldoutConfig(globalHoldouts: [global1, global2], localHoldouts: [local])
 
         let result = config.getGlobalHoldouts()
         XCTAssertEqual(result.count, 2)
@@ -95,7 +93,7 @@ class HoldoutConfigTests: XCTestCase {
         var global: Holdout = try! OTUtils.model(from: HoldoutTests.sampleData)
         global.id = "g1"
 
-        let config = HoldoutConfig(allholdouts: [local1, local2, global])
+        let config = HoldoutConfig(globalHoldouts: [global], localHoldouts: [local1, local2])
 
         // Rule1 should only have local1
         XCTAssertEqual(config.getHoldoutsForRule(ruleId: "rule1"), [local1])
@@ -137,7 +135,7 @@ class HoldoutConfigTests: XCTestCase {
         local3.id = "l3"
         local3.includedRules = ["shared_rule", "other_rule"]
 
-        let config = HoldoutConfig(allholdouts: [local1, local2, local3])
+        let config = HoldoutConfig(globalHoldouts: [], localHoldouts: [local1, local2, local3])
 
         let sharedRuleHoldouts = config.getHoldoutsForRule(ruleId: "shared_rule")
         XCTAssertEqual(sharedRuleHoldouts.count, 3)
@@ -159,7 +157,7 @@ class HoldoutConfigTests: XCTestCase {
         local.id = "l1"
         local.includedRules = ["rule1"]
 
-        config.allHoldouts = [global, local]
+        config = HoldoutConfig(globalHoldouts: [global], localHoldouts: [local])
 
         // Verify maps were updated
         XCTAssertEqual(config.global.count, 1)

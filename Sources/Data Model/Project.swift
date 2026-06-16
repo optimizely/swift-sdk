@@ -52,10 +52,7 @@ struct Project: Codable, Equatable {
     var sendFlagDecisions: Bool?
     var sdkKey: String?
     var environmentKey: String?
-    // Holdouts
-    // `holdouts` carries ONLY global holdouts. `localHoldouts` (new top-level
-    // section, FSSDK-12760) carries ONLY rule-scoped local holdouts. Section
-    // membership is the sole signal for scope; older SDKs ignore the new key.
+    // Holdouts: `holdouts` = global, `localHoldouts` = rule-scoped.
     var holdouts: [Holdout]
     var localHoldouts: [Holdout]
     // Region

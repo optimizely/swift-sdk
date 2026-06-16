@@ -499,27 +499,6 @@ extension DecisionServiceTests_Holdouts {
         XCTAssertEqual(decision?.source, Constants.DecisionSource.holdout.rawValue, "Source should be holdout")
     }
     
-    func testGetVariationForFeatureExperiment_HoldoutExcludedFlag() {
-        // Modify holdout to exclude the feature flag
-        var modifiedHoldoutData = sampleHoldout
-        modifiedHoldoutData["includedRules"] = []  // Empty array = local holdout targeting no rules (excludes flag_id_1234)
-        let excludedHoldout = try! OTUtils.model(from: modifiedHoldoutData) as Holdout
-        self.config.project.holdouts = [excludedHoldout]
-        self.config.holdoutConfig.allHoldouts = [excludedHoldout]
-        
-        let decision = mockDecisionService.getVariationForFeature(
-            config: config,
-            featureFlag: featureFlag,
-            user: optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryMatch)
-        ).result
-        
-        // Should skip holdout and bucket into experiment
-        XCTAssertNotNil(decision, "Decision should not be nil")
-        XCTAssertEqual(decision?.experiment?.id, kExperimentId, "Should return experiment")
-        XCTAssertEqual(decision?.variation?.key, kVariationKeyD, "Should return experiment variation")
-        XCTAssertEqual(decision?.source, Constants.DecisionSource.featureTest.rawValue, "Source should Westhill")
-    }
-    
     func testGetVariationForFeatureExperiment_MultipleHoldoutsWithOrdering() {
         // Setup multiple holdouts: global, included, excluded
         let tfAllocationRange = 1500

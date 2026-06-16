@@ -301,7 +301,7 @@ class DecisionServiceTests_LocalHoldouts: BaseHoldoutTests {
         var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
         holdout.includedRules = [experimentRuleId]  // Only targets experiment in feature_1
         config.project.holdouts = [holdout]
-        config.holdoutConfig.allHoldouts = [holdout]
+        config.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [holdout])
 
         // Mock bucketer
         let mockBucketer = MockBucketer(mockBucketValue: 2500)

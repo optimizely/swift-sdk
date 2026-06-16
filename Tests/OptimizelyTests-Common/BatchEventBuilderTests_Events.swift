@@ -578,7 +578,7 @@ extension BatchEventBuilderTests_Events {
         var holdout: Holdout = try! OTUtils.model(from: sampleHoldout)
         holdout.includedRules = []  // Empty array = local holdout targeting no rules (excludes feature_1)
         optimizely.config?.project.holdouts = [holdout]
-        optimizely.config?.holdoutConfig.allHoldouts = [holdout]
+        optimizely.config?.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [holdout])
         
         let exp = expectation(description: "Wait for event to dispatch")
         

@@ -16,7 +16,7 @@
 
 import XCTest
 
-class DecisionServiceTests_Holdouts: BaseHoldoutTests {
+class DecisionServiceTests_Holdouts: XCTestCase {
     
     var optimizely: OptimizelyClient!
     var config: ProjectConfig!
@@ -189,6 +189,7 @@ class DecisionServiceTests_Holdouts: BaseHoldoutTests {
     
     override func setUp() {
         super.setUp()
+        
         self.optimizely = OTUtils.createOptimizely(datafileName: "empty_datafile",
                                                    clearUserProfileService: true)
         self.config = self.optimizely.config!
@@ -211,10 +212,6 @@ class DecisionServiceTests_Holdouts: BaseHoldoutTests {
         self.config.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [holdout])
     }
 
-    override func tearDown() {
-        super.tearDown()
-    }
-    
 }
 
 // MARK: - Test doesMeetAudienceConditions()

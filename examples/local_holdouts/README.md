@@ -5,9 +5,9 @@
 A hands-on exploration tool for testing local holdouts in the SDK. This is
 **not an automated test suite** -- it's a starting point for manual QA.
 
-`LocalHoldoutsBugBash.swift` (in `DemoSwiftApp/Samples/`) contains working
-SDK code with commented-out blocks you can uncomment, modify, and extend.
-The goal is to try unusual things and find bugs that automated tests miss.
+`DemoSwiftApp/AppDelegate.swift` contains working SDK code with commented-out
+blocks you can uncomment, modify, and extend. The goal is to try unusual
+things and find bugs that automated tests miss.
 
 **Scope: Local holdouts only (single project). Cross-project holdouts are
 not in scope for this bug bash.**
@@ -52,14 +52,14 @@ Create or reuse a project in your Optimizely environment:
 
    | Flag Key | Rule Key (A/B Test) | Variations | Traffic | Audience |
    |----------|---------------------|------------|---------|----------|
-   | `flag_a` | `rule_a` | on, off | 100% | Everyone |
-   | `flag_b` | `rule_b` | on, off | 100% | Everyone |
+   | `flag1` | `rule1` | on, off | 100% | Everyone |
+   | `flag2` | `rule2` | on, off | 100% | Everyone |
 
 3. **Create holdouts:**
 
    | Holdout Name | Type | Targeted Rules | Traffic | Audience |
    |--------------|------|----------------|---------|----------|
-   | `local_holdout` | Local | `rule_a` only | 50% | Everyone |
+   | `local_holdout` | Local | `rule1` only | 50% | Everyone |
    | `global_holdout` | Global | All rules | 10% | Everyone |
 
 4. Activate all rules and holdouts.
@@ -84,25 +84,17 @@ Create or reuse a project in your Optimizely environment:
 4. **Set the scheme:**
    Make sure the scheme is set to `DemoSwiftiOS` (next to the Run/Play button).
 
-5. **Lower event dispatch interval** (optional convenience):
-   In `OptimizelySwiftSDK > Customization > DefaultEventDispatcher.swift`,
-   change the timer interval to 1 second so events dispatch immediately
-   instead of batching for 5 minutes. This makes it easier to verify
-   impression/conversion events on the Results page.
-
-6. **Set your SDK key:**
+5. **Set your SDK key:**
    Open `DemoSwiftApp/AppDelegate.swift` and update `sdkKey` with your
    project's SDK key (from Settings > Environments in the Optimizely UI).
 
-7. **Build & Run:** `Cmd+R` or click the Play button in Xcode.
-   The app will initialize the SDK and run `LocalHoldoutsBugBash.run()`.
+6. **Build & Run:** `Cmd+R` or click the Play button in Xcode.
    Check the Xcode console for output -- ignore the phone emulator.
 
 ### 3. Explore
 
-Open `DemoSwiftApp/Samples/LocalHoldoutsBugBash.swift` and start
-uncommenting code blocks. Each block is a self-contained example you can
-modify:
+Open `DemoSwiftApp/AppDelegate.swift` and start uncommenting code blocks
+inside `runBugBash()`. Each block is a self-contained example you can modify:
 
 - **Basic decide** -- see which users get held out
 - **Attributes** -- test audience-targeted holdouts
@@ -112,6 +104,7 @@ modify:
 - **Listeners** -- inspect holdout metadata in decision notifications
 - **Distribution check** -- verify holdout traffic percentages
 - **Wait for refresh** -- keep SDK alive while you make UI changes
+- **Concurrent decide** -- test thread safety
 
 Combine blocks, change user IDs, add your own logic. The SDK client polls
 every 30 seconds, so changes you make in the Optimizely UI will be picked
@@ -121,7 +114,7 @@ up automatically.
 
 These are things to try during the bug bash. They are NOT prescriptive
 scripts -- use them as inspiration for exploration. The code blocks in
-`LocalHoldoutsBugBash.swift` give you the building blocks.
+`AppDelegate.swift` give you the building blocks.
 
 ### UI mutation scenarios
 Make changes in the Optimizely UI while the SDK is running (use the "wait
@@ -131,15 +124,15 @@ for datafile refresh" code block to keep the SDK alive).
 |---|------------|-----------------|
 | 1 | **Delete a running holdout** -- note held-out users, delete holdout, re-check | SDK crashes, stale holdout still applied, users don't recover |
 | 2 | **Change holdout traffic** -- try 50%->0%, 50%->100%, 10%->90% | Wrong distribution, users not re-bucketed |
-| 3 | **Switch local to global** -- local holdout on rule_a, switch to global | flag_b not affected when it should be |
+| 3 | **Switch local to global** -- local holdout on rule1, switch to global | flag2 not affected when it should be |
 | 4 | **Switch global to local** -- global holdout, switch to local targeting one rule | Other flags still incorrectly held out |
 | 5 | **Add audience to holdout** -- holdout with Everyone, add audience condition | Users without attribute still held out |
 | 6 | **Remove audience from holdout** -- audience holdout, remove audience | Holdout doesn't expand to all users |
-| 7 | **Delete the rule a holdout targets** -- local holdout targets rule_a, delete rule_a | Crash, nil pointer, or holdout leaks to other rules |
+| 7 | **Delete the rule a holdout targets** -- local holdout targets rule1, delete rule1 | Crash, nil reference, or holdout leaks to other rules |
 | 8 | **Pause a holdout** -- running holdout at 50%, pause it | Holdout still applied after pause |
 | 9 | **Add holdout to running experiment** -- experiment with no holdouts, add one | New holdout not picked up |
 
-### Feature interaction edge cases
+### Flag interaction edge cases
 
 | # | What to try | Expected |
 |---|------------|----------|
@@ -164,7 +157,7 @@ for datafile refresh" code block to keep the SDK alive).
 | 23 | **Concurrent decide calls** -- multiple DispatchQueue threads | Crashes, data races |
 | 24 | **Same user, different attributes** -- decide without, then with attributes | Audience holdout activates only with matching attributes |
 | 25 | **Long/special user IDs** -- 1000+ chars, unicode, emojis | Bucketing breaks, crashes |
-| 26 | **Global holdout consistency** -- user held out on flag_a, check flag_b, flag_c | Same user should be held out on all flags |
+| 26 | **Global holdout consistency** -- user held out on flag1, check flag2 | Same user should be held out on all flags |
 | 27 | **Holdout on flag with no rules** -- create holdout targeting non-existent rule | Should return default off without crash |
 
 ## Files
@@ -172,8 +165,7 @@ for datafile refresh" code block to keep the SDK alive).
 | File | Description |
 |------|-------------|
 | `examples/local_holdouts/README.md` | This doc |
-| `DemoSwiftApp/Samples/LocalHoldoutsBugBash.swift` | Main bug bash code with all the exploration blocks |
-| `DemoSwiftApp/AppDelegate.swift` | Demo app entry point -- calls `LocalHoldoutsBugBash.run()` |
+| `DemoSwiftApp/AppDelegate.swift` | Main bug bash code -- SDK init, visible tests, commented test cases |
 
 ## Log bugs here
 

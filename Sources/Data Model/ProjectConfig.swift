@@ -81,7 +81,16 @@ class ProjectConfig {
         // variation into any experiment with type == .featureRollout
         injectFeatureRolloutVariations()
         
-        holdoutConfig.allHoldouts = project.holdouts
+        // Holdout sections are partitioned by the datafile (FSSDK-12760):
+        //   - `holdouts`      -> global holdouts (applied to every flag)
+        //   - `localHoldouts` -> rule-scoped local holdouts
+        // HoldoutConfig enforces the partition: `includedRules` on global-section
+        // entries is stripped, and local-section entries without `includedRules`
+        // are logged and excluded.
+        holdoutConfig = HoldoutConfig(
+            globalHoldouts: project.holdouts,
+            localHoldouts: project.localHoldouts
+        )
         
         self.experimentKeyMap = {
             var map = [String: Experiment]()

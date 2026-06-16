@@ -75,7 +75,7 @@ class DecisionListenerTests_Holdouts: XCTestCase {
         let mockDecisionService = DefaultDecisionService(userProfileService: OTUtils.createClearUserProfileService(), bucketer: MockBucketer(mockBucketValue: 400))
         optimizely.decisionService = mockDecisionService
         optimizely.config!.project.holdouts = [holdout]
-        optimizely.config!.holdoutConfig.allHoldouts = [holdout]
+        optimizely.config!.holdoutConfig = HoldoutConfig(globalHoldouts: [holdout], localHoldouts: [])
 
         self.notificationCenter = self.optimizely.notificationCenter!
     }
@@ -119,8 +119,7 @@ class DecisionListenerTests_Holdouts: XCTestCase {
         var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
         // Include all rules in feature_1: experiment + delivery rules
         holdout.includedRules = ["10390977673", "3332020515", "3332020494", "18322080788"]
-        optimizely.config!.project.holdouts = [holdout]
-        optimizely.config!.holdoutConfig.allHoldouts = [holdout]
+        optimizely.config!.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [holdout])
         
         let exp = expectation(description: "x")
         let user = optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryMatch)
@@ -142,8 +141,7 @@ class DecisionListenerTests_Holdouts: XCTestCase {
     func testDecisionListenerDecideWithExcludedFlags() {
         var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
         holdout.includedRules = []  // Empty array = local holdout targeting no rules (excludes feature_1)
-        optimizely.config!.project.holdouts = [holdout]
-        optimizely.config!.holdoutConfig.allHoldouts = [holdout]
+        optimizely.config!.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [holdout])
         
         let exp = expectation(description: "x")
         let user = optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryMatch)
@@ -172,8 +170,7 @@ class DecisionListenerTests_Holdouts: XCTestCase {
         // Include all rules in feature_1: experiment + delivery rules
         holdout_2.includedRules = ["10390977673", "3332020515", "3332020494", "18322080788"]
 
-        optimizely.config!.project.holdouts = [holdout, holdout_2]
-        optimizely.config!.holdoutConfig.allHoldouts = [holdout, holdout_2]
+        optimizely.config!.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [holdout, holdout_2])
 
         let exp = expectation(description: "x")
         let user = optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryMatch)

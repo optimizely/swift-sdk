@@ -1,66 +1,15 @@
 /*
-============================================================
-Local Holdouts Bug Bash -- Swift SDK
-============================================================
+ Local Holdouts Bug Bash -- Swift SDK (Xcode version)
 
-OVERVIEW:
-Local holdouts target specific experiment/delivery rules rather than applying
-globally to all rules across all flags. This bug bash validates that the SDK
-correctly evaluates local holdouts, handles UI changes (datafile updates),
-and doesn't break under edge cases.
+ See examples/local_holdouts/README.md for full setup instructions,
+ how local holdouts work, and the list of 27 scenarios to try.
 
-HOW LOCAL HOLDOUTS WORK:
-
-  Evaluation priority (highest to lowest):
-    1. Global holdouts  -- flag-level, before any rule evaluation
-    2. Forced decisions  -- per-rule, SetForcedDecision overrides everything below
-    3. Local holdouts    -- per-rule, after forced decisions
-    4. Normal experiment/rollout bucketing
-
-  Holdout types (determined by includedRules field in datafile):
-    - Global:  includedRules = null     --> applies to ALL rules on ALL flags
-    - Local:   includedRules = ["5001"] --> applies only to rule 5001
-    - Empty:   includedRules = []       --> local holdout targeting nothing (effectively disabled, NOT global)
-
-  When a user is held out:
-    - decision.variationKey = "ho_off_key"
-    - decision.enabled      = false
-    - decision.ruleKey      = the holdout key (e.g. "my_local_holdout")
-    - Impression event:  rule_type = "holdout", campaign_id = ""
-
-OPTIMIZELY PROJECT SETUP:
-
-  1. Create or reuse a project in your Optimizely environment.
-  2. Create a custom audience:
-     - Name: "Custom Attr Audience"
-     - Condition: custom attribute "customattr" equals "yes"
-  3. Create flags with A/B test rules:
-
-     Flag Key   | Rule Key (A/B Test) | Variations | Traffic | Audience
-     -----------|---------------------|------------|---------|----------
-     flag1      | rule1               | on, off    | 100%    | Everyone
-     flag2      | rule2               | on, off    | 100%    | Everyone
-
-  4. Create holdouts:
-
-     Holdout Name     | Type   | Targeted Rules   | Traffic | Audience
-     -----------------|--------|------------------|---------|-------------------
-     local_holdout    | Local  | rule1 only       | 50%     | Everyone
-     global_holdout   | Global | All rules        | 10%     | Everyone
-
-  5. Activate all rules and holdouts.
-  6. Copy your SDK Key from Settings -> Environments.
-  7. Update the sdkKey constant below.
-
-RUNNING:
-  1. Open OptimizelySwiftSDK.xcworkspace in Xcode
-  2. Set scheme to "DemoSwiftiOS"
-  3. Set your SDK key below
-  4. Build & Run (Cmd+R) -- check Xcode console for output, ignore the emulator
-  5. The SDK client polls every 30 seconds. Make changes in the Optimizely UI,
-     wait ~30s, and the SDK picks them up automatically.
-
-============================================================
+ HOW TO RUN:
+   1. Open OptimizelySwiftSDK.xcworkspace in Xcode
+   2. Set scheme to "DemoSwiftiOS"
+   3. Set your SDK key below
+   4. Build & Run (Cmd+R) -- check Xcode console, ignore the emulator
+   5. Uncomment test cases below one by one, re-build & run
 */
 
 import UIKit
@@ -146,8 +95,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 let uc = self.optimizely.createUserContext(userId: uid)
                 let d = uc.decide(key: self.FLAG1)
                 let tag = self.isHoldout(d) ? "HOLDOUT:\(d.ruleKey ?? "")" : "normal"
-                print(String(format: "  %-15s %-30s var=%-10s enabled=%@",
-                             uid, tag, d.variationKey ?? "nil", d.enabled ? "true" : "false"))
+                print("  \(uid.padding(toLength: 15, withPad: " ", startingAt: 0))\(tag.padding(toLength: 30, withPad: " ", startingAt: 0))var=\(d.variationKey ?? "nil")  enabled=\(d.enabled)")
             }
 
             // ----------------------------------------------------------
@@ -207,9 +155,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             // let all = uc.decideAll()
             // for (fk, d) in all {
             //     let tag = self.isHoldout(d) ? " [HOLDOUT]" : ""
-            //     print(String(format: "  %-15s rule=%-20s var=%-10s enabled=%@%@",
-            //                  fk, d.ruleKey ?? "", d.variationKey ?? "nil",
-            //                  d.enabled ? "true" : "false", tag))
+            //     print("  \(fk.padding(toLength: 15, withPad: " ", startingAt: 0))rule=\((d.ruleKey ?? "").padding(toLength: 20, withPad: " ", startingAt: 0))var=\(d.variationKey ?? "nil")  enabled=\(d.enabled)\(tag)")
             // }
 
             // ----------------------------------------------------------
@@ -296,7 +242,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             //     counts[key, default: 0] += 1
             // }
             // for (key, count) in counts.sorted(by: { $0.key < $1.key }) {
-            //     print(String(format: "  %-35s %4d (%.1f%%)", key, count, Double(count) / 10.0))
+            //     print("  \(key.padding(toLength: 35, withPad: " ", startingAt: 0))\(String(count).padding(toLength: 5, withPad: " ", startingAt: 0))(\(String(format: "%.1f", Double(count) / 10.0))%)")
             // }
 
             // ----------------------------------------------------------
@@ -337,145 +283,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     // ============================================================
-    // SCENARIO IDEAS -- Things to try during the bug bash
-    // ============================================================
+    // SCENARIO IDEAS: see examples/local_holdouts/README.md
     //
-    // These are NOT automated tests. They are ideas for manual exploration.
-    // Use the code blocks above as building blocks, combine them, modify them.
-    //
-    // ---- UI MUTATION SCENARIOS ----
-    // (Make changes in the Optimizely UI while the SDK is running)
-    //
-    // 1. DELETE A RUNNING HOLDOUT
-    //    - Run the distribution check, note which users are held out
-    //    - Delete the holdout in the UI, wait for datafile refresh
-    //    - Re-run: previously held-out users should now get normal decisions
-    //    - What if you delete a GLOBAL holdout? Do all flags recover?
-    //
-    // 2. CHANGE HOLDOUT TRAFFIC
-    //    - Start with 50%, run distribution check
-    //    - Change to 0% in UI --> everyone should get normal decisions
-    //    - Change to 100% --> everyone should be held out
-    //    - Change to 1% --> only ~1% held out
-    //    - Does the SDK re-bucket correctly each time?
-    //
-    // 3. SWITCH LOCAL <-> GLOBAL
-    //    - Start with a local holdout targeting rule1 only
-    //    - Verify flag2 is NOT affected
-    //    - Switch it to global in the UI
-    //    - After refresh: flag2 should NOW be affected too
-    //    - Switch back to local: flag2 should stop being affected
-    //
-    // 4. ADD/REMOVE AUDIENCE ON HOLDOUT
-    //    - Holdout with audience: only users with customattr=yes get held out
-    //    - Remove the audience: ALL users should now get held out
-    //    - Add it back: only matching users get held out again
-    //    - Try changing the attribute value in the audience condition
-    //
-    // 5. DELETE THE RULE A HOLDOUT TARGETS
-    //    - Local holdout targets rule1
-    //    - Delete rule1 from the flag in the UI
-    //    - Does the SDK crash? Or gracefully ignore the holdout?
-    //
-    // 6. PAUSE A HOLDOUT
-    //    - Running holdout with 50% traffic
-    //    - Pause it in the UI
-    //    - After refresh: NO users should be held out
-    //    - Re-activate: users should be held out again
-    //
-    // 7. ADD A HOLDOUT TO A RUNNING EXPERIMENT
-    //    - Experiment running with no holdouts, users getting normal decisions
-    //    - Create a new local holdout targeting that experiment
-    //    - After refresh: some users should now be held out
-    //
-    // ---- FEATURE INTERACTION EDGE CASES ----
-    //
-    // 8. FORCED DECISION BEATS HOLDOUT
-    //    - Find a user who IS held out (run distribution check)
-    //    - setForcedDecision for that user --> should get forced variation, NOT holdout
-    //    - removeForcedDecision --> holdout should return
-    //    - Try both flag-level and rule-level forced decisions
-    //
-    // 9. DECIDE ALL WITH GLOBAL HOLDOUT
-    //    - User hits global holdout
-    //    - decideAll should show holdout on EVERY flag
-    //    - decide(keys:) for a subset should match decideAll for those keys
-    //
-    // 10. ENABLED FLAGS ONLY + HOLDOUT
-    //     - Holdout sets enabled=false
-    //     - decideAll with .enabledFlagsOnly should EXCLUDE held-out flags
-    //     - Verify the excluded flags are exactly the held-out ones
-    //
-    // 11. DECISION LISTENER METADATA
-    //     - Register a decision notification listener
-    //     - Make a decide call that hits a holdout
-    //     - Check: does the listener fire? What's in decisionInfo?
-    //     - Expected: experiment_id = holdout_id, rule_type = "holdout"
-    //
-    // 12. TRACK AFTER HOLDOUT
-    //     - User is held out, then trackEvent is called
-    //     - Does the conversion event fire? (it should)
-    //     - Check the event payload for correct metadata
-    //
-    // 13. DISABLE DECISION EVENT + HOLDOUT
-    //     - Decide with .disableDecisionEvent option
-    //     - Decision result should be the same (holdout still applies)
-    //     - But no impression event should be dispatched
-    //
-    // ---- STRESS & BOUNDARY SCENARIOS ----
-    //
-    // 14. MANY HOLDOUTS ON SAME RULE
-    //     - Create 10+ local holdouts all targeting the same rule
-    //     - Each with different traffic (5%, 10%, 15%, ...)
-    //     - Are they evaluated in datafile order? First match wins?
-    //     - Run distribution check -- does total holdout rate make sense?
-    //
-    // 15. LARGE PROJECT WITH HOLDOUTS
-    //     - Use a project with 100+ flags
-    //     - Add local holdouts targeting a few rules
-    //     - Does decision performance degrade? Any timeouts?
-    //
-    // 16. HOLDOUT WITH 0% TRAFFIC
-    //     - Create holdout with traffic set to 0%
-    //     - Should NEVER hold out any user
-    //     - Verify across 1000+ users
-    //
-    // 17. EMPTY INCLUDED RULES (includedRules: [])
-    //     - This is a local holdout that targets NOTHING
-    //     - Should NOT be treated as global
-    //     - Should have NO effect on any flag
-    //
-    // 18. RAPID DATAFILE CHANGES
-    //     - Use the "wait for datafile refresh" code block
-    //     - Make 5 changes in rapid succession in the UI
-    //     - Does the SDK eventually settle on the correct state?
-    //     - Any race conditions or stale decisions?
-    //
-    // 19. CONCURRENT DECIDE CALLS
-    //     - Use the concurrent decide block above
-    //     - Any crashes, data races, or inconsistent results?
-    //
-    // 20. HOLDOUT + SAME USER DIFFERENT ATTRIBUTES
-    //     - Same user ID, first decide with no attributes
-    //     - Then decide WITH attributes that match a holdout audience
-    //     - Does the holdout correctly activate only with matching attributes?
-    //
-    // 21. VERY LONG USER IDS / SPECIAL CHARACTERS
-    //     - User ID with 1000+ characters
-    //     - User ID with unicode, emojis, spaces
-    //     - Does bucketing still work? Any crashes?
-    //
-    // 22. MULTIPLE FLAGS, ONE GLOBAL HOLDOUT
-    //     - 5+ flags, one global holdout at 10%
-    //     - For a given user, if they're held out on flag1, are they also
-    //       held out on flag2, etc? (they should be -- same bucketing)
-    //
-    // 23. HOLDOUT ON A FLAG WITH NO RULES
-    //     - Create a flag with no experiment rules
-    //     - Create a holdout (global or local targeting a non-existent rule)
-    //     - What does decide return? Should be default off without crash
-    //
-    // ============================================================
     // LOG BUGS HERE:
     // https://episerver99-my.sharepoint.com/:x:/g/personal/matjaz_pirnovar_optimizely_com/IQCkcX_sg-ZeS7uNrKPc6wf8AVKqgPsQJrSjciNNJy035KM?e=E1XPcA
     // ============================================================

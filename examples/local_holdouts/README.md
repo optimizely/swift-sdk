@@ -5,9 +5,9 @@
 A hands-on exploration tool for testing local holdouts in the SDK. This is
 **not an automated test suite** -- it's a starting point for manual QA.
 
-`DemoSwiftApp/AppDelegate.swift` contains working SDK code with commented-out
-blocks you can uncomment, modify, and extend. The goal is to try unusual
-things and find bugs that automated tests miss.
+The code contains working SDK calls with commented-out blocks you can
+uncomment, modify, and extend. The goal is to try unusual things and find
+bugs that automated tests miss.
 
 **Scope: Local holdouts only (single project). Cross-project holdouts are
 not in scope for this bug bash.**
@@ -35,12 +35,7 @@ of running experiments. They come in two types:
 - `decision.enabled` = `false`
 - Impression event metadata: `rule_type: "holdout"`, `campaign_id: ""`
 
-Use these fields to tell whether a decision is a holdout or a normal
-experiment result when debugging.
-
-## Quick start
-
-### 1. Set up your project
+## 1. Set up your Optimizely project
 
 Create or reuse a project in your Optimizely environment:
 
@@ -64,57 +59,88 @@ Create or reuse a project in your Optimizely environment:
 
 4. Activate all rules and holdouts.
 
-### 2. Set up the Swift SDK demo app
+5. Copy your **SDK Key** from Settings > Environments.
 
-1. **Clone the repo** (if you haven't already):
-   ```bash
-   git clone git@github.com:optimizely/swift-sdk.git
-   cd swift-sdk
-   git checkout matjaz/local-holdouts-bug-bash
-   ```
+## 2. Run the bug bash
 
-2. **Install dependencies:**
-   ```bash
-   pod update
-   ```
+There are two ways to run. Pick whichever works for you.
 
-3. **Open in Xcode:**
-   Open `OptimizelySwiftSDK.xcworkspace` in the latest Xcode.
+---
 
-4. **Set the scheme:**
-   Make sure the scheme is set to `DemoSwiftiOS` (next to the Run/Play button).
+### Option A: Command line (no Xcode needed)
 
-5. **Set your SDK key:**
-   Open `DemoSwiftApp/AppDelegate.swift` and update `sdkKey` with your
-   project's SDK key (from Settings > Environments in the Optimizely UI).
+This is the easiest way. You only need the Swift compiler (comes with
+macOS Command Line Tools).
 
-6. **Build & Run:** `Cmd+R` or click the Play button in Xcode.
-   Check the Xcode console for output -- ignore the phone emulator.
+```bash
+git clone git@github.com:optimizely/swift-sdk.git
+cd swift-sdk
+git checkout matjaz/local-holdouts-bug-bash
+cd examples/local_holdouts
+```
 
-### 3. Explore
+Edit `Sources/main.swift`:
+- Set `SDK_KEY` to your SDK key (line 22)
+- If using a **staging/inte/prep** environment, the code already points to
+  the staging CDN. For **production** SDK keys, comment out the two
+  `datafileHandler` lines
 
-Open `DemoSwiftApp/AppDelegate.swift` and start uncommenting code blocks
-inside `runBugBash()`. Each block is a self-contained example you can modify:
+Run:
+```bash
+swift run
+```
 
-- **Basic decide** -- see which users get held out
-- **Attributes** -- test audience-targeted holdouts
-- **Forced decisions** -- override holdouts at flag or rule level
-- **DecideAll / DecideForKeys** -- see holdouts across multiple flags
-- **EnabledFlagsOnly** -- verify held-out flags get excluded
-- **Listeners** -- inspect holdout metadata in decision notifications
-- **Distribution check** -- verify holdout traffic percentages
-- **Wait for refresh** -- keep SDK alive while you make UI changes
-- **Concurrent decide** -- test thread safety
+Edit `Sources/main.swift` to uncomment test cases, then `swift run` again.
 
-Combine blocks, change user IDs, add your own logic. The SDK client polls
-every 30 seconds, so changes you make in the Optimizely UI will be picked
-up automatically.
+---
+
+### Option B: Xcode (iOS demo app)
+
+Use this if you have Xcode installed and want to run the iOS demo app.
+
+```bash
+git clone git@github.com:optimizely/swift-sdk.git
+cd swift-sdk
+git checkout matjaz/local-holdouts-bug-bash
+pod update
+```
+
+Open `OptimizelySwiftSDK.xcworkspace` in Xcode:
+1. Set the scheme to **DemoSwiftiOS**
+2. Edit `DemoSwiftApp/AppDelegate.swift`:
+   - Set `sdkKey` to your SDK key (line 76)
+   - If using a staging/inte environment, add a `datafileHandler` pointing
+     to the staging CDN (see `main.swift` for the pattern)
+3. **Build & Run** (`Cmd+R`) -- check the Xcode console for output, ignore
+   the phone emulator
+
+Edit `AppDelegate.swift` to uncomment test cases, then Build & Run again.
+
+---
+
+## 3. Explore
+
+Both files have the same structure:
+- **Visible code** runs on startup: project inspection, basic decide, try 20 users
+- **Commented-out blocks** -- uncomment one at a time to test:
+  - Decide with attributes (audience-targeted holdouts)
+  - Forced decisions (flag-level and rule-level)
+  - DecideAll / DecideForKeys
+  - EnabledFlagsOnly
+  - DisableDecisionEvent
+  - Track event after holdout
+  - Decision listener / Track listener
+  - Distribution check (1000 users)
+  - Wait for datafile refresh (keep SDK alive for UI changes)
+  - Concurrent decide calls (thread safety)
+
+Combine blocks, change user IDs, add your own logic. The SDK polls every
+30 seconds, so changes in the Optimizely UI are picked up automatically.
 
 ## Scenario ideas
 
 These are things to try during the bug bash. They are NOT prescriptive
-scripts -- use them as inspiration for exploration. The code blocks in
-`AppDelegate.swift` give you the building blocks.
+scripts -- use them as inspiration for exploration.
 
 ### UI mutation scenarios
 Make changes in the Optimizely UI while the SDK is running (use the "wait
@@ -154,18 +180,11 @@ for datafile refresh" code block to keep the SDK alive).
 | 20 | **0% traffic holdout** -- should never apply | Holdout incorrectly applied |
 | 21 | **Empty includedRules []** -- local holdout targeting nothing | Incorrectly treated as global |
 | 22 | **Rapid UI changes** -- 5 changes in 60 seconds | Stale decisions, race conditions |
-| 23 | **Concurrent decide calls** -- multiple DispatchQueue threads | Crashes, data races |
+| 23 | **Concurrent decide calls** -- multiple threads | Crashes, data races |
 | 24 | **Same user, different attributes** -- decide without, then with attributes | Audience holdout activates only with matching attributes |
 | 25 | **Long/special user IDs** -- 1000+ chars, unicode, emojis | Bucketing breaks, crashes |
 | 26 | **Global holdout consistency** -- user held out on flag1, check flag2 | Same user should be held out on all flags |
 | 27 | **Holdout on flag with no rules** -- create holdout targeting non-existent rule | Should return default off without crash |
-
-## Files
-
-| File | Description |
-|------|-------------|
-| `examples/local_holdouts/README.md` | This doc |
-| `DemoSwiftApp/AppDelegate.swift` | Main bug bash code -- SDK init, visible tests, commented test cases |
 
 ## Log bugs here
 

@@ -14,6 +14,7 @@
 // limitations under the License.
 //
 
+import CommonCrypto
 import Foundation
 
 open class DefaultDatafileHandler: OPTDatafileHandler {
@@ -69,10 +70,10 @@ open class DefaultDatafileHandler: OPTDatafileHandler {
             }
             
             let session = self.getSession(resourceTimeoutInterval: resourceTimeoutInterval)
-            // without this the URLSession will leak, see docs on URLSession and https://stackoverflow.com/questions/67318867
-            defer { session.finishTasksAndInvalidate() }
-            
-            guard let request = self.getRequest(sdkKey: sdkKey) else { return }
+            guard let request = self.getRequest(sdkKey: sdkKey) else {
+                session.finishTasksAndInvalidate()
+                return
+            }
             
             let task = session.downloadTask(with: request) { (url, response, error) in
                 var result = OptimizelyResult<Data?>.failure(.generic)
@@ -104,6 +105,7 @@ open class DefaultDatafileHandler: OPTDatafileHandler {
                 }
                 
                 self.reachability.updateNumContiguousFails(isError: (error != nil))
+                session.finishTasksAndInvalidate()
                 
                 completionHandler(result)
             }
@@ -212,23 +214,23 @@ open class DefaultDatafileHandler: OPTDatafileHandler {
     // MARK: - datafile store
     
     open func createDataStore(sdkKey: String) -> OPTDataStore {
-        return DataStoreFile<Data>(storeName: sdkKey)
+        return DataStoreFile<Data>(storeName: sdkKey.sha256Hash)
     }
     
     public func saveDatafile(sdkKey: String, dataFile: Data) {
-        getDatafileCache(sdkKey: sdkKey).saveItem(forKey: sdkKey, value: dataFile)
+        getDatafileCache(sdkKey: sdkKey).saveItem(forKey: sdkKey.sha256Hash, value: dataFile)
     }
     
     public func loadSavedDatafile(sdkKey: String) -> Data? {
-        return getDatafileCache(sdkKey: sdkKey).getItem(forKey: sdkKey) as? Data
+        return getDatafileCache(sdkKey: sdkKey).getItem(forKey: sdkKey.sha256Hash) as? Data
     }
     
     public func isDatafileSaved(sdkKey: String) -> Bool {
-        return getDatafileCache(sdkKey: sdkKey).getItem(forKey: sdkKey) as? Data != nil
+        return getDatafileCache(sdkKey: sdkKey).getItem(forKey: sdkKey.sha256Hash) as? Data != nil
     }
     
     public func removeSavedDatafile(sdkKey: String) {
-        getDatafileCache(sdkKey: sdkKey).removeItem(forKey: sdkKey)
+        getDatafileCache(sdkKey: sdkKey).removeItem(forKey: sdkKey.sha256Hash)
     }
 
 }
@@ -336,11 +338,24 @@ extension DefaultDatafileHandler {
 
 extension DataStoreUserDefaults {
     func getLastModified(sdkKey: String) -> String? {
-        return getItem(forKey: "OPTLastModified-" + sdkKey) as? String
+        return getItem(forKey: "OPTLastModified-" + sdkKey.sha256Hash) as? String
     }
     
     func setLastModified(sdkKey: String, lastModified: String) {
-        saveItem(forKey: "OPTLastModified-" + sdkKey, value: lastModified)
+        saveItem(forKey: "OPTLastModified-" + sdkKey.sha256Hash, value: lastModified)
+    }
+}
+
+extension String {
+    var sha256Hash: String {
+        let data = Data(utf8)
+        var digest = [UInt8](repeating: 0, count: Int(CC_SHA256_DIGEST_LENGTH))
+
+        data.withUnsafeBytes { buffer in
+            _ = CC_SHA256(buffer.baseAddress, CC_LONG(data.count), &digest)
+        }
+
+        return digest.map { String(format: "%02x", $0) }.joined()
     }
 }
 

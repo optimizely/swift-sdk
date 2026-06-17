@@ -19,6 +19,7 @@ import XCTest
 class DatafileHandlerTests: XCTestCase {
     
     let sdkKey = "localcdnTestSDKKey"
+    let sdkKeyHash = "acd36624eecc323f29164c830871e59f91a9b604ac77794edfa060400750237c"
 
     override func setUp() {
         OTUtils.bindLoggerForTest(.info)
@@ -416,9 +417,8 @@ class DatafileHandlerTests: XCTestCase {
     
     func testDownloadWithoutTimeout() {
         let handler = TimoutDatafileHandler()
-        // create a dummy file at a url to use as or datafile cdn location
-        let localUrl = OTUtils.saveAFile(name: "invalidKeyXXXXX", data: "{}".data(using: .utf8)!)
-        handler.localFileUrl = localUrl
+        handler.saveDatafile(sdkKey: "invalidKeyXXXXX", dataFile: "{}".data(using: .utf8)!)
+        XCTAssertTrue(handler.isDatafileSaved(sdkKey: "invalidKeyXXXXX"))
 
         let expectation = XCTestExpectation(description: "will wait for response.")
         handler.downloadDatafile(sdkKey: "invalidKeyXXXXX") { (result) in
@@ -426,14 +426,48 @@ class DatafileHandlerTests: XCTestCase {
                 print(data ?? "")
                 XCTAssert(true)
                 expectation.fulfill()
-                OTUtils.removeAFile(name: "invalidKeyXXXXX")
+                OTUtils.removeDatafileCache(sdkKey: "invalidKeyXXXXX")
             }
         }
 
         wait(for: [expectation], timeout: 10.0)
     }
+
+    func testDatafileCacheUsesHashedPersistenceIdentifier() {
+        let handler = DefaultDatafileHandler()
+        let datafile = "{}".data(using: .utf8)!
+
+        handler.saveDatafile(sdkKey: sdkKey, dataFile: datafile)
+
+        XCTAssertTrue(handler.isDatafileSaved(sdkKey: sdkKey))
+
+        let store = handler.createDataStore(sdkKey: sdkKey) as! DataStoreFile<Data>
+        XCTAssertEqual(store.url.lastPathComponent, sdkKeyHash)
+        XCTAssertFalse(store.url.lastPathComponent.contains(sdkKey))
+    }
+
+    func testLastModifiedUsesHashedUserDefaultsKey() {
+        let handler = DefaultDatafileHandler()
+
+        handler.sharedDataStore.setLastModified(sdkKey: sdkKey, lastModified: "1234")
+
+        XCTAssertEqual(handler.sharedDataStore.getLastModified(sdkKey: sdkKey), "1234")
+
+        let allKeys = UserDefaults.standard.dictionaryRepresentation().keys
+        XCTAssertTrue(allKeys.contains("OPTLastModified-\(sdkKeyHash)"))
+        XCTAssertFalse(allKeys.contains("OPTLastModified-\(sdkKey)"))
+    }
+
+    func testLegacyRawLastModifiedKeyIsIgnored() {
+        let handler = DefaultDatafileHandler()
+
+        OTUtils.createDatafileCache(sdkKey: sdkKey)
+        UserDefaults.standard.set("1234", forKey: "OPTLastModified-\(sdkKey)")
+
+        XCTAssertNil(handler.getRequest(sdkKey: sdkKey)?.getLastModified())
+    }
     
-    func testDatafileCacheFormatCompatibilty() {
+    func testLegacyRawNamedDatafileCacheIsIgnored() {
         
         // pre-store a datafile in a cache
 
@@ -449,13 +483,10 @@ class DatafileHandlerTests: XCTestCase {
         url = url.appendingPathComponent(testSDKKey, isDirectory: false)
         try! datafileData.write(to: url, options: .atomic)
         
-        // verify that a new datafileHandler can read an existing datafile cache
+        // verify that hashed-only persistence causes a one-time cache miss for legacy raw-named files
 
         let datafileFromCache = DefaultDatafileHandler().loadSavedDatafile(sdkKey: testSDKKey)
-        XCTAssert(datafileFromCache == datafileData, "failed to support old datafile cached data format")
-        
-        let project = try! JSONDecoder().decode(Project.self, from: datafileFromCache!)
-        XCTAssert(project.revision == "241")
+        XCTAssertNil(datafileFromCache)
     }
 
 }

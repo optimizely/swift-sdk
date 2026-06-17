@@ -254,16 +254,39 @@ class OTUtils {
     
     static func createDatafileCache(sdkKey: String, contents: String? = nil) {
         let data = (contents ?? "datafile-for-\(sdkKey)").data(using: .utf8)!
-        _ = saveAFile(name: sdkKey, data: data)
+        _ = saveAFile(name: sdkKey.sha256Hash, data: data)
     }
     
     static func removeDatafileCache(sdkKey: String, contents: String? = nil) {
-        removeAFile(name: sdkKey)
+        removeAFile(name: sdkKey.sha256Hash)
     }
     
     static func clearAllDataFiles(including: String? = nil) {
-        removeAllFiles(including: including, in: .documentDirectory)
-        removeAllFiles(including: including, in: .cachesDirectory)
+        removeAllDataFiles(matching: including.map { [$0, $0.sha256Hash] }, in: .documentDirectory)
+        removeAllDataFiles(matching: including.map { [$0, $0.sha256Hash] }, in: .cachesDirectory)
+    }
+
+    static func removeAllDataFiles(matching namesToRemove: [String]?, in directory: FileManager.SearchPathDirectory) {
+        if let docUrl = FileManager.default.urls(for: directory, in: .userDomainMask).first {
+            if let names = try? FileManager.default.contentsOfDirectory(atPath: docUrl.path) {
+                names.forEach { name in
+                    let shouldRemove: Bool
+                    if let namesToRemove = namesToRemove {
+                        shouldRemove = namesToRemove.contains(name)
+                    } else {
+                        shouldRemove = !name.contains("OPTEvent")
+                    }
+
+                    if shouldRemove {
+                        let fileUrl = docUrl.appendingPathComponent(name)
+                        do {
+                            try FileManager.default.removeItem(at: fileUrl)
+                        } catch {
+                        }
+                    }
+                }
+            }
+        }
     }
     
     static func removeAllFiles(including: String? = nil, in directory: FileManager.SearchPathDirectory) {

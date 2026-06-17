@@ -29,8 +29,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     let FLAG2 = "flag2"
 
     // Audience attribute
-    let ATTR_KEY   = "customattr"
-    let ATTR_MATCH = "yes"
+    let ATTR_KEY   = "country"
+    let ATTR_MATCH = "us"
 
     var window: UIWindow?
     var optimizely: OptimizelyClient!
@@ -105,7 +105,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             // let userWithAttr = self.optimizely.createUserContext(userId: "user_123",
             //                                                      attributes: [self.ATTR_KEY: self.ATTR_MATCH])
             // let d2 = userWithAttr.decide(key: self.FLAG1, options: [.includeReasons])
-            // self.printDecision(label: "user_123 with customattr=yes", decision: d2)
+            // self.printDecision(label: "user_123 with country=us", decision: d2)
             //
             // // Same user WITHOUT the attribute -- should NOT hit audience holdout
             // let userNoAttr = self.optimizely.createUserContext(userId: "user_123")

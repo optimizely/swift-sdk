@@ -24,8 +24,8 @@ let FLAG1 = "flag1"
 let FLAG2 = "flag2"
 
 // Audience attribute
-let ATTR_KEY   = "customattr"
-let ATTR_MATCH = "yes"
+let ATTR_KEY   = "country"
+let ATTR_MATCH = "us"
 
 // ============================================================
 // HELPERS
@@ -167,7 +167,7 @@ for i in 1...20 {
 // let userWithAttr = optimizely.createUserContext(userId: "user_123",
 //                                                 attributes: [ATTR_KEY: ATTR_MATCH])
 // let d2 = userWithAttr.decide(key: FLAG1, options: [.includeReasons])
-// printDecision(label: "user_123 with customattr=yes", decision: d2)
+// printDecision(label: "user_123 with country=us", decision: d2)
 //
 // // Same user WITHOUT the attribute -- should NOT hit audience holdout
 // let userNoAttr = optimizely.createUserContext(userId: "user_123")

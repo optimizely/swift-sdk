@@ -40,8 +40,8 @@ of running experiments. They come in two types:
 Create or reuse a project in your Optimizely environment:
 
 1. **Create a custom audience:**
-   - Name: `Custom Attr Audience`
-   - Condition: custom attribute `customattr` equals `"yes"`
+   - Name: `audience1`
+   - Condition: custom attribute `country` equals `"us"`
 
 2. **Create flags with rules:**
 

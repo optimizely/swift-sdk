@@ -17,7 +17,7 @@ import Optimizely
 // CONFIGURATION -- Update these for your environment
 // ============================================================
 
-let SDK_KEY = "2ErGc4hLeKSQbCNjAypLn"
+let SDK_KEY = "LfWk63cRiNaycueLueTmU"
 
 // Flags and rules -- must match your project setup
 let FLAG1 = "flag1"

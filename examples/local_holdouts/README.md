@@ -47,14 +47,14 @@ Create or reuse a project in your Optimizely environment:
 
    | Flag Key | Rule Key (A/B Test) | Variations | Traffic | Audience |
    |----------|---------------------|------------|---------|----------|
-   | `flag1` | `rule1` | on, off | 100% | Everyone |
-   | `flag2` | `rule2` | on, off | 100% | Everyone |
+   | `flag1` | `ab1` | on, off | 100% | Everyone |
+   | `flag2` | `ab2` | on, off | 100% | Everyone |
 
 3. **Create holdouts:**
 
    | Holdout Name | Type | Targeted Rules | Traffic | Audience |
    |--------------|------|----------------|---------|----------|
-   | `local_holdout` | Local | `rule1` only | 50% | Everyone |
+   | `local_holdout` | Local | `ab1` only | 50% | Everyone |
    | `global_holdout` | Global | All rules | 10% | Everyone |
 
 4. Activate all rules and holdouts.
@@ -150,11 +150,11 @@ for datafile refresh" code block to keep the SDK alive).
 |---|------------|-----------------|
 | 1 | **Delete a running holdout** -- note held-out users, delete holdout, re-check | SDK crashes, stale holdout still applied, users don't recover |
 | 2 | **Change holdout traffic** -- try 50%->0%, 50%->100%, 10%->90% | Wrong distribution, users not re-bucketed |
-| 3 | **Switch local to global** -- local holdout on rule1, switch to global | flag2 not affected when it should be |
+| 3 | **Switch local to global** -- local holdout on ab1, switch to global | flag2 not affected when it should be |
 | 4 | **Switch global to local** -- global holdout, switch to local targeting one rule | Other flags still incorrectly held out |
 | 5 | **Add audience to holdout** -- holdout with Everyone, add audience condition | Users without attribute still held out |
 | 6 | **Remove audience from holdout** -- audience holdout, remove audience | Holdout doesn't expand to all users |
-| 7 | **Delete the rule a holdout targets** -- local holdout targets rule1, delete rule1 | Crash, nil reference, or holdout leaks to other rules |
+| 7 | **Delete the rule a holdout targets** -- local holdout targets ab1, delete ab1 | Crash, nil reference, or holdout leaks to other rules |
 | 8 | **Pause a holdout** -- running holdout at 50%, pause it | Holdout still applied after pause |
 | 9 | **Add holdout to running experiment** -- experiment with no holdouts, add one | New holdout not picked up |
 

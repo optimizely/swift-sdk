@@ -31,8 +31,21 @@ let ATTR_MATCH = "us"
 // HELPERS
 // ============================================================
 
+// Collect all experiment/delivery rule keys so we can distinguish holdouts
+// (holdout decisions use the holdout's own key as ruleKey, not an experiment key)
+var knownRuleKeys: Set<String> = []
+
+func buildKnownRuleKeys(_ client: OptimizelyClient) {
+    guard let config = try? client.getOptimizelyConfig() else { return }
+    for (_, feat) in config.featuresMap {
+        for rule in feat.experimentRules { knownRuleKeys.insert(rule.key) }
+        for rule in feat.deliveryRules  { knownRuleKeys.insert(rule.key) }
+    }
+}
+
 func isHoldout(_ d: OptimizelyDecision) -> Bool {
-    return d.variationKey == "ho_off_key" && !d.enabled
+    guard !d.enabled, let rk = d.ruleKey else { return false }
+    return !knownRuleKeys.contains(rk)
 }
 
 func printDecision(label: String, decision d: OptimizelyDecision) {
@@ -112,7 +125,7 @@ let eventDispatcher = DefaultEventDispatcher(timerInterval: 0)
 // Use staging CDN for inte/prep SDK keys.
 // For production SDK keys, comment out the two datafileHandler lines below.
 let datafileHandler = DefaultDatafileHandler()
-datafileHandler.endPointStringFormat = "https://optimizely-staging.s3.amazonaws.com/datafiles/%@.json"
+datafileHandler.endPointStringFormat = "https://dev.cdn.optimizely.com/datafiles/%@.json"
 
 let optimizely = OptimizelyClient(sdkKey: SDK_KEY,
                                    eventDispatcher: eventDispatcher,
@@ -136,6 +149,9 @@ optimizely.start { result in
     semaphore.signal()
 }
 semaphore.wait()
+
+// Build rule key lookup for isHoldout() helper
+buildKnownRuleKeys(optimizely)
 
 // Show current project state (flags, rules, holdouts)
 inspectProject(optimizely)
@@ -202,7 +218,7 @@ for i in 1...20 {
 // ----------------------------------------------------------
 // print("\n--- Forced decision (rule level) ---")
 // let uc = optimizely.createUserContext(userId: "user_123")
-// let ruleCtx = OptimizelyDecisionContext(flagKey: FLAG1, ruleKey: "rule1")
+// let ruleCtx = OptimizelyDecisionContext(flagKey: FLAG1, ruleKey: "ab1")
 // let ruleFD = OptimizelyForcedDecision(variationKey: "on")
 // _ = uc.setForcedDecision(context: ruleCtx, decision: ruleFD)
 // let d = uc.decide(key: FLAG1)

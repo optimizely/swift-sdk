@@ -75,6 +75,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 return
             }
 
+            // Build rule key lookup for isHoldout() helper
+            self.buildKnownRuleKeys()
+
             // Show current project state (flags, rules, holdouts)
             self.inspectProject()
 
@@ -140,7 +143,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             // ----------------------------------------------------------
             // print("\n--- Forced decision (rule level) ---")
             // let uc = self.optimizely.createUserContext(userId: "user_123")
-            // let ruleCtx = OptimizelyDecisionContext(flagKey: self.FLAG1, ruleKey: "rule1")
+            // let ruleCtx = OptimizelyDecisionContext(flagKey: self.FLAG1, ruleKey: "ab1")
             // let ruleFD = OptimizelyForcedDecision(variationKey: "on")
             // _ = uc.setForcedDecision(context: ruleCtx, decision: ruleFD)
             // let d = uc.decide(key: self.FLAG1)
@@ -293,8 +296,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // HELPERS -- Used by the code above, no need to modify
     // ============================================================
 
+    var knownRuleKeys: Set<String> = []
+
+    func buildKnownRuleKeys() {
+        guard let config = try? optimizely.getOptimizelyConfig() else { return }
+        for (_, feat) in config.featuresMap {
+            for rule in feat.experimentRules { knownRuleKeys.insert(rule.key) }
+            for rule in feat.deliveryRules  { knownRuleKeys.insert(rule.key) }
+        }
+    }
+
     func isHoldout(_ d: OptimizelyDecision) -> Bool {
-        return d.variationKey == "ho_off_key" && !d.enabled
+        guard !d.enabled, let rk = d.ruleKey else { return false }
+        return !knownRuleKeys.contains(rk)
     }
 
     func printDecision(label: String, decision d: OptimizelyDecision) {

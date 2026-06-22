@@ -11,7 +11,7 @@ Local Holdouts let you measure the true incremental impact of individual feature
 by holding out a subset of users from specific rollouts while still serving them other experiences. 
 See [Holdouts docs](https://support.optimizely.com/hc/en-us/articles/38941939408269-Global-holdouts) for more information.
 
-- add localHoldouts to datafile for backward compatibility ([#638](https://github.com/optimizely/swift-sdk/pull/638))
+- Add localHoldouts to datafile for backward compatibility ([#638](https://github.com/optimizely/swift-sdk/pull/638))
 - Revert local holdout feature gate logic ([#637](https://github.com/optimizely/swift-sdk/pull/637))
 
 ### Functionality Enhancement

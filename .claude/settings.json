@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xcodebuild -project bugbash.xcodeproj -list)",
+      "Bash(xcodebuild -project bugbash.xcodeproj -scheme bugbash -destination 'platform=iOS Simulator,name=iPhone 16' build)"
+    ]
+  }
+}

@@ -13,6 +13,9 @@ See [Holdouts docs](https://support.optimizely.com/hc/en-us/articles/32370102322
 
 - add localHoldouts to datafile for backward compatibility ([#638](https://github.com/optimizely/swift-sdk/pull/638))
 - Revert local holdout feature gate logic ([#637](https://github.com/optimizely/swift-sdk/pull/637))
+
+### Functionality Enhancement
+
 - Block ODP identify event for single identifier ([#636](https://github.com/optimizely/swift-sdk/pull/636))
 
 ## 5.3.0

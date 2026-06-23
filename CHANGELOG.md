@@ -1,5 +1,23 @@
 # Optimizely Swift SDK Changelog
 
+## 5.4.0
+June 22, 2026
+
+### New Features
+
+**Local Holdouts**: Added support for Local Holdouts, enabling holdout experiments 
+to be scoped to specific feature flags rather than applied globally. 
+Local Holdouts let you measure the true incremental impact of individual features 
+by holding out a subset of users from specific rollouts while still serving them other experiences. 
+See [Holdouts docs](https://support.optimizely.com/hc/en-us/articles/38941939408269-Global-holdouts) for more information.
+
+- Add localHoldouts to datafile for backward compatibility ([#638](https://github.com/optimizely/swift-sdk/pull/638))
+- Revert local holdout feature gate logic ([#637](https://github.com/optimizely/swift-sdk/pull/637))
+
+### Functionality Enhancement
+
+- Block ODP identify event for single identifier ([#636](https://github.com/optimizely/swift-sdk/pull/636))
+
 ## 5.3.0
 May 4, 2026
 

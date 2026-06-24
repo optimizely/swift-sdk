@@ -30,24 +30,95 @@ class BatchEventBuilder {
                                       ruleType: String,
                                       enabled: Bool,
                                       cmabUUID: String?) -> Data? {
-        
+
         let metaData = DecisionMetadata(ruleType: ruleType, ruleKey: experiment?.key ?? "", flagKey: flagKey, variationKey: variation?.key ?? "", enabled: enabled, cmabUUID: cmabUUID)
-        
-        let decision = Decision(variationID: variation?.id ?? "",
-                                campaignID: experiment?.layerId ?? "",
-                                experimentID: experiment?.id ?? "",
+
+        let rawCampaignId = experiment?.layerId ?? ""
+        let rawVariationId = variation?.id
+        let experimentId = experiment?.id ?? ""
+
+        let isHoldout = (ruleType == Constants.DecisionSource.holdout.rawValue)
+        let (campaignId, variationId) = normalizeDecisionIds(rawCampaignId: rawCampaignId,
+                                                             rawVariationId: rawVariationId,
+                                                             experimentId: experimentId,
+                                                             isHoldout: isHoldout)
+
+        let decision = Decision(variationID: variationId,
+                                campaignID: campaignId,
+                                experimentID: experimentId,
                                 metaData: metaData)
-        
+
         let dispatchEvent = DispatchEvent(timestamp: timestampSince1970,
                                           key: DispatchEvent.activateEventKey,
-                                          entityID: experiment?.layerId ?? "",
+                                          entityID: rawCampaignId,
                                           uuid: uuid)
-        
+
         return createBatchEvent(config: config,
                                 userId: userId,
                                 attributes: attributes,
                                 decisions: [decision],
                                 dispatchEvents: [dispatchEvent])
+    }
+
+    // MARK: - Holdout Event ID Normalization (FSSDK-12813)
+
+    /// Normalizes `campaign_id` and `variation_id` for holdout decision events so
+    /// the on-the-wire payload always carries pipeline-valid values.
+    ///
+    /// For **holdout** decisions only:
+    /// - `campaign_id` falls back to `experiment_id` when the raw value is not a
+    ///   non-empty decimal-digit string (empty, whitespace, null/nil, or non-numeric).
+    /// - `variation_id` is normalized to `nil` (emitted as JSON `null`) when the
+    ///   raw value is not a non-empty decimal-digit string.
+    ///
+    /// For all non-holdout decisions the original (pre-fix) behavior is preserved:
+    /// `campaign_id` is the raw value (or empty string) and `variation_id` is the
+    /// raw value (or empty string) — wrapped in Optional purely so the `Decision`
+    /// struct can share one storage type across both branches.
+    static func normalizeDecisionIds(rawCampaignId: String,
+                                     rawVariationId: String?,
+                                     experimentId: String,
+                                     isHoldout: Bool) -> (campaignId: String, variationId: String?) {
+        guard isHoldout else {
+            // Preserve legacy behavior for non-holdout decisions (FR-005).
+            return (rawCampaignId, rawVariationId ?? "")
+        }
+
+        // Holdout: campaign_id must be a numeric string, otherwise fall back to
+        // experiment_id (FR-001/FR-002). Whitespace-only and non-numeric strings
+        // are treated as invalid; the upstream experiment_id is passed through
+        // unchanged even if it is itself invalid (FR-006 — never drop the event).
+        let campaignId = isValidNumericIdString(rawCampaignId) ? rawCampaignId : experimentId
+
+        // Holdout: variation_id must be a numeric string or JSON null
+        // (FR-003/FR-004). Anything else (empty, whitespace, non-numeric) becomes
+        // nil so the encoder emits JSON `null`.
+        let variationId: String?
+        if let raw = rawVariationId, isValidNumericIdString(raw) {
+            variationId = raw
+        } else {
+            variationId = nil
+        }
+
+        return (campaignId, variationId)
+    }
+
+    /// Returns true iff `value` is a non-empty string consisting entirely of
+    /// decimal digits `[0-9]`. Empty strings, whitespace-only strings, and any
+    /// string containing non-digit characters return false. Leading zeros are
+    /// allowed because Optimizely IDs are opaque identifiers (see spec).
+    static func isValidNumericIdString(_ value: String) -> Bool {
+        guard !value.isEmpty else { return false }
+        // `CharacterSet.decimalDigits` includes non-ASCII digit forms (e.g.
+        // Arabic-Indic digits). Spec restricts validity to ASCII `[0-9]`, so we
+        // walk the unicode scalars explicitly instead of using
+        // `rangeOfCharacter(from: CharacterSet.decimalDigits.inverted)`.
+        for scalar in value.unicodeScalars {
+            if scalar.value < 0x30 || scalar.value > 0x39 {
+                return false
+            }
+        }
+        return true
     }
     
     // MARK: - Converison Event

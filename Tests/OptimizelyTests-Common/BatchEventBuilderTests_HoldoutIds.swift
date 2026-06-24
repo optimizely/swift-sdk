@@ -14,9 +14,10 @@
 // limitations under the License.
 //
 
-// Tests for FSSDK-12813: holdout decision events must always carry a valid
-// `campaign_id` (falling back to `experiment_id`) and either a valid numeric
-// `variation_id` or JSON `null`. Non-holdout decisions must be unaffected.
+// Tests for FSSDK-12813: every decision event (experiment, feature test,
+// rollout, or holdout) must carry a valid numeric `campaign_id` (falling back
+// to `experiment_id` if invalid) and either a valid numeric `variation_id` or
+// JSON `null`. The normalization is uniform across decision types per FR-005.
 
 import XCTest
 
@@ -52,123 +53,112 @@ class BatchEventBuilderTests_HoldoutIds: XCTestCase {
         XCTAssertFalse(BatchEventBuilder.isValidNumericIdString("\u{0660}\u{0661}"))
     }
 
-    // MARK: - normalizeDecisionIds — non-holdout pass-through (FR-005)
+    // MARK: - normalizeDecisionIds — valid IDs pass through unchanged (SC-003)
 
-    func testNormalize_nonHoldout_passesThroughCampaignAndVariation() {
+    func testNormalize_validCampaignAndVariation_passThrough() {
+        // The dominant production case: both IDs already valid. No change.
         let (campaign, variation) = BatchEventBuilder.normalizeDecisionIds(
             rawCampaignId: "555",
             rawVariationId: "777",
-            experimentId: "999",
-            isHoldout: false)
+            experimentId: "999")
         XCTAssertEqual(campaign, "555")
         XCTAssertEqual(variation, "777")
     }
 
-    func testNormalize_nonHoldout_emptyValuesPreservedAsBefore() {
-        // Pre-fix behavior: non-holdout events used `?? ""`. Verify normalization
-        // does not change this branch — empty stays empty, no fallback occurs.
+    func testNormalize_validCampaignAndNilVariation_variationStaysNil() {
+        // Valid campaign, no variation supplied (e.g. holdout with no variation
+        // assigned). variation_id must be JSON null, not empty string.
         let (campaign, variation) = BatchEventBuilder.normalizeDecisionIds(
-            rawCampaignId: "",
+            rawCampaignId: "555",
             rawVariationId: nil,
-            experimentId: "999",
-            isHoldout: false)
-        XCTAssertEqual(campaign, "")
-        XCTAssertEqual(variation, "")
+            experimentId: "999")
+        XCTAssertEqual(campaign, "555")
+        XCTAssertNil(variation)
     }
 
-    // MARK: - normalizeDecisionIds — holdout campaign_id (FR-001/FR-002)
+    // MARK: - normalizeDecisionIds — campaign_id (FR-001/FR-002) applied uniformly
 
-    func testNormalize_holdout_emptyCampaignFallsBackToExperimentId() {
+    func testNormalize_emptyCampaignFallsBackToExperimentId() {
         let (campaign, _) = BatchEventBuilder.normalizeDecisionIds(
             rawCampaignId: "",
             rawVariationId: "777",
-            experimentId: "exp_42",
-            isHoldout: true)
+            experimentId: "exp_42")
         XCTAssertEqual(campaign, "exp_42")
     }
 
-    func testNormalize_holdout_whitespaceCampaignFallsBackToExperimentId() {
+    func testNormalize_whitespaceCampaignFallsBackToExperimentId() {
         let (campaign, _) = BatchEventBuilder.normalizeDecisionIds(
             rawCampaignId: "   ",
             rawVariationId: "777",
-            experimentId: "exp_42",
-            isHoldout: true)
+            experimentId: "exp_42")
         XCTAssertEqual(campaign, "exp_42")
     }
 
-    func testNormalize_holdout_nonNumericCampaignFallsBackToExperimentId() {
+    func testNormalize_nonNumericCampaignFallsBackToExperimentId() {
         let (campaign, _) = BatchEventBuilder.normalizeDecisionIds(
             rawCampaignId: "not_a_number",
             rawVariationId: "777",
-            experimentId: "exp_42",
-            isHoldout: true)
+            experimentId: "exp_42")
         XCTAssertEqual(campaign, "exp_42")
     }
 
-    func testNormalize_holdout_validNumericCampaignKept() {
+    func testNormalize_validNumericCampaignKept() {
         let (campaign, _) = BatchEventBuilder.normalizeDecisionIds(
             rawCampaignId: "12345",
             rawVariationId: "777",
-            experimentId: "exp_42",
-            isHoldout: true)
+            experimentId: "exp_42")
         XCTAssertEqual(campaign, "12345")
     }
 
-    func testNormalize_holdout_invalidExperimentIdStillPassedThrough() {
+    func testNormalize_invalidExperimentIdStillPassedThrough() {
         // FR-006: never drop the event; pass invalid experiment_id through if
         // that is all we have for the fallback.
         let (campaign, _) = BatchEventBuilder.normalizeDecisionIds(
             rawCampaignId: "",
             rawVariationId: "777",
-            experimentId: "",
-            isHoldout: true)
+            experimentId: "")
         XCTAssertEqual(campaign, "")
     }
 
-    // MARK: - normalizeDecisionIds — holdout variation_id (FR-003/FR-004)
+    // MARK: - normalizeDecisionIds — variation_id (FR-003/FR-004) applied uniformly
 
-    func testNormalize_holdout_emptyVariationBecomesNil() {
+    func testNormalize_emptyVariationBecomesNil() {
         let (_, variation) = BatchEventBuilder.normalizeDecisionIds(
             rawCampaignId: "12345",
             rawVariationId: "",
-            experimentId: "exp_42",
-            isHoldout: true)
+            experimentId: "exp_42")
         XCTAssertNil(variation)
     }
 
-    func testNormalize_holdout_whitespaceVariationBecomesNil() {
+    func testNormalize_whitespaceVariationBecomesNil() {
         let (_, variation) = BatchEventBuilder.normalizeDecisionIds(
             rawCampaignId: "12345",
             rawVariationId: "  ",
-            experimentId: "exp_42",
-            isHoldout: true)
+            experimentId: "exp_42")
         XCTAssertNil(variation)
     }
 
-    func testNormalize_holdout_nilVariationStaysNil() {
+    func testNormalize_nilVariationStaysNil() {
         let (_, variation) = BatchEventBuilder.normalizeDecisionIds(
             rawCampaignId: "12345",
             rawVariationId: nil,
-            experimentId: "exp_42",
-            isHoldout: true)
+            experimentId: "exp_42")
         XCTAssertNil(variation)
     }
 
-    func testNormalize_holdout_nonNumericVariationBecomesNil() {
+    func testNormalize_nonNumericVariationBecomesNil() {
         let (_, variation) = BatchEventBuilder.normalizeDecisionIds(
             rawCampaignId: "12345",
             rawVariationId: "abc",
-            experimentId: "exp_42",
-            isHoldout: true)
+            experimentId: "exp_42")
         XCTAssertNil(variation)
     }
 
-    func testNormalize_holdout_validNumericVariationKept() {
+    func testNormalize_validNumericVariationKept() {
         let (_, variation) = BatchEventBuilder.normalizeDecisionIds(
             rawCampaignId: "12345",
             rawVariationId: "777",
-            experimentId: "exp_42",
-            isHoldout: true)
+            experimentId: "exp_42")
         XCTAssertEqual(variation, "777")
     }
 

@@ -37,11 +37,9 @@ class BatchEventBuilder {
         let rawVariationId = variation?.id
         let experimentId = experiment?.id ?? ""
 
-        let isHoldout = (ruleType == Constants.DecisionSource.holdout.rawValue)
         let (campaignId, variationId) = normalizeDecisionIds(rawCampaignId: rawCampaignId,
                                                              rawVariationId: rawVariationId,
-                                                             experimentId: experimentId,
-                                                             isHoldout: isHoldout)
+                                                             experimentId: experimentId)
 
         let decision = Decision(variationID: variationId,
                                 campaignID: campaignId,
@@ -60,39 +58,30 @@ class BatchEventBuilder {
                                 dispatchEvents: [dispatchEvent])
     }
 
-    // MARK: - Holdout Event ID Normalization (FSSDK-12813)
+    // MARK: - Decision Event ID Normalization (FSSDK-12813)
 
-    /// Normalizes `campaign_id` and `variation_id` for holdout decision events so
-    /// the on-the-wire payload always carries pipeline-valid values.
+    /// Normalizes `campaign_id` and `variation_id` so every dispatched decision
+    /// event carries pipeline-valid values, regardless of decision type
+    /// (experiment, feature test, rollout, or holdout). See spec FR-001–FR-005.
     ///
-    /// For **holdout** decisions only:
     /// - `campaign_id` falls back to `experiment_id` when the raw value is not a
-    ///   non-empty decimal-digit string (empty, whitespace, null/nil, or non-numeric).
-    /// - `variation_id` is normalized to `nil` (emitted as JSON `null`) when the
-    ///   raw value is not a non-empty decimal-digit string.
-    ///
-    /// For all non-holdout decisions the original (pre-fix) behavior is preserved:
-    /// `campaign_id` is the raw value (or empty string) and `variation_id` is the
-    /// raw value (or empty string) — wrapped in Optional purely so the `Decision`
-    /// struct can share one storage type across both branches.
+    ///   non-empty decimal-digit string. For well-formed datafiles this is a
+    ///   no-op for non-holdout decisions; the fallback fires on holdout events
+    ///   (which legitimately may lack `layerId`) and acts as a safety net for
+    ///   any future malformed input.
+    /// - `variation_id` becomes `nil` (emitted as JSON `null`) when the raw
+    ///   value is not a non-empty decimal-digit string.
     static func normalizeDecisionIds(rawCampaignId: String,
                                      rawVariationId: String?,
-                                     experimentId: String,
-                                     isHoldout: Bool) -> (campaignId: String, variationId: String?) {
-        guard isHoldout else {
-            // Preserve legacy behavior for non-holdout decisions (FR-005).
-            return (rawCampaignId, rawVariationId ?? "")
-        }
-
-        // Holdout: campaign_id must be a numeric string, otherwise fall back to
-        // experiment_id (FR-001/FR-002). Whitespace-only and non-numeric strings
-        // are treated as invalid; the upstream experiment_id is passed through
-        // unchanged even if it is itself invalid (FR-006 — never drop the event).
+                                     experimentId: String) -> (campaignId: String, variationId: String?) {
+        // campaign_id must be a numeric string, otherwise fall back to
+        // experiment_id. The upstream experiment_id is passed through unchanged
+        // even if it is itself invalid (FR-006 — never drop the event).
         let campaignId = isValidNumericIdString(rawCampaignId) ? rawCampaignId : experimentId
 
-        // Holdout: variation_id must be a numeric string or JSON null
-        // (FR-003/FR-004). Anything else (empty, whitespace, non-numeric) becomes
-        // nil so the encoder emits JSON `null`.
+        // variation_id must be a numeric string or JSON null. Anything else
+        // (empty, whitespace, non-numeric) becomes nil so the encoder emits
+        // JSON `null`.
         let variationId: String?
         if let raw = rawVariationId, isValidNumericIdString(raw) {
             variationId = raw

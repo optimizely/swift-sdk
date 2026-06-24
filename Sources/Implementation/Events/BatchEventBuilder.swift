@@ -46,9 +46,13 @@ class BatchEventBuilder {
                                 experimentID: experimentId,
                                 metaData: metaData)
 
+        // FR-009: events[].entity_id shares the same source as
+        // decisions[].campaign_id (experiment.layerId) and the same fallback
+        // contract. Use the normalized value so the two fields never diverge
+        // on the wire — see spec US3 / SC-006.
         let dispatchEvent = DispatchEvent(timestamp: timestampSince1970,
                                           key: DispatchEvent.activateEventKey,
-                                          entityID: rawCampaignId,
+                                          entityID: campaignId,
                                           uuid: uuid)
 
         return createBatchEvent(config: config,

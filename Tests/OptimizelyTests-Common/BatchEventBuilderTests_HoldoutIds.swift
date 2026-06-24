@@ -211,4 +211,68 @@ class BatchEventBuilderTests_HoldoutIds: XCTestCase {
         XCTAssertEqual(json["variation_id"] as? String, "777")
         XCTAssertFalse(json["variation_id"] is NSNull)
     }
+
+    // MARK: - Impression event entity_id (FR-009 / SC-006)
+
+    /// End-to-end: a holdout impression event has an empty source `layerId`,
+    /// so both `decisions[0].campaign_id` AND `events[0].entity_id` must fall
+    /// back to the holdout's `experiment_id`, and they must be byte-equal.
+    func testImpressionEvent_holdout_entityIdMirrorsNormalizedCampaignId() throws {
+        let datafile = OTUtils.loadJSONDatafile("api_datafile")!
+        let eventDispatcher = MockEventDispatcher()
+        var optimizely: OptimizelyClient! = OptimizelyClient(sdkKey: "fssdk_12813_entity_id",
+                                                             eventDispatcher: eventDispatcher)
+        defer {
+            optimizely?.close()
+            optimizely = nil
+        }
+        try optimizely.start(datafile: datafile)
+
+        // Holdout struct defaults layerId to "" (see Holdout.swift) — the
+        // canonical case this fix targets. id is the fallback used by both
+        // campaign_id (FR-002) and entity_id (FR-009).
+        let holdoutJSON: [String: Any] = [
+            "status": "Running",
+            "id": "holdout_4444444",
+            "key": "holdout_key",
+            "trafficAllocation": [
+                ["entityId": "holdout_variation_a11", "endOfRange": 10000]
+            ],
+            "audienceIds": [],
+            "variations": [
+                ["variables": [], "id": "holdout_variation_a11", "key": "holdout_a"]
+            ]
+        ]
+        let holdout: Holdout = try OTUtils.model(from: holdoutJSON)
+        optimizely.config?.holdoutConfig = HoldoutConfig(globalHoldouts: [holdout], localHoldouts: [])
+
+        let user = optimizely.createUserContext(userId: "test_user_1")
+        _ = user.decide(key: "feature_1")
+
+        let exp = expectation(description: "impression dispatched")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { exp.fulfill() }
+        wait(for: [exp], timeout: 1.0)
+
+        guard let raw = eventDispatcher.events.first?.body,
+              let event = try JSONSerialization.jsonObject(with: raw, options: .allowFragments) as? [String: Any],
+              let visitor = (event["visitors"] as? [[String: Any]])?.first,
+              let snapshot = (visitor["snapshots"] as? [[String: Any]])?.first,
+              let decision = (snapshot["decisions"] as? [[String: Any]])?.first,
+              let dispatchEvent = (snapshot["events"] as? [[String: Any]])?.first else {
+            return XCTFail("impression event was not dispatched in expected shape")
+        }
+
+        let campaignId = decision["campaign_id"] as? String
+        let entityId = dispatchEvent["entity_id"] as? String
+
+        // FR-002: campaign_id falls back to experiment_id (holdout.id).
+        XCTAssertEqual(campaignId, holdout.id,
+                       "campaign_id must fall back to holdout.id when layerId is empty")
+        // FR-009: entity_id falls back the same way.
+        XCTAssertEqual(entityId, holdout.id,
+                       "entity_id must fall back to holdout.id when layerId is empty")
+        // SC-006: the two fields share source + fallback; they must never diverge.
+        XCTAssertEqual(campaignId, entityId,
+                       "campaign_id and entity_id must hold the same normalized value")
+    }
 }

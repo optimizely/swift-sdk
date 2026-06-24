@@ -493,7 +493,7 @@ extension OptimizelyUserContextTests_Decide_Holdouts {
         XCTAssert(desc.contains("campaign_activated"))
         
         XCTAssertEqual(eventDecision.experimentID, "id_holdout")
-        XCTAssertEqual(eventDecision.variationID, "id_holdout_variation")
+        XCTAssertNil(eventDecision.variationID)
         
         XCTAssertEqual(metadata.flagKey, "feature_2")
         XCTAssertEqual(metadata.ruleKey, "key_holdout")

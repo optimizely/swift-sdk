@@ -161,7 +161,7 @@ extension OptimizelyUserContextTests_Decide {
         let desc = eventSent.description
         XCTAssert(desc.contains("campaign_activated"))
         
-        XCTAssertEqual(eventDecision.variationID, "")
+        XCTAssertNil(eventDecision.variationID)
         XCTAssertEqual(eventDecision.experimentID, "")
 
         XCTAssertEqual(metadata.flagKey, "feature_3")

@@ -100,16 +100,44 @@ struct DecisionMetadata: Codable, Equatable {
 }
 
 struct Decision: Codable, Equatable {
-    let variationID: String
+    // `variationID` is optional so holdout events can serialize an explicit JSON
+    // `null` when the holdout has no usable variation id. For non-holdout
+    // decisions this remains a non-empty numeric string (see BatchEventBuilder).
+    let variationID: String?
     let campaignID: String
     let experimentID: String
     let metaData: DecisionMetadata
-    
+
     enum CodingKeys: String, CodingKey {
         case variationID = "variation_id"
         case campaignID = "campaign_id"
         case experimentID = "experiment_id"
         case metaData = "metadata"
+    }
+
+    init(variationID: String?,
+         campaignID: String,
+         experimentID: String,
+         metaData: DecisionMetadata) {
+        self.variationID = variationID
+        self.campaignID = campaignID
+        self.experimentID = experimentID
+        self.metaData = metaData
+    }
+
+    // Custom encoder ensures `variation_id` is emitted as explicit JSON `null`
+    // when the value is nil (the default synthesized Codable would omit the key
+    // via `encodeIfPresent`, which the event pipeline does not accept).
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        if let variationID = variationID {
+            try container.encode(variationID, forKey: .variationID)
+        } else {
+            try container.encodeNil(forKey: .variationID)
+        }
+        try container.encode(campaignID, forKey: .campaignID)
+        try container.encode(experimentID, forKey: .experimentID)
+        try container.encode(metaData, forKey: .metaData)
     }
 }
 

@@ -15,15 +15,40 @@
 //
 
 // Tests for FSSDK-12813: every decision event (experiment, feature test,
-// rollout, or holdout) must carry a valid numeric `campaign_id` (falling back
-// to `experiment_id` if invalid) and either a valid numeric `variation_id` or
-// JSON `null`. The normalization is uniform across decision types per FR-005.
+// rollout, or holdout) must carry a non-empty `campaign_id` (falling back to
+// `experiment_id` only when empty) and either a valid numeric `variation_id`
+// or JSON `null`. The normalization is uniform across decision types per
+// FR-005.
+//
+// Spec note (2026-06-24 relaxation): `campaign_id` and `entity_id` accept any
+// non-empty string content (IDs may be opaque, e.g. `"layer_abc"`). Only
+// `variation_id` keeps the stricter numeric-string-only contract.
 
 import XCTest
 
 class BatchEventBuilderTests_HoldoutIds: XCTestCase {
 
-    // MARK: - isValidNumericIdString
+    // MARK: - isNonEmptyString (campaign_id / entity_id validator)
+
+    func testIsNonEmptyString_acceptsAnyNonEmptyContent() {
+        // Numeric strings.
+        XCTAssertTrue(BatchEventBuilder.isNonEmptyString("12345"))
+        XCTAssertTrue(BatchEventBuilder.isNonEmptyString("0"))
+        // Opaque IDs — the whole point of the FSSDK-12813 spec relaxation:
+        // any non-empty string content is valid for campaign_id / entity_id.
+        XCTAssertTrue(BatchEventBuilder.isNonEmptyString("layer_abc"))
+        XCTAssertTrue(BatchEventBuilder.isNonEmptyString("default-12345"))
+        XCTAssertTrue(BatchEventBuilder.isNonEmptyString("exp_42"))
+        // Whitespace-only is still non-empty per spec FR-001 — only the empty
+        // string triggers the fallback.
+        XCTAssertTrue(BatchEventBuilder.isNonEmptyString(" "))
+    }
+
+    func testIsNonEmptyString_rejectsEmptyOnly() {
+        XCTAssertFalse(BatchEventBuilder.isNonEmptyString(""))
+    }
+
+    // MARK: - isValidNumericIdString (variation_id validator — unchanged)
 
     func testIsValidNumericIdString_validDigits() {
         XCTAssertTrue(BatchEventBuilder.isValidNumericIdString("12345"))
@@ -79,6 +104,8 @@ class BatchEventBuilderTests_HoldoutIds: XCTestCase {
     // MARK: - normalizeDecisionIds — campaign_id (FR-001/FR-002) applied uniformly
 
     func testNormalize_emptyCampaignFallsBackToExperimentId() {
+        // Only the empty string triggers the fallback per spec FR-002
+        // (post-2026-06-24 relaxation).
         let (campaign, _) = BatchEventBuilder.normalizeDecisionIds(
             rawCampaignId: "",
             rawVariationId: "777",
@@ -86,20 +113,35 @@ class BatchEventBuilderTests_HoldoutIds: XCTestCase {
         XCTAssertEqual(campaign, "exp_42")
     }
 
-    func testNormalize_whitespaceCampaignFallsBackToExperimentId() {
+    func testNormalize_whitespaceCampaignPassesThrough() {
+        // Spec FR-001 (relaxed 2026-06-24): any non-empty string is valid for
+        // campaign_id, including whitespace-only. Only empty triggers fallback.
         let (campaign, _) = BatchEventBuilder.normalizeDecisionIds(
             rawCampaignId: "   ",
             rawVariationId: "777",
             experimentId: "exp_42")
-        XCTAssertEqual(campaign, "exp_42")
+        XCTAssertEqual(campaign, "   ")
     }
 
-    func testNormalize_nonNumericCampaignFallsBackToExperimentId() {
+    func testNormalize_nonNumericCampaignPassesThrough() {
+        // Spec FR-001 (relaxed 2026-06-24): non-numeric campaign_id is valid
+        // — IDs may be opaque. No fallback to experiment_id.
         let (campaign, _) = BatchEventBuilder.normalizeDecisionIds(
             rawCampaignId: "not_a_number",
             rawVariationId: "777",
             experimentId: "exp_42")
-        XCTAssertEqual(campaign, "exp_42")
+        XCTAssertEqual(campaign, "not_a_number")
+    }
+
+    func testNormalize_opaqueCampaignPassesThrough_FSSDK12813_relaxation() {
+        // Direct proof of the FSSDK-12813 spec relaxation: an opaque ID such
+        // as "layer_abc" is a valid campaign_id and MUST pass through
+        // unchanged (no fallback to experiment_id).
+        let (campaign, _) = BatchEventBuilder.normalizeDecisionIds(
+            rawCampaignId: "layer_abc",
+            rawVariationId: "777",
+            experimentId: "exp_42")
+        XCTAssertEqual(campaign, "layer_abc")
     }
 
     func testNormalize_validNumericCampaignKept() {

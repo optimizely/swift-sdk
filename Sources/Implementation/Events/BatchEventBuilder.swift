@@ -68,20 +68,23 @@ class BatchEventBuilder {
     /// event carries pipeline-valid values, regardless of decision type
     /// (experiment, feature test, rollout, or holdout). See spec FR-001–FR-005.
     ///
-    /// - `campaign_id` falls back to `experiment_id` when the raw value is not a
-    ///   non-empty decimal-digit string. For well-formed datafiles this is a
-    ///   no-op for non-holdout decisions; the fallback fires on holdout events
-    ///   (which legitimately may lack `layerId`) and acts as a safety net for
-    ///   any future malformed input.
-    /// - `variation_id` becomes `nil` (emitted as JSON `null`) when the raw
-    ///   value is not a non-empty decimal-digit string.
+    /// - `campaign_id` falls back to `experiment_id` when the raw value is an
+    ///   empty string. Any non-empty string (numeric like `"12345"` or opaque
+    ///   like `"layer_abc"`/`"default-12345"`) is accepted and passes through
+    ///   unchanged. The fallback fires on holdout events (which legitimately
+    ///   may lack `layerId`) and acts as a safety net for any future malformed
+    ///   input. See spec FR-001 / FR-002 (relaxed per 2026-06-24 update).
+    /// - `variation_id` keeps the stricter numeric-string contract: it becomes
+    ///   `nil` (emitted as JSON `null`) when the raw value is not a non-empty
+    ///   decimal-digit string. See spec FR-003 / FR-004.
     static func normalizeDecisionIds(rawCampaignId: String,
                                      rawVariationId: String?,
                                      experimentId: String) -> (campaignId: String, variationId: String?) {
-        // campaign_id must be a numeric string, otherwise fall back to
-        // experiment_id. The upstream experiment_id is passed through unchanged
-        // even if it is itself invalid (FR-006 — never drop the event).
-        let campaignId = isValidNumericIdString(rawCampaignId) ? rawCampaignId : experimentId
+        // campaign_id only needs to be a non-empty string of any character
+        // content. If it is empty, fall back to experiment_id. The upstream
+        // experiment_id is passed through unchanged even if it is itself
+        // invalid (FR-006 — never drop the event).
+        let campaignId = isNonEmptyString(rawCampaignId) ? rawCampaignId : experimentId
 
         // variation_id must be a numeric string or JSON null. Anything else
         // (empty, whitespace, non-numeric) becomes nil so the encoder emits
@@ -96,10 +99,23 @@ class BatchEventBuilder {
         return (campaignId, variationId)
     }
 
+    /// Returns true iff `value` is a non-empty string. Used for the relaxed
+    /// `campaign_id` / `entity_id` validation per spec FR-001 / FR-009 — any
+    /// non-empty string passes regardless of character content (IDs may be
+    /// opaque, e.g. `"default-12345"`, `"layer_abc"`).
+    static func isNonEmptyString(_ value: String) -> Bool {
+        return !value.isEmpty
+    }
+
     /// Returns true iff `value` is a non-empty string consisting entirely of
     /// decimal digits `[0-9]`. Empty strings, whitespace-only strings, and any
     /// string containing non-digit characters return false. Leading zeros are
     /// allowed because Optimizely IDs are opaque identifiers (see spec).
+    ///
+    /// Used only for `variation_id` validation per spec FR-003 — `variation_id`
+    /// retains the stricter numeric-string-only contract even after the
+    /// 2026-06-24 spec relaxation. `campaign_id` and `entity_id` use
+    /// `isNonEmptyString(_:)` instead.
     static func isValidNumericIdString(_ value: String) -> Bool {
         guard !value.isEmpty else { return false }
         // `CharacterSet.decimalDigits` includes non-ASCII digit forms (e.g.

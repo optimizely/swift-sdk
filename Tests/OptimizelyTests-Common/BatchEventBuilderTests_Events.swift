@@ -1,5 +1,5 @@
 //
-// Copyright 2019-2021, 2023 Optimizely, Inc. and contributors
+// Copyright 2019-2021, 2023, 2026 Optimizely, Inc. and contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,19 +27,27 @@ class BatchEventBuilderTests_Events: XCTestCase {
     var project: Project!
     let datafile = OTUtils.loadJSONDatafile("api_datafile")!
     
+    // FSSDK-12813: holdout fixture uses numeric-string IDs so the post-fix
+    // event-id normalization (campaign_id falls back to experiment_id when
+    // layerId is invalid; variation_id becomes JSON null when invalid) is a
+    // no-op for the happy-path holdout tests below. Per spec FR-011, every
+    // pre-existing test that builds an event payload must use valid
+    // decimal-digit string IDs (or have its expected output updated to match
+    // the normalized post-fix value). These tests exercise routing/metadata,
+    // not the invalid-input path, so the IDs are now realistic numeric strings.
     var sampleHoldout: [String: Any] {
         return [
             "status": "Running",
-            "id": "holdout_4444444",
+            "id": "4444444",
             "key": "holdout_key",
             "trafficAllocation": [
-                ["entityId": "holdout_variation_a11", "endOfRange": 10000] // 100% traffic allocation
+                ["entityId": "4444411", "endOfRange": 10000] // 100% traffic allocation
             ],
             "audienceIds": [],
             "variations": [
                 [
                     "variables": [],
-                    "id": "holdout_variation_a11",
+                    "id": "4444411",
                     "key": "holdout_a"
                 ]
             ]

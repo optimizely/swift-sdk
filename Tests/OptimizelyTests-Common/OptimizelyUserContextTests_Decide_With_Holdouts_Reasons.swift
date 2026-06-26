@@ -1,5 +1,5 @@
 //
-// Copyright 2022, Optimizely, Inc. and contributors 
+// Copyright 2022, 2026, Optimizely, Inc. and contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");  
 // you may not use this file except in compliance with the License.
@@ -23,19 +23,25 @@ class OptimizelyUserContextTests_Decide_With_Holdouts_Reasons: XCTestCase {
     var kAttributesCountryMatch: [String: Any] = ["country": "US"]
     var kAttributesCountryNotMatch: [String: Any] = ["country": "ca"]
     
+    // FSSDK-12813: holdout fixture uses numeric-string IDs so the post-fix
+    // event-id normalization (campaign_id falls back to experiment_id when
+    // layerId is invalid; variation_id becomes JSON null when invalid) is a
+    // no-op for the happy-path decide-reasons tests below. Per spec FR-011,
+    // every pre-existing test that builds an event payload must use valid
+    // decimal-digit string IDs.
     var sampleHoldout: [String: Any] {
         return [
             "status": "Running",
-            "id": "id_holdout",
+            "id": "9999900001",
             "key": "key_holdout",
             "trafficAllocation": [
-                ["entityId": "id_holdout_variation", "endOfRange": 500]
+                ["entityId": "9999900002", "endOfRange": 500]
             ],
             "audienceIds": [],
             "variations": [
                 [
                     "variables": [],
-                    "id": "id_holdout_variation",
+                    "id": "9999900002",
                     "key": "key_holdout_variation"
                 ]
             ]
@@ -103,7 +109,7 @@ class OptimizelyUserContextTests_Decide_With_Holdouts_Reasons: XCTestCase {
         let featureId_2 = "4482920078"
         
         var holdout2 = holdout1
-        holdout2.id = "id_holdout_2"
+        holdout2.id = "9999900003"  // FSSDK-12813: numeric-string ID
         holdout2.key = "key_holdout_2"
         
         // Local holdout with 10% traffic (excludes feature_2 by targeting no rules)

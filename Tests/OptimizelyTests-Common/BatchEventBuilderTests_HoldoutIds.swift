@@ -275,4 +275,38 @@ class BatchEventBuilderTests_HoldoutIds: XCTestCase {
         XCTAssertEqual(campaignId, entityId,
                        "campaign_id and entity_id must hold the same normalized value")
     }
+
+    // MARK: - Cross-decision-type regression (FR-005 / SC-003)
+
+    /// FR-005: the same normalization runs for every decision type, so the
+    /// happy-path (valid numeric source IDs) MUST be a byte-equivalent no-op
+    /// for experiments / feature tests / rollouts — `campaign_id` keeps the
+    /// raw `layerId` (it does NOT fall back to `experiment_id`), and
+    /// `variation_id` keeps the raw value (it does NOT collapse to `nil`).
+    /// SC-006 is locked in alongside: when both IDs are valid, the matching
+    /// `entity_id` for the impression event is just `rawCampaignId`, so the
+    /// invariant "campaign_id == entity_id" holds trivially. This unit-level
+    /// regression complements the existing holdout end-to-end test (which
+    /// asserts the fallback path); together they cover both legs of FR-005.
+    /// Traceable to FSSDK-12839 / spec 003-fix-holdout-events-ids.
+    func testNormalize_nonHoldoutHappyPath_isByteEquivalentNoOp() {
+        // Experiment / feature-test / rollout: source IDs are all valid numeric
+        // strings, as a well-formed datafile guarantees. Normalization must
+        // not substitute anything.
+        let rawCampaign = "10417730432"   // realistic numeric layerId
+        let rawVariation = "10418551353"  // realistic numeric variation id
+        let experimentId = "10420810910"  // distinct from layerId on purpose
+
+        let (campaign, variation) = BatchEventBuilder.normalizeDecisionIds(
+            rawCampaignId: rawCampaign,
+            rawVariationId: rawVariation,
+            experimentId: experimentId)
+
+        XCTAssertEqual(campaign, rawCampaign,
+                       "campaign_id must pass through unchanged on the happy path (no fallback to experiment_id)")
+        XCTAssertNotEqual(campaign, experimentId,
+                          "campaign_id MUST NOT collapse to experiment_id when the raw value is already valid")
+        XCTAssertEqual(variation, rawVariation,
+                       "variation_id must pass through unchanged on the happy path (no collapse to nil)")
+    }
 }

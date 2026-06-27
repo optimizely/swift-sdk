@@ -24,14 +24,16 @@ class OptimizelyUserContextTests_Decide_Holdouts: XCTestCase {
     var kAttributesCountryMatch: [String: Any] = ["country": "US"]
     var kAttributesCountryNotMatch: [String: Any] = ["country": "ca"]
     
-    // FSSDK-12813: holdout fixture uses numeric-string IDs so the post-fix
-    // event-id normalization (campaign_id falls back to experiment_id when
-    // layerId is invalid; variation_id becomes JSON null when invalid) is a
-    // no-op for the happy-path decide-API tests below. Per spec FR-011, every
-    // pre-existing test that builds an event payload must use valid
-    // decimal-digit string IDs. These tests exercise the decide() API surface
-    // (variationKey / ruleKey / metadata), not the invalid-id path, so the
-    // IDs are now realistic numeric strings.
+    // FSSDK-12813: holdout fixture uses valid IDs so the post-fix event-id
+    // normalization is a no-op for the happy-path decide-API tests below.
+    // `campaign_id` and `entity_id` accept any non-empty string (fallback to
+    // `experiment_id` only when empty/null/missing); `variation_id` retains
+    // the decimal-digit-only contract (anything else normalizes to JSON null).
+    // Per FR-011 the variation `id` (and the matching
+    // `trafficAllocation[].entityId`) must be a numeric string; numeric
+    // strings are used for the holdout `id` too to keep the fixture uniform.
+    // These tests exercise the decide() API surface (variationKey / ruleKey /
+    // metadata), not the invalid-id path.
     var sampleHoldout: [String: Any] {
         return [
             "status": "Running",
@@ -500,10 +502,12 @@ extension OptimizelyUserContextTests_Decide_Holdouts {
         let desc = eventSent.description
         XCTAssert(desc.contains("campaign_activated"))
         
-        // FSSDK-12813: sampleHoldout now uses numeric-string IDs ("9999900001"
-        // for the holdout id, "9999900002" for the variation), so the
-        // post-fix normalization is a no-op here and variation_id is emitted
-        // as a numeric string rather than JSON null.
+        // FSSDK-12813: sampleHoldout now uses valid numeric IDs ("9999900001"
+        // for the holdout id, "9999900002" for the variation), so the post-fix
+        // normalization is a no-op here. variation_id retains the decimal-
+        // digit-only contract and is emitted as a numeric string (rather than
+        // JSON null, which would be the result under the prior non-numeric
+        // placeholder).
         XCTAssertEqual(eventDecision.experimentID, "9999900001")
         XCTAssertEqual(eventDecision.variationID, "9999900002")
         

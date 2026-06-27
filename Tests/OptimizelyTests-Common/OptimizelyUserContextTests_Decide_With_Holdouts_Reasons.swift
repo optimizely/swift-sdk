@@ -23,12 +23,14 @@ class OptimizelyUserContextTests_Decide_With_Holdouts_Reasons: XCTestCase {
     var kAttributesCountryMatch: [String: Any] = ["country": "US"]
     var kAttributesCountryNotMatch: [String: Any] = ["country": "ca"]
     
-    // FSSDK-12813: holdout fixture uses numeric-string IDs so the post-fix
-    // event-id normalization (campaign_id falls back to experiment_id when
-    // layerId is invalid; variation_id becomes JSON null when invalid) is a
-    // no-op for the happy-path decide-reasons tests below. Per spec FR-011,
-    // every pre-existing test that builds an event payload must use valid
-    // decimal-digit string IDs.
+    // FSSDK-12813: holdout fixture uses valid IDs so the post-fix event-id
+    // normalization is a no-op for the happy-path decide-reasons tests below.
+    // `campaign_id` and `entity_id` accept any non-empty string (fallback to
+    // `experiment_id` only when empty/null/missing); `variation_id` retains
+    // the decimal-digit-only contract. Per FR-011 the variation `id` (and the
+    // matching `trafficAllocation[].entityId`) must be a numeric string;
+    // numeric strings are used for the holdout `id` too to keep the fixture
+    // uniform.
     var sampleHoldout: [String: Any] {
         return [
             "status": "Running",

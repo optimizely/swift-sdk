@@ -30,13 +30,15 @@ class DecisionServiceTests_LocalHoldouts: XCTestCase {
     let experimentRuleId = "10390977673"  // From decide_datafile
     let deliveryRuleId = "3332020515"     // From decide_datafile rollout
 
-    // FSSDK-12813: holdout fixture uses numeric-string IDs so any event
-    // payload that downstream tests dispatch from this decision carries
-    // pipeline-valid IDs and the post-fix normalization is a no-op. Per
-    // spec FR-011, every pre-existing test that builds an event payload
-    // must use valid decimal-digit string IDs. Keys (`holdout_test_key`,
-    // `holdout_variation_key`) are arbitrary identifiers and are left as
-    // descriptive strings.
+    // FSSDK-12813: holdout fixture uses valid IDs so any event payload that
+    // downstream tests dispatch from this decision carries pipeline-valid
+    // values and the post-fix normalization is a no-op. `campaign_id` /
+    // `entity_id` accept any non-empty string; `variation_id` retains the
+    // decimal-digit-only contract. Per FR-011 the variation `id` (and the
+    // matching `trafficAllocation[].entityId`) must be a numeric string;
+    // numeric strings are used for the holdout `id` too to keep the fixture
+    // uniform. Keys (`holdout_test_key`, `holdout_variation_key`) are
+    // arbitrary identifiers and are left as descriptive strings.
     var sampleHoldout: [String: Any] {
         return [
             "status": "Running",

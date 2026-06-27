@@ -27,17 +27,9 @@ class BatchEventBuilderTests_Events: XCTestCase {
     var project: Project!
     let datafile = OTUtils.loadJSONDatafile("api_datafile")!
     
-    // FSSDK-12813: holdout fixture uses valid IDs so the post-fix event-id
-    // normalization is a no-op for the happy-path holdout tests below. Under
-    // the spec, `campaign_id` and `events[].entity_id` accept any non-empty
-    // string (fallback to `experiment_id` only when the source is empty/null/
-    // missing), while `variation_id` retains the stricter decimal-digit-only
-    // contract (anything else normalizes to JSON null). Per FR-011, every
-    // pre-existing event-construction fixture must either supply a valid
-    // placeholder or update its expected output to the normalized value.
-    // Numeric strings are used here for both `id` fields because that form is
-    // valid under either rule (campaign_id non-empty-string, variation_id
-    // digits-only) and keeps the fixtures uniform.
+    // Numeric strings used for both id fields: campaign_id accepts any
+    // non-empty string, variation_id requires digits-only. Numeric satisfies
+    // both and keeps fixtures uniform.
     var sampleHoldout: [String: Any] {
         return [
             "status": "Running",

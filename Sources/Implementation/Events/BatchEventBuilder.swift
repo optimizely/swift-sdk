@@ -62,35 +62,23 @@ class BatchEventBuilder {
                                 dispatchEvents: [dispatchEvent])
     }
 
-    // MARK: - Decision Event ID Normalization (FSSDK-12813, FSSDK-12834)
+    // MARK: - Decision Event ID Normalization
 
-    /// Normalizes `campaign_id` and `variation_id` so every dispatched decision
-    /// event carries pipeline-valid values, regardless of decision type
-    /// (experiment, feature test, rollout, or holdout). See spec FR-001–FR-005.
+    /// Normalizes `campaign_id` and `variation_id` for every dispatched
+    /// decision event (experiment, feature test, rollout, holdout).
     ///
-    /// - `campaign_id` (and the mirrored `events[].entity_id`, FR-009) falls
-    ///   back to `experiment_id` ONLY when the raw value is empty, whitespace-
-    ///   only, null, or missing. Any other non-empty string passes through
-    ///   unchanged — IDs may be opaque (e.g. `"default-12345"`, `"layer_abc"`)
-    ///   per FR-001. Holdouts trigger the fallback today because they
-    ///   legitimately default `layerId` to `""`; the rule also acts as a safety
-    ///   net for any future malformed input.
-    /// - `variation_id` keeps the stricter numeric-string contract (FR-003):
-    ///   it becomes `nil` (emitted as JSON `null`) when the raw value is not a
-    ///   non-empty decimal-digit string.
+    /// - `campaign_id` (mirrored as `events[].entity_id`) accepts any non-empty
+    ///   string and falls back to `experiment_id` only on empty/whitespace
+    ///   input. Opaque IDs (e.g. `"layer_abc"`) pass through.
+    /// - `variation_id` must be a non-empty decimal-digit string; anything
+    ///   else becomes `nil` (encoded as JSON `null`).
+    /// - `experiment_id` is never validated here — it is always passed
+    ///   through so the event is never dropped.
     static func normalizeDecisionIds(rawCampaignId: String,
                                      rawVariationId: String?,
                                      experimentId: String) -> (campaignId: String, variationId: String?) {
-        // FR-001/FR-002: campaign_id is valid if it is any non-empty string
-        // (numeric or opaque). The fallback to experiment_id fires only on
-        // empty / whitespace-only inputs. The upstream experiment_id is passed
-        // through unchanged even if it is itself invalid (FR-006 — never drop
-        // the event).
         let campaignId = isValidStringId(rawCampaignId) ? rawCampaignId : experimentId
 
-        // FR-003/FR-004: variation_id must be a decimal-digit string or JSON
-        // null. Anything else (empty, whitespace, opaque non-numeric) becomes
-        // nil so the encoder emits JSON `null`.
         let variationId: String?
         if let raw = rawVariationId, isValidNumericIdString(raw) {
             variationId = raw
@@ -101,28 +89,19 @@ class BatchEventBuilder {
         return (campaignId, variationId)
     }
 
-    /// Returns true iff `value` is a non-empty string of length ≥ 1 carrying
-    /// at least one non-whitespace character. Used for the relaxed
-    /// `campaign_id` / `entity_id` contract (FR-001 / FR-009): any character
-    /// content is allowed (opaque IDs like `"default-12345"` or `"layer_abc"`
-    /// are valid). The whitespace-only check is a defensive normalization so
-    /// pure-whitespace inputs are treated as empty and trigger the fallback.
+    /// True iff `value` is non-empty and contains at least one non-whitespace
+    /// character. Used for the relaxed `campaign_id` / `entity_id` contract.
     static func isValidStringId(_ value: String) -> Bool {
         guard !value.isEmpty else { return false }
         return value.contains { !$0.isWhitespace }
     }
 
-    /// Returns true iff `value` is a non-empty string consisting entirely of
-    /// decimal digits `[0-9]`. Empty strings, whitespace-only strings, and any
-    /// string containing non-digit characters return false. Leading zeros are
-    /// allowed because Optimizely IDs are opaque identifiers (see spec).
-    /// Used for the stricter `variation_id` contract (FR-003).
+    /// True iff `value` is a non-empty ASCII decimal-digit string `[0-9]+`.
+    /// Used for the strict `variation_id` contract. We walk unicode scalars
+    /// directly because `CharacterSet.decimalDigits` would also accept
+    /// non-ASCII digit forms (e.g. Arabic-Indic).
     static func isValidNumericIdString(_ value: String) -> Bool {
         guard !value.isEmpty else { return false }
-        // `CharacterSet.decimalDigits` includes non-ASCII digit forms (e.g.
-        // Arabic-Indic digits). Spec restricts validity to ASCII `[0-9]`, so we
-        // walk the unicode scalars explicitly instead of using
-        // `rangeOfCharacter(from: CharacterSet.decimalDigits.inverted)`.
         for scalar in value.unicodeScalars {
             if scalar.value < 0x30 || scalar.value > 0x39 {
                 return false

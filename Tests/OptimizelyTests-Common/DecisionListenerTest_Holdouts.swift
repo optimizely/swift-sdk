@@ -39,13 +39,9 @@ class DecisionListenerTests_Holdouts: XCTestCase {
     let kVariableValueDouble = 4.2
     let kVariableValueBool = true
     
-    // FSSDK-12813: holdout fixture uses valid IDs so the post-fix event-id
-    // normalization is a no-op for the happy-path decision-listener tests
-    // below. `campaign_id` / `entity_id` accept any non-empty string, while
-    // `variation_id` retains the decimal-digit-only contract. Per FR-011 the
-    // variation `id` (and the matching `trafficAllocation[].entityId`) must
-    // be a numeric string; numeric strings are used for the holdout `id` too
-    // to keep the fixture uniform.
+    // variation id and trafficAllocation entityId must be numeric strings
+    // (variation_id contract). Holdout id uses numeric too for fixture
+    // uniformity, though any non-empty string would satisfy campaign_id.
     var sampleHoldout: [String: Any] {
         return [
             "status": "Running",

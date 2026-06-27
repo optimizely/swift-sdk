@@ -23,14 +23,8 @@ class OptimizelyUserContextTests_Decide_With_Holdouts_Reasons: XCTestCase {
     var kAttributesCountryMatch: [String: Any] = ["country": "US"]
     var kAttributesCountryNotMatch: [String: Any] = ["country": "ca"]
     
-    // FSSDK-12813: holdout fixture uses valid IDs so the post-fix event-id
-    // normalization is a no-op for the happy-path decide-reasons tests below.
-    // `campaign_id` and `entity_id` accept any non-empty string (fallback to
-    // `experiment_id` only when empty/null/missing); `variation_id` retains
-    // the decimal-digit-only contract. Per FR-011 the variation `id` (and the
-    // matching `trafficAllocation[].entityId`) must be a numeric string;
-    // numeric strings are used for the holdout `id` too to keep the fixture
-    // uniform.
+    // variation id and trafficAllocation entityId must be numeric strings.
+    // Holdout id uses numeric too for fixture uniformity.
     var sampleHoldout: [String: Any] {
         return [
             "status": "Running",
@@ -111,7 +105,7 @@ class OptimizelyUserContextTests_Decide_With_Holdouts_Reasons: XCTestCase {
         let featureId_2 = "4482920078"
         
         var holdout2 = holdout1
-        holdout2.id = "9999900003"  // FSSDK-12813: numeric-string ID
+        holdout2.id = "9999900003"
         holdout2.key = "key_holdout_2"
         
         // Local holdout with 10% traffic (excludes feature_2 by targeting no rules)

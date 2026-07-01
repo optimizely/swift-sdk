@@ -190,7 +190,7 @@ class DefaultCmabService: CmabService {
         let cmabAttributeIds = cmab.attributeIds
         for attributeId in cmabAttributeIds {
             if let attribute = config.getAttribute(id: attributeId), let value = userAttributes[attribute.key] {
-                filteredUserAttributes[attribute.key] = value
+                filteredUserAttributes[attribute.id] = value
             }
         }
         return filteredUserAttributes

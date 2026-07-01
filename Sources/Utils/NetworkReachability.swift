@@ -52,28 +52,34 @@ class NetworkReachability {
     
     init(maxContiguousFails: Int? = nil) {
         self.maxContiguousFails = maxContiguousFails ?? NetworkReachability.defaultMaxContiguousFails
-     
-        if #available(macOS 10.14, iOS 12.0, watchOS 5.0, tvOS 12.0, *) {
-            
-            // NOTE: test with real devices only (simulator not updating properly)
 
-            self.monitor = NWPathMonitor()
-            
-            (monitor as! NWPathMonitor).pathUpdateHandler = { [weak self] (path: NWPath) -> Void in
+        if #available(macOS 10.14, iOS 17.0, watchOS 5.0, tvOS 12.0, *) {
+
+            // Fail-safe NWPathMonitor initialization
+            let pathMonitor = NWPathMonitor()
+            self.monitor = pathMonitor
+
+            // Use safe optional casting instead of force cast
+            guard let monitor = self.monitor as? NWPathMonitor else {
+                // Monitor initialization failed - network reachability disabled
+                return
+            }
+
+            monitor.pathUpdateHandler = { [weak self] (path: NWPath) -> Void in
                 // "Reachability path: satisfied (Path is satisfied), interface: en0, ipv4, ipv6, dns, expensive, constrained"
                 // "Reachability path: unsatisfied (No network route)"
                 // print("Reachability path: \(path)")
-                
+
                 // this task runs in sync queue. set private variable (instead of isConnected to avoid deadlock)
                 self?.connected = (path.status == .satisfied)
             }
-            
-            (monitor as! NWPathMonitor).start(queue: queue)
+
+            monitor.start(queue: queue)
         }
     }
     
     func stop() {
-        if #available(macOS 10.14, iOS 12.0, watchOS 5.0, tvOS 12.0, *) {
+        if #available(macOS 10.14, iOS 17.0, watchOS 5.0, tvOS 12.0, *) {
             guard let monitor = monitor as? NWPathMonitor else { return }
 
             monitor.pathUpdateHandler = nil
@@ -85,12 +91,12 @@ class NetworkReachability {
         numContiguousFails = isError ? (numContiguousFails + 1) : 0
     }
             
-    /// Skip network access when reachability is down (optimization for iOS12+ only)
+    /// Skip network access when reachability is down (optimization for iOS17+ only)
     /// - Returns: true when network access should be blocked
     func shouldBlockNetworkAccess() -> Bool {
         if numContiguousFails < maxContiguousFails { return false }
 
-        if #available(macOS 10.14, iOS 12.0, watchOS 5.0, tvOS 12.0, *) {
+        if #available(macOS 10.14, iOS 17.0, watchOS 5.0, tvOS 12.0, *) {
             return !isConnected
         } else {
             return false

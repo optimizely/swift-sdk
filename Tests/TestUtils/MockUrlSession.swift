@@ -55,7 +55,7 @@ class MockUrlSession: URLSession {
     }
 
     init(handler: MockDatafileHandler? = nil, statusCode: Int = 0, withError: Bool = false, localResponseData: String? = nil) {
-        lock.async {
+        lock.sync {
             Self.validSessions += 1
         }
         self.handler = handler
@@ -63,9 +63,9 @@ class MockUrlSession: URLSession {
         self.withError = withError
         self.localResponseData = localResponseData
     }
-   
+
     init(handler: MockDatafileHandler? = nil, settingsMap: [String: (Int, Bool)]) {
-        lock.async {
+        lock.sync {
             Self.validSessions += 1
         }
         self.handler = handler
@@ -118,7 +118,7 @@ class MockUrlSession: URLSession {
     }
 
     override func finishTasksAndInvalidate() {
-        lock.async {
+        lock.sync {
             Self.validSessions -= 1
         }
     }

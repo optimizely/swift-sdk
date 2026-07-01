@@ -1,5 +1,5 @@
 //
-// Copyright 2022, Optimizely, Inc. and contributors 
+// Copyright 2022, 2026, Optimizely, Inc. and contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");  
 // you may not use this file except in compliance with the License.
@@ -39,20 +39,23 @@ class DecisionListenerTests_Holdouts: XCTestCase {
     let kVariableValueDouble = 4.2
     let kVariableValueBool = true
     
+    // variation id and trafficAllocation entityId must be numeric strings
+    // (variation_id contract). Holdout id uses numeric too for fixture
+    // uniformity, though any non-empty string would satisfy campaign_id.
     var sampleHoldout: [String: Any] {
         return [
             "status": "Running",
-            "id": "id_holdout",
+            "id": "9999900001",
             "key": "key_holdout",
             "layerId": "10420273888",
             "trafficAllocation": [
-                ["entityId": "id_holdout_variation", "endOfRange": 500]
+                ["entityId": "9999900002", "endOfRange": 500]
             ],
             "audienceIds": [],
             "variations": [
                 [
                     "variables": [],
-                    "id": "id_holdout_variation",
+                    "id": "9999900002",
                     "key": "key_holdout_variation"
                 ]
             ]

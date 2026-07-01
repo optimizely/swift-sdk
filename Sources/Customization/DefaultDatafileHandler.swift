@@ -71,6 +71,9 @@ open class DefaultDatafileHandler: OPTDatafileHandler {
             let session = self.getSession(resourceTimeoutInterval: resourceTimeoutInterval)
 
             guard let request = self.getRequest(sdkKey: sdkKey) else {
+                let optError = OptimizelyError.datafileDownloadFailed("Invalid URL for sdkKey: \(sdkKey)")
+                self.logger.e(optError)
+                completionHandler(.failure(optError))
                 session.finishTasksAndInvalidate()
                 return
             }

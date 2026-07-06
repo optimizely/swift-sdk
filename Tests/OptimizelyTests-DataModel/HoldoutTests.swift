@@ -31,7 +31,7 @@ class HoldoutTests: XCTestCase {
                                            "match": "exact",
                                            "value": 30]]
     
-    /// Global holoout without  included and excluded key
+    /// Global holdout without includedRules (nil means global)
     static var sampleData: [String: Any] = ["id": "11111",
                                             "key": "background",
                                             "status": "Running",
@@ -39,24 +39,26 @@ class HoldoutTests: XCTestCase {
                                             "trafficAllocation": [HoldoutTests.trafficAllocationData],
                                             "audienceIds": ["33333"],
                                             "audienceConditions": HoldoutTests.conditionHolderData]
-    
-    static var sampleDataWithIncludedFlags: [String: Any] = ["id": "55555",
+
+    /// Local holdout with specific rules
+    static var sampleDataWithIncludedRules: [String: Any] = ["id": "55555",
                                             "key": "background",
                                             "status": "Running",
                                             "variations": [HoldoutTests.variationData],
                                             "trafficAllocation": [HoldoutTests.trafficAllocationData],
                                             "audienceIds": ["33333"],
                                             "audienceConditions": HoldoutTests.conditionHolderData,
-                                            "includedFlags": ["4444", "5555"]]
-    
-    static var sampleDataWithExcludedFlags: [String: Any] = ["id": "3333",
+                                            "includedRules": ["4444", "5555"]]
+
+    /// Another local holdout with different rules
+    static var sampleDataWithDifferentRules: [String: Any] = ["id": "3333",
                                                              "key": "background",
                                                              "status": "Running",
                                                              "variations": [HoldoutTests.variationData],
                                                              "trafficAllocation": [HoldoutTests.trafficAllocationData],
                                                              "audienceIds": ["33333"],
                                                              "audienceConditions": HoldoutTests.conditionHolderData,
-                                                             "excludedFlags": ["8888", "9999"]]
+                                                             "includedRules": ["8888", "9999"]]
     
     
     
@@ -79,11 +81,11 @@ extension HoldoutTests {
         XCTAssert(model.audienceConditions == (try! OTUtils.model(from: HoldoutTests.conditionHolderData)))
     }
     
-    func testDecodeSuccessWithIncludedFlags() {
-        let data: [String: Any] = HoldoutTests.sampleDataWithIncludedFlags
-        
+    func testDecodeSuccessWithIncludedRules() {
+        let data: [String: Any] = HoldoutTests.sampleDataWithIncludedRules
+
         let model: Holdout = try! OTUtils.model(from: data)
-        
+
         XCTAssert(model.id == "55555")
         XCTAssert(model.key == "background")
         XCTAssert(model.status == .running)
@@ -91,23 +93,24 @@ extension HoldoutTests {
         XCTAssert(model.trafficAllocation == [try! OTUtils.model(from: HoldoutTests.trafficAllocationData)])
         XCTAssert(model.audienceIds == ["33333"])
         XCTAssert(model.audienceConditions == (try! OTUtils.model(from: HoldoutTests.conditionHolderData)))
-        XCTAssertEqual(model.includedFlags, ["4444", "5555"])
+        XCTAssertEqual(model.includedRules, ["4444", "5555"])
+        XCTAssertFalse(model.isGlobal)
     }
-    
-    func testDecodeSuccessWithExcludedFlags() {
-        let data: [String: Any] = HoldoutTests.sampleDataWithExcludedFlags
-        
+
+    func testDecodeGlobalHoldout() {
+        let data: [String: Any] = HoldoutTests.sampleData
+
         let model: Holdout = try! OTUtils.model(from: data)
-        
-        XCTAssert(model.id == "3333")
+
+        XCTAssert(model.id == "11111")
         XCTAssert(model.key == "background")
         XCTAssert(model.status == .running)
         XCTAssert(model.variations == [try! OTUtils.model(from: HoldoutTests.variationData)])
         XCTAssert(model.trafficAllocation == [try! OTUtils.model(from: HoldoutTests.trafficAllocationData)])
         XCTAssert(model.audienceIds == ["33333"])
         XCTAssert(model.audienceConditions == (try! OTUtils.model(from: HoldoutTests.conditionHolderData)))
-        XCTAssertEqual(model.includedFlags, [])
-        XCTAssertEqual(model.excludedFlags, ["8888", "9999"])
+        XCTAssertNil(model.includedRules)
+        XCTAssertTrue(model.isGlobal)
     }
     
 

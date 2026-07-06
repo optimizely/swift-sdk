@@ -1,5 +1,43 @@
 # Optimizely Swift SDK Changelog
 
+## 5.4.1
+June 24, 2026
+
+### Fixes
+
+- normalize campaign_id, variation_id, and entity_id on decision events ([#642](https://github.com/optimizely/swift-sdk/pull/642))
+
+## 5.4.0
+June 22, 2026
+
+### New Features
+
+**Local Holdouts**: Added support for Local Holdouts, enabling holdout experiments 
+to be scoped to specific feature flags rather than applied globally. 
+Local Holdouts let you measure the true incremental impact of individual features 
+by holding out a subset of users from specific rollouts while still serving them other experiences. 
+See [Holdouts docs](https://support.optimizely.com/hc/en-us/articles/38941939408269-Global-holdouts) for more information.
+
+- Add localHoldouts to datafile for backward compatibility ([#638](https://github.com/optimizely/swift-sdk/pull/638))
+- Revert local holdout feature gate logic ([#637](https://github.com/optimizely/swift-sdk/pull/637))
+
+### Functionality Enhancement
+
+- Block ODP identify event for single identifier ([#636](https://github.com/optimizely/swift-sdk/pull/636))
+
+## 5.3.0
+May 4, 2026
+
+### New Features
+
+**Feature Rollout**: Added support for Feature Rollouts, a new experiment type 
+combining Targeted Delivery simplicity with A/B test measurement capabilities. 
+Feature Rollouts enable progressive rollouts with full impact analytics, metric tracking, 
+and confidence intervals. 
+See [Feature Rollout docs](https://support.optimizely.com/hc/en-us/articles/45552846481037-Run-Feature-Rollouts-in-Feature-Experimentation) for more information.
+
+- Add Feature Rollout support ([#626](https://github.com/optimizely/swift-sdk/pull/626))
+
 ## 5.2.1
 January 23rd, 2026
 

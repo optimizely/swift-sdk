@@ -1,5 +1,5 @@
 //
-// Copyright 2025, Optimizely, Inc. and contributors
+// Copyright 2025-2026, Optimizely, Inc. and contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,100 +16,73 @@
 
 import Foundation
 
+/// Holds parsed holdout entries and exposes per-rule and global lookups.
+///
+/// Two top-level datafile sections drive holdout scoping:
+///   - `holdouts`      → global (applied to every flag); `includedRules` is stripped at parse time.
+///   - `localHoldouts` → rule-scoped via `includedRules`; entries without rules are excluded.
 struct HoldoutConfig {
-    var allHoldouts: [Holdout] {
-        didSet {
-            updateHoldoutMapping()
-        }
-    }
+    private let logger = OPTLoggerFactory.getLogger()
+
     private(set) var global: [Holdout] = []
     private(set) var holdoutIdMap: [String: Holdout] = [:]
-    private(set) var flagHoldoutsMap: [String: [Holdout]] = [:]
-    private(set) var includedHoldouts: [String: [Holdout]] = [:]
-    private(set) var excludedHoldouts: [String: [Holdout]] = [:]
-    
-    init(allholdouts: [Holdout] = []) {
-        self.allHoldouts = allholdouts
-        updateHoldoutMapping()
+    private(set) var ruleHoldoutsMap: [String: [Holdout]] = [:]
+
+    // MARK: - Init
+
+    init() {}
+
+    init(globalHoldouts: [Holdout], localHoldouts: [Holdout]) {
+        applySections(globalHoldouts: globalHoldouts, localHoldouts: localHoldouts)
     }
-    
-    /// Updates internal mappings of holdouts including the id map, global list, and per-flag inclusion/exclusion maps.
-    mutating func updateHoldoutMapping() {
-        holdoutIdMap = {
-            var map = [String: Holdout]()
-            allHoldouts.forEach { map[$0.id] = $0 }
-            return map
-        }()
-        
-        flagHoldoutsMap = [:]
-        global = []
-        includedHoldouts = [:]
-        excludedHoldouts = [:]
-        
-        for holdout in allHoldouts {
-            switch (holdout.includedFlags.isEmpty, holdout.excludedFlags.isEmpty) {
-                case (true, true):
-                    global.append(holdout)
-                    
-                case (false, _):
-                    holdout.includedFlags.forEach { flagId in
-                        if var existing = includedHoldouts[flagId] {
-                            existing.append(holdout)
-                            includedHoldouts[flagId] = existing
-                        } else {
-                            includedHoldouts[flagId] = [holdout]
-                        }
-                    }
-                    
-                case (true, false):
-                    global.append(holdout)
-                    
-                    holdout.excludedFlags.forEach { flagId in
-                        if var existing = excludedHoldouts[flagId] {
-                            existing.append(holdout)
-                            excludedHoldouts[flagId] = existing
-                        } else {
-                            excludedHoldouts[flagId] = [holdout]
-                        }
-                    }
+
+    // MARK: - Section application
+
+    private mutating func applySections(globalHoldouts: [Holdout], localHoldouts: [Holdout]) {
+        var newIdMap: [String: Holdout] = [:]
+        var newGlobal: [Holdout] = []
+        var newRuleMap: [String: [Holdout]] = [:]
+
+        for var holdout in globalHoldouts {
+            if holdout.includedRules != nil {
+                logger.w("Global holdout '\(holdout.key)' (id: \(holdout.id)) has 'includedRules' which will be ignored; global holdouts apply to all flags.")
+            }
+            holdout.includedRules = nil
+            newIdMap[holdout.id] = holdout
+            newGlobal.append(holdout)
+        }
+
+        // Local entries must carry a non-empty `includedRules`; invalid ones are excluded.
+        for holdout in localHoldouts {
+            guard let rules = holdout.includedRules, !rules.isEmpty else {
+                logger.e(
+                    "Local holdout '\(holdout.key)' (id: \(holdout.id)) is missing or has empty 'includedRules'; skipping."
+                )
+                continue
+            }
+            newIdMap[holdout.id] = holdout
+            for ruleId in rules {
+                newRuleMap[ruleId, default: []].append(holdout)
             }
         }
+
+        self.holdoutIdMap = newIdMap
+        self.global = newGlobal
+        self.ruleHoldoutsMap = newRuleMap
     }
-    
-    /// Returns the applicable holdouts for the given flag ID by combining global holdouts (excluding any specified) and included holdouts, in that order.
-    /// Caches the result for future calls.
-    /// - Parameter id: The flag identifier.
-    /// - Returns: An array of `Holdout` objects relevant to the given flag.
-    mutating func getHoldoutForFlag(id: String) -> [Holdout] {
-        guard !allHoldouts.isEmpty else { return [] }
-        
-        // Check cache and return persistent holdouts
-        if let holdouts = flagHoldoutsMap[id] {
-            return holdouts
-        }
-        
-        // Prioritize global holdouts first 
-        var activeHoldouts: [Holdout] = []
-        
-        let excluded = excludedHoldouts[id] ?? []
-        
-        if !excluded.isEmpty {
-            activeHoldouts = global.filter { holdout in
-                return !excluded.contains(holdout)
-            }
-        } else {
-            activeHoldouts = global
-        }
-        
-        let includedHoldouts = includedHoldouts[id] ?? []
-        
-        activeHoldouts += includedHoldouts
-        
-        flagHoldoutsMap[id] = activeHoldouts
-        
-        return flagHoldoutsMap[id] ?? []
+
+    // MARK: - Lookups
+
+    /// Returns local holdouts targeting a specific rule.
+    func getHoldoutsForRule(ruleId: String) -> [Holdout] {
+        return ruleHoldoutsMap[ruleId] ?? []
     }
-    
+
+    /// Returns all global holdouts.
+    func getGlobalHoldouts() -> [Holdout] {
+        return global
+    }
+
     /// Get a Holdout object for an Id.
     func getHoldout(id: String) -> Holdout? {
         return holdoutIdMap[id]

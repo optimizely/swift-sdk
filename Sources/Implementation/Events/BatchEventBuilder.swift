@@ -30,24 +30,84 @@ class BatchEventBuilder {
                                       ruleType: String,
                                       enabled: Bool,
                                       cmabUUID: String?) -> Data? {
-        
+
         let metaData = DecisionMetadata(ruleType: ruleType, ruleKey: experiment?.key ?? "", flagKey: flagKey, variationKey: variation?.key ?? "", enabled: enabled, cmabUUID: cmabUUID)
-        
-        let decision = Decision(variationID: variation?.id ?? "",
-                                campaignID: experiment?.layerId ?? "",
-                                experimentID: experiment?.id ?? "",
+
+        let rawCampaignId = experiment?.layerId ?? ""
+        let rawVariationId = variation?.id
+        let experimentId = experiment?.id ?? ""
+
+        let (campaignId, variationId) = normalizeDecisionIds(rawCampaignId: rawCampaignId,
+                                                             rawVariationId: rawVariationId,
+                                                             experimentId: experimentId)
+
+        let decision = Decision(variationID: variationId,
+                                campaignID: campaignId,
+                                experimentID: experimentId,
                                 metaData: metaData)
-        
+
+        // FR-009: events[].entity_id shares the same source as
+        // decisions[].campaign_id (experiment.layerId) and the same fallback
+        // contract. Use the normalized value so the two fields never diverge
+        // on the wire — see spec US3 / SC-006.
         let dispatchEvent = DispatchEvent(timestamp: timestampSince1970,
                                           key: DispatchEvent.activateEventKey,
-                                          entityID: experiment?.layerId ?? "",
+                                          entityID: campaignId,
                                           uuid: uuid)
-        
+
         return createBatchEvent(config: config,
                                 userId: userId,
                                 attributes: attributes,
                                 decisions: [decision],
                                 dispatchEvents: [dispatchEvent])
+    }
+
+    // MARK: - Decision Event ID Normalization
+
+    /// Normalizes `campaign_id` and `variation_id` for every dispatched
+    /// decision event (experiment, feature test, rollout, holdout).
+    ///
+    /// - `campaign_id` (mirrored as `events[].entity_id`) accepts any non-empty
+    ///   string and falls back to `experiment_id` only on empty/whitespace
+    ///   input. Opaque IDs (e.g. `"layer_abc"`) pass through.
+    /// - `variation_id` must be a non-empty decimal-digit string; anything
+    ///   else becomes `nil` (encoded as JSON `null`).
+    /// - `experiment_id` is never validated here — it is always passed
+    ///   through so the event is never dropped.
+    static func normalizeDecisionIds(rawCampaignId: String,
+                                     rawVariationId: String?,
+                                     experimentId: String) -> (campaignId: String, variationId: String?) {
+        let campaignId = isValidStringId(rawCampaignId) ? rawCampaignId : experimentId
+
+        let variationId: String?
+        if let raw = rawVariationId, isValidNumericIdString(raw) {
+            variationId = raw
+        } else {
+            variationId = nil
+        }
+
+        return (campaignId, variationId)
+    }
+
+    /// True iff `value` is non-empty and contains at least one non-whitespace
+    /// character. Used for the relaxed `campaign_id` / `entity_id` contract.
+    static func isValidStringId(_ value: String) -> Bool {
+        guard !value.isEmpty else { return false }
+        return value.contains { !$0.isWhitespace }
+    }
+
+    /// True iff `value` is a non-empty ASCII decimal-digit string `[0-9]+`.
+    /// Used for the strict `variation_id` contract. We walk unicode scalars
+    /// directly because `CharacterSet.decimalDigits` would also accept
+    /// non-ASCII digit forms (e.g. Arabic-Indic).
+    static func isValidNumericIdString(_ value: String) -> Bool {
+        guard !value.isEmpty else { return false }
+        for scalar in value.unicodeScalars {
+            if scalar.value < 0x30 || scalar.value > 0x39 {
+                return false
+            }
+        }
+        return true
     }
     
     // MARK: - Converison Event

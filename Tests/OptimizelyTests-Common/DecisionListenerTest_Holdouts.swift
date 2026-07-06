@@ -1,5 +1,5 @@
 //
-// Copyright 2022, Optimizely, Inc. and contributors 
+// Copyright 2022, 2026, Optimizely, Inc. and contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");  
 // you may not use this file except in compliance with the License.
@@ -39,25 +39,26 @@ class DecisionListenerTests_Holdouts: XCTestCase {
     let kVariableValueDouble = 4.2
     let kVariableValueBool = true
     
+    // variation id and trafficAllocation entityId must be numeric strings
+    // (variation_id contract). Holdout id uses numeric too for fixture
+    // uniformity, though any non-empty string would satisfy campaign_id.
     var sampleHoldout: [String: Any] {
         return [
             "status": "Running",
-            "id": "id_holdout",
+            "id": "9999900001",
             "key": "key_holdout",
             "layerId": "10420273888",
             "trafficAllocation": [
-                ["entityId": "id_holdout_variation", "endOfRange": 500]
+                ["entityId": "9999900002", "endOfRange": 500]
             ],
             "audienceIds": [],
             "variations": [
                 [
                     "variables": [],
-                    "id": "id_holdout_variation",
+                    "id": "9999900002",
                     "key": "key_holdout_variation"
                 ]
-            ],
-            "includedFlags": [],
-            "excludedFlags": []
+            ]
         ]
     }
     
@@ -73,11 +74,12 @@ class DecisionListenerTests_Holdouts: XCTestCase {
         var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
         //  Audience "13389130056" requires "country" = "US"
         holdout.audienceIds = ["13389130056"]
-        
+
         let mockDecisionService = DefaultDecisionService(userProfileService: OTUtils.createClearUserProfileService(), bucketer: MockBucketer(mockBucketValue: 400))
         optimizely.decisionService = mockDecisionService
         optimizely.config!.project.holdouts = [holdout]
-        
+        optimizely.config!.holdoutConfig = HoldoutConfig(globalHoldouts: [holdout], localHoldouts: [])
+
         self.notificationCenter = self.optimizely.notificationCenter!
     }
     
@@ -118,8 +120,9 @@ class DecisionListenerTests_Holdouts: XCTestCase {
     
     func testDecisionListenerDecideWithIncludedFlags() {
         var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
-        holdout.includedFlags = [kFeatureId]
-        optimizely.config!.project.holdouts = [holdout]
+        // Include all rules in feature_1: experiment + delivery rules
+        holdout.includedRules = ["10390977673", "3332020515", "3332020494", "18322080788"]
+        optimizely.config!.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [holdout])
         
         let exp = expectation(description: "x")
         let user = optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryMatch)
@@ -140,8 +143,8 @@ class DecisionListenerTests_Holdouts: XCTestCase {
     
     func testDecisionListenerDecideWithExcludedFlags() {
         var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
-        holdout.excludedFlags = [kFeatureId]
-        optimizely.config!.project.holdouts = [holdout]
+        holdout.includedRules = []  // Empty array = local holdout targeting no rules (excludes feature_1)
+        optimizely.config!.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [holdout])
         
         let exp = expectation(description: "x")
         let user = optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryMatch)
@@ -162,15 +165,16 @@ class DecisionListenerTests_Holdouts: XCTestCase {
     
     func testDecisionListenerDecideWithMultipleHoldouts() {
         var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
-        holdout.excludedFlags = [kFeatureId]
-        
+        holdout.includedRules = []  // Empty array = local holdout targeting no rules (excludes feature_1)
+
         var holdout_2 = holdout
         holdout_2.key = "holdout_key_2"
         holdout_2.id = "holdout_id_2"
-        holdout_2.includedFlags = [kFeatureId]
-        
-        optimizely.config!.project.holdouts = [holdout, holdout_2]
-        
+        // Include all rules in feature_1: experiment + delivery rules
+        holdout_2.includedRules = ["10390977673", "3332020515", "3332020494", "18322080788"]
+
+        optimizely.config!.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [holdout, holdout_2])
+
         let exp = expectation(description: "x")
         let user = optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryMatch)
         

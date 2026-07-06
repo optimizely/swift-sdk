@@ -98,15 +98,19 @@ class ProjectConfigTests: XCTestCase {
         var holdout2 = HoldoutTests.sampleData
         var holdout3 = HoldoutTests.sampleData
         var holdout4 = HoldoutTests.sampleData
-        
-        holdout0["id"] = "3000" // Global holdout (no included or excluded flags)
-        holdout1["id"] = "3001" // Global holdout (no included or excluded flags)
-        holdout2["id"] = "3002" // Global holdout (no included or excluded flags)
-        holdout3["id"] = "3003" // Included flagids ["2000", "2002"]
-        holdout4["id"] = "3004" // Excluded flagids ["2001"]
-        
-        holdout3["includedFlags"] = ["2000", "2002"]
-        holdout4["excludedFlags"] = ["2001"]
+
+        // FSSDK-12760: scope is determined by datafile section, not by `includedRules`.
+        // Entries in `holdouts` are global; entries in `localHoldouts` are local.
+        holdout0["id"] = "3000" // Global holdout (in `holdouts` section)
+        holdout1["id"] = "3001" // Global holdout (in `holdouts` section)
+        holdout2["id"] = "3002" // Global holdout (in `holdouts` section)
+        holdout3["id"] = "3003" // Local holdout targeting rules in feature 2000 and 2002
+        holdout4["id"] = "3004" // Local holdout targeting rules NOT in feature 2001
+
+        // holdout3 targets all rules in features 2000 and 2002
+        holdout3["includedRules"] = ["1000", "1003", "1004"]  // Rules from features 2000 and 2002
+        // holdout4 targets rules NOT in feature 2001 (i.e., other features)
+        holdout4["includedRules"] = ["1003", "1004"]  // Rules from features 2002 and 2003, NOT 2001
         
         var feature0 = FeatureFlagTests.sampleData
         var feature1 = FeatureFlagTests.sampleData
@@ -133,7 +137,9 @@ class ProjectConfigTests: XCTestCase {
         var projectData = ProjectTests.sampleData
         projectData["experiments"] = [exp0, exp1, exp2, exp3, exp4]
         projectData["featureFlags"] = [feature0, feature1, feature2, feature3]
-        projectData["holdouts"] = [holdout0, holdout1, holdout2, holdout3, holdout4]
+        // FSSDK-12760: globals go into `holdouts`, locals into `localHoldouts`.
+        projectData["holdouts"] = [holdout0, holdout1, holdout2]
+        projectData["localHoldouts"] = [holdout3, holdout4]
         
         // check experimentFeatureMap extracted properly
         
@@ -142,33 +148,37 @@ class ProjectConfigTests: XCTestCase {
         projectConfig.project = model
         
         let holdoutIdMap = projectConfig.holdoutConfig.holdoutIdMap
-        
-        XCTAssertEqual(holdoutIdMap["3000"]?.includedFlags, [])
-        XCTAssertEqual(holdoutIdMap["3000"]?.excludedFlags, [])
-        
-        XCTAssertEqual(holdoutIdMap["3001"]?.includedFlags, [])
-        XCTAssertEqual(holdoutIdMap["3001"]?.excludedFlags, [])
-        
-        XCTAssertEqual(holdoutIdMap["3002"]?.includedFlags, [])
-        XCTAssertEqual(holdoutIdMap["3002"]?.excludedFlags, [])
-        
-        XCTAssertEqual(holdoutIdMap["3003"]?.includedFlags, ["2000", "2002"])
-        XCTAssertEqual(holdoutIdMap["3003"]?.excludedFlags, [])
-        
-        
-        XCTAssertEqual(holdoutIdMap["3004"]?.includedFlags, [])
-        XCTAssertEqual(holdoutIdMap["3004"]?.excludedFlags, ["2001"])
 
-        /// Test Global holdout + included
-        
-        XCTAssertEqual(projectConfig.holdoutConfig.getHoldoutForFlag(id: "2000").map { $0.id }, ["3000", "3001", "3002", "3004", "3003"])
-        XCTAssertEqual(projectConfig.holdoutConfig.getHoldoutForFlag(id: "2002").map { $0.id }, ["3000", "3001", "3002", "3004","3003"])
-        
-        /// Test Global holdout - excluded
-        XCTAssertEqual(projectConfig.holdoutConfig.getHoldoutForFlag(id: "2001").map { $0.id }, ["3000", "3001", "3002"])
-        
-        /// Test Global holdout + others
-        XCTAssertEqual(projectConfig.holdoutConfig.getHoldoutForFlag(id: "2003").map { $0.id }, ["3000", "3001", "3002", "3004"])
+        // Verify holdouts are correctly stored in holdoutIdMap
+        XCTAssertNotNil(holdoutIdMap["3000"])
+        XCTAssertNotNil(holdoutIdMap["3001"])
+        XCTAssertNotNil(holdoutIdMap["3002"])
+        XCTAssertNotNil(holdoutIdMap["3003"])
+        XCTAssertNotNil(holdoutIdMap["3004"])
+
+        // Verify includedRules values
+        XCTAssertNil(holdoutIdMap["3000"]?.includedRules)  // Global holdout
+        XCTAssertNil(holdoutIdMap["3001"]?.includedRules)  // Global holdout
+        XCTAssertNil(holdoutIdMap["3002"]?.includedRules)  // Global holdout
+        XCTAssertEqual(holdoutIdMap["3003"]?.includedRules, ["1000", "1003", "1004"])
+        XCTAssertEqual(holdoutIdMap["3004"]?.includedRules, ["1003", "1004"])
+
+        /// Test getGlobalHoldouts() - should return holdouts with includedRules == nil
+        let globalHoldouts = projectConfig.holdoutConfig.getGlobalHoldouts()
+        XCTAssertEqual(globalHoldouts.map { $0.id }.sorted(), ["3000", "3001", "3002"])
+
+        /// Test getHoldoutsForRule() for different rules
+        // Rule "1000" (in features 2000, 2001, 2002, 2003) - targeted by holdout3
+        XCTAssertEqual(projectConfig.holdoutConfig.getHoldoutsForRule(ruleId: "1000").map { $0.id }, ["3003"])
+
+        // Rule "1001" (in feature 2001 only) - not targeted by any local holdout
+        XCTAssertTrue(projectConfig.holdoutConfig.getHoldoutsForRule(ruleId: "1001").isEmpty)
+
+        // Rule "1003" (in features 2002, 2003) - targeted by both holdout3 and holdout4
+        XCTAssertEqual(projectConfig.holdoutConfig.getHoldoutsForRule(ruleId: "1003").map { $0.id }.sorted(), ["3003", "3004"])
+
+        // Rule "1004" (in features 2002, 2003) - targeted by both holdout3 and holdout4
+        XCTAssertEqual(projectConfig.holdoutConfig.getHoldoutsForRule(ruleId: "1004").map { $0.id }.sorted(), ["3003", "3004"])
     }
     
     func testFlagVariations() {

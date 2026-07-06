@@ -1,5 +1,5 @@
 //
-// Copyright 2022, Optimizely, Inc. and contributors 
+// Copyright 2022, 2026, Optimizely, Inc. and contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");  
 // you may not use this file except in compliance with the License.
@@ -23,24 +23,24 @@ class OptimizelyUserContextTests_Decide_With_Holdouts_Reasons: XCTestCase {
     var kAttributesCountryMatch: [String: Any] = ["country": "US"]
     var kAttributesCountryNotMatch: [String: Any] = ["country": "ca"]
     
+    // variation id and trafficAllocation entityId must be numeric strings.
+    // Holdout id uses numeric too for fixture uniformity.
     var sampleHoldout: [String: Any] {
         return [
             "status": "Running",
-            "id": "id_holdout",
+            "id": "9999900001",
             "key": "key_holdout",
             "trafficAllocation": [
-                ["entityId": "id_holdout_variation", "endOfRange": 500]
+                ["entityId": "9999900002", "endOfRange": 500]
             ],
             "audienceIds": [],
             "variations": [
                 [
                     "variables": [],
-                    "id": "id_holdout_variation",
+                    "id": "9999900002",
                     "key": "key_holdout_variation"
                 ]
-            ],
-            "includedFlags": [],
-            "excludedFlags": []
+            ]
         ]
     }
     
@@ -58,11 +58,11 @@ class OptimizelyUserContextTests_Decide_With_Holdouts_Reasons: XCTestCase {
         let featureKey = "feature_1"
         
         let holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
-        optimizely.config!.project.holdouts = [holdout]
-        
+        optimizely.config!.holdoutConfig = HoldoutConfig(globalHoldouts: [holdout], localHoldouts: [])
+
         let mockDecisionService = DefaultDecisionService(userProfileService: OTUtils.createClearUserProfileService(), bucketer: MockBucketer(mockBucketValue: 400))
         optimizely.decisionService = mockDecisionService
-        
+
         let user = optimizely.createUserContext(userId: kUserId)
         // Call decide with reasons
         let decision = user.decide(key: featureKey, options: [.includeReasons])
@@ -72,16 +72,17 @@ class OptimizelyUserContextTests_Decide_With_Holdouts_Reasons: XCTestCase {
         XCTAssertFalse(decision.enabled, "Feature should be disabled in holdout")
         XCTAssert(decision.reasons.contains(LogMessage.userBucketedIntoVariationInHoldout(kUserId, "key_holdout", "key_holdout_variation").reason))
     }
-    
+
     /// Test when user is bucketed into the included flags holdout for feature_1
     func testDecideReasons_userBucketedIntoIncludedHoldout() {
         let featureKey = "feature_1"
         let featureId = "4482920077"
-        
+
         var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
-        holdout.includedFlags = [featureId]
-        optimizely.config!.project.holdouts = [holdout]
-        
+        // Include all rules in feature_1: experiment + delivery rules
+        holdout.includedRules = ["10390977673", "3332020515", "3332020494", "18322080788"]
+        optimizely.config!.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [holdout])
+
         let mockDecisionService = DefaultDecisionService(userProfileService: OTUtils.createClearUserProfileService(), bucketer: MockBucketer(mockBucketValue: 400))
         optimizely.decisionService = mockDecisionService
         
@@ -104,17 +105,17 @@ class OptimizelyUserContextTests_Decide_With_Holdouts_Reasons: XCTestCase {
         let featureId_2 = "4482920078"
         
         var holdout2 = holdout1
-        holdout2.id = "id_holdout_2"
+        holdout2.id = "9999900003"
         holdout2.key = "key_holdout_2"
         
-        // Global holdout with 10% traffice (featureId_2 excluded)
+        // Local holdout with 10% traffic (excludes feature_2 by targeting no rules)
         holdout2.trafficAllocation[0].endOfRange = 1000
-        holdout2.excludedFlags = [featureId_2]
+        holdout2.includedRules = []  // Empty array = local holdout targeting no rules (excludes feature_2)
         
         // Bucket valud outside global holdout range but inside second holdout range
         let mockDecisionService = DefaultDecisionService(userProfileService: OTUtils.createClearUserProfileService(), bucketer: MockBucketer(mockBucketValue: 600))
         optimizely.decisionService = mockDecisionService
-        optimizely.config!.project.holdouts = [holdout1, holdout2]
+        optimizely.config!.holdoutConfig = HoldoutConfig(globalHoldouts: [holdout1], localHoldouts: [holdout2])
         
         let user = optimizely.createUserContext(userId: kUserId)
         // Call decide with reasons
@@ -131,7 +132,7 @@ class OptimizelyUserContextTests_Decide_With_Holdouts_Reasons: XCTestCase {
         
         var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
         holdout.status = .draft
-        optimizely.config!.project.holdouts = [holdout]
+        optimizely.config!.holdoutConfig = HoldoutConfig(globalHoldouts: [holdout], localHoldouts: [])
         
         let mockDecisionService = DefaultDecisionService(userProfileService: OTUtils.createClearUserProfileService(), bucketer: MockBucketer(mockBucketValue: 400))
         optimizely.decisionService = mockDecisionService
@@ -160,9 +161,8 @@ class OptimizelyUserContextTests_Decide_With_Holdouts_Reasons: XCTestCase {
         
         let mockDecisionService = DefaultDecisionService(userProfileService: OTUtils.createClearUserProfileService(), bucketer: MockBucketer(mockBucketValue: 400))
         optimizely.decisionService = mockDecisionService
-        optimizely.config!.project.holdouts = [holdout]
-        
-        
+        optimizely.config!.holdoutConfig = HoldoutConfig(globalHoldouts: [holdout], localHoldouts: [])
+
         let user = optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryMatch)
         // Call decide with reasons
         let decision = user.decide(key: featureKey, options: [.includeReasons])
@@ -184,8 +184,8 @@ class OptimizelyUserContextTests_Decide_With_Holdouts_Reasons: XCTestCase {
         
         let mockDecisionService = DefaultDecisionService(userProfileService: OTUtils.createClearUserProfileService(), bucketer: MockBucketer(mockBucketValue: 400))
         optimizely.decisionService = mockDecisionService
-        optimizely.config!.project.holdouts = [holdout]
-        
+        optimizely.config!.holdoutConfig = HoldoutConfig(globalHoldouts: [holdout], localHoldouts: [])
+
         let user = optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryNotMatch)
         // Call decide with reasons
         let decision = user.decide(key: featureKey, options: [.includeReasons])

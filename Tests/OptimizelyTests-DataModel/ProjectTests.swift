@@ -215,13 +215,39 @@ extension ProjectTests {
     func testDecodeSuccessWithMissingHoldouts() {
         var data: [String: Any] = ProjectTests.sampleData
         data["holdouts"] = nil
-        
+
         let model: Project = try! OTUtils.model(from: data)
         XCTAssertNotNil(model)
         XCTAssertEqual(model.holdouts, [])
-        
+
     }
-    
+
+    // MARK: - FSSDK-12760: top-level `localHoldouts` section
+
+    /// Old datafiles without a `localHoldouts` key must continue to parse;
+    /// `localHoldouts` defaults to an empty array.
+    func testDecodeSuccessWithMissingLocalHoldouts() {
+        var data: [String: Any] = ProjectTests.sampleData
+        data["localHoldouts"] = nil
+
+        let model: Project = try! OTUtils.model(from: data)
+        XCTAssertEqual(model.localHoldouts, [])
+    }
+
+    /// New datafiles emit a `localHoldouts` array alongside `holdouts`.
+    /// Both sections must be decoded into their respective fields.
+    func testDecodeSuccessWithLocalHoldoutsSection() {
+        var data: [String: Any] = ProjectTests.sampleData
+        data["localHoldouts"] = [HoldoutTests.sampleDataWithIncludedRules]
+
+        let model: Project = try! OTUtils.model(from: data)
+        XCTAssertEqual(model.localHoldouts.count, 1)
+        XCTAssertEqual(model.localHoldouts.first?.id, "55555")
+        XCTAssertEqual(model.localHoldouts.first?.includedRules, ["4444", "5555"])
+        // Global section must not be affected
+        XCTAssertEqual(model.holdouts, [try! OTUtils.model(from: HoldoutTests.sampleData)])
+    }
+
 }
 
 // MARK: - Encode

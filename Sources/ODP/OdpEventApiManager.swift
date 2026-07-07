@@ -63,19 +63,18 @@ open class OdpEventApiManager {
         urlRequest.addValue("application/json", forHTTPHeaderField: "content-type")
         
         let session = self.getSession()
-        // without this the URLSession will leak, see docs on URLSession and https://stackoverflow.com/questions/67318867
-        defer { session.finishTasksAndInvalidate() }
 
         let task = session.dataTask(with: urlRequest) { data, response, error in
             var errMessage: String?
             var canRetry: Bool = true
-            
+
             defer {
                 if let errMessage = errMessage {
                     completionHandler(.odpEventFailed(errMessage, canRetry))
                 } else {
                     completionHandler(nil)
                 }
+                session.finishTasksAndInvalidate()
             }
             
             if let error = error {

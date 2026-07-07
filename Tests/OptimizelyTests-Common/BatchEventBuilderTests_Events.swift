@@ -1,5 +1,5 @@
 //
-// Copyright 2019-2021, 2023 Optimizely, Inc. and contributors
+// Copyright 2019-2021, 2023, 2026 Optimizely, Inc. and contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,19 +27,22 @@ class BatchEventBuilderTests_Events: XCTestCase {
     var project: Project!
     let datafile = OTUtils.loadJSONDatafile("api_datafile")!
     
+    // Numeric strings used for both id fields: campaign_id accepts any
+    // non-empty string, variation_id requires digits-only. Numeric satisfies
+    // both and keeps fixtures uniform.
     var sampleHoldout: [String: Any] {
         return [
             "status": "Running",
-            "id": "holdout_4444444",
+            "id": "4444444",
             "key": "holdout_key",
             "trafficAllocation": [
-                ["entityId": "holdout_variation_a11", "endOfRange": 10000] // 100% traffic allocation
+                ["entityId": "4444411", "endOfRange": 10000] // 100% traffic allocation
             ],
             "audienceIds": [],
             "variations": [
                 [
                     "variables": [],
-                    "id": "holdout_variation_a11",
+                    "id": "4444411",
                     "key": "holdout_a"
                 ]
             ]

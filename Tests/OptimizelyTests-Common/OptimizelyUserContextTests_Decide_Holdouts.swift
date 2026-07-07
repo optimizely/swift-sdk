@@ -1,5 +1,5 @@
 //
-// Copyright 2022, Optimizely, Inc. and contributors 
+// Copyright 2022, 2026, Optimizely, Inc. and contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");  
 // you may not use this file except in compliance with the License.
@@ -24,19 +24,22 @@ class OptimizelyUserContextTests_Decide_Holdouts: XCTestCase {
     var kAttributesCountryMatch: [String: Any] = ["country": "US"]
     var kAttributesCountryNotMatch: [String: Any] = ["country": "ca"]
     
+    // variation id and trafficAllocation entityId must be numeric strings.
+    // Holdout id uses numeric too for fixture uniformity. These tests
+    // exercise the decide() API surface, not the invalid-id path.
     var sampleHoldout: [String: Any] {
         return [
             "status": "Running",
-            "id": "id_holdout",
+            "id": "9999900001",
             "key": "key_holdout",
             "trafficAllocation": [
-                ["entityId": "id_holdout_variation", "endOfRange": 500]
+                ["entityId": "9999900002", "endOfRange": 500]
             ],
             "audienceIds": [],
             "variations": [
                 [
                     "variables": [],
-                    "id": "id_holdout_variation",
+                    "id": "9999900002",
                     "key": "key_holdout_variation"
                 ]
             ]
@@ -492,8 +495,9 @@ extension OptimizelyUserContextTests_Decide_Holdouts {
         let desc = eventSent.description
         XCTAssert(desc.contains("campaign_activated"))
         
-        XCTAssertEqual(eventDecision.experimentID, "id_holdout")
-        XCTAssertNil(eventDecision.variationID)
+        // Numeric variation id is emitted unchanged (not JSON null).
+        XCTAssertEqual(eventDecision.experimentID, "9999900001")
+        XCTAssertEqual(eventDecision.variationID, "9999900002")
         
         XCTAssertEqual(metadata.flagKey, "feature_2")
         XCTAssertEqual(metadata.ruleKey, "key_holdout")

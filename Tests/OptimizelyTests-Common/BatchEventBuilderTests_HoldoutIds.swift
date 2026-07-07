@@ -14,21 +14,43 @@
 // limitations under the License.
 //
 
-// Tests for FSSDK-12813: every decision event (experiment, feature test,
-// rollout, or holdout) must carry a valid numeric `campaign_id` (falling back
-// to `experiment_id` if invalid) and either a valid numeric `variation_id` or
-// JSON `null`. The normalization is uniform across decision types per FR-005.
+// Tests for decision-event id normalization:
+//   campaign_id / events[].entity_id: any non-empty string; fallback to
+//     experiment_id on empty / whitespace / null.
+//   variation_id: decimal-digit string only; otherwise JSON null.
 
 import XCTest
 
 class BatchEventBuilderTests_HoldoutIds: XCTestCase {
 
-    // MARK: - isValidNumericIdString
+    // MARK: - isValidStringId (relaxed contract for campaign_id / entity_id)
+
+    func testIsValidStringId_nonEmptyContent() {
+        XCTAssertTrue(BatchEventBuilder.isValidStringId("12345"))
+        XCTAssertTrue(BatchEventBuilder.isValidStringId("default-12345"))
+        XCTAssertTrue(BatchEventBuilder.isValidStringId("layer_abc"))
+        XCTAssertTrue(BatchEventBuilder.isValidStringId("a"))
+        XCTAssertTrue(BatchEventBuilder.isValidStringId("0"))
+        XCTAssertTrue(BatchEventBuilder.isValidStringId("not_a_number"))
+        // Non-ASCII content is accepted; no character-set restriction.
+        XCTAssertTrue(BatchEventBuilder.isValidStringId("\u{0660}\u{0661}"))
+    }
+
+    func testIsValidStringId_emptyOrWhitespaceOnly() {
+        XCTAssertFalse(BatchEventBuilder.isValidStringId(""))
+        XCTAssertFalse(BatchEventBuilder.isValidStringId(" "))
+        XCTAssertFalse(BatchEventBuilder.isValidStringId("   "))
+        XCTAssertFalse(BatchEventBuilder.isValidStringId("\t"))
+        XCTAssertFalse(BatchEventBuilder.isValidStringId("\n"))
+        XCTAssertFalse(BatchEventBuilder.isValidStringId(" \t\n "))
+    }
+
+    // MARK: - isValidNumericIdString (strict contract for variation_id)
 
     func testIsValidNumericIdString_validDigits() {
         XCTAssertTrue(BatchEventBuilder.isValidNumericIdString("12345"))
         XCTAssertTrue(BatchEventBuilder.isValidNumericIdString("0"))
-        // Leading zeros are allowed because IDs are opaque.
+        // Leading zeros allowed: IDs are opaque.
         XCTAssertTrue(BatchEventBuilder.isValidNumericIdString("007"))
         XCTAssertTrue(BatchEventBuilder.isValidNumericIdString("10390977714"))
     }
@@ -49,14 +71,13 @@ class BatchEventBuilderTests_HoldoutIds: XCTestCase {
         XCTAssertFalse(BatchEventBuilder.isValidNumericIdString("+12345"))
         XCTAssertFalse(BatchEventBuilder.isValidNumericIdString("12 45"))
         XCTAssertFalse(BatchEventBuilder.isValidNumericIdString("1e10"))
-        // Non-ASCII digit forms (e.g. Arabic-Indic) are NOT valid per spec.
+        // Non-ASCII digit forms (e.g. Arabic-Indic) are NOT valid.
         XCTAssertFalse(BatchEventBuilder.isValidNumericIdString("\u{0660}\u{0661}"))
     }
 
-    // MARK: - normalizeDecisionIds — valid IDs pass through unchanged (SC-003)
+    // MARK: - normalizeDecisionIds — happy path
 
     func testNormalize_validCampaignAndVariation_passThrough() {
-        // The dominant production case: both IDs already valid. No change.
         let (campaign, variation) = BatchEventBuilder.normalizeDecisionIds(
             rawCampaignId: "555",
             rawVariationId: "777",
@@ -66,8 +87,6 @@ class BatchEventBuilderTests_HoldoutIds: XCTestCase {
     }
 
     func testNormalize_validCampaignAndNilVariation_variationStaysNil() {
-        // Valid campaign, no variation supplied (e.g. holdout with no variation
-        // assigned). variation_id must be JSON null, not empty string.
         let (campaign, variation) = BatchEventBuilder.normalizeDecisionIds(
             rawCampaignId: "555",
             rawVariationId: nil,
@@ -76,9 +95,10 @@ class BatchEventBuilderTests_HoldoutIds: XCTestCase {
         XCTAssertNil(variation)
     }
 
-    // MARK: - normalizeDecisionIds — campaign_id (FR-001/FR-002) applied uniformly
+    // MARK: - normalizeDecisionIds — campaign_id
 
     func testNormalize_emptyCampaignFallsBackToExperimentId() {
+        // Canonical holdout case: layerId defaults to "".
         let (campaign, _) = BatchEventBuilder.normalizeDecisionIds(
             rawCampaignId: "",
             rawVariationId: "777",
@@ -86,7 +106,7 @@ class BatchEventBuilderTests_HoldoutIds: XCTestCase {
         XCTAssertEqual(campaign, "exp_42")
     }
 
-    func testNormalize_whitespaceCampaignFallsBackToExperimentId() {
+    func testNormalize_whitespaceOnlyCampaignFallsBackToExperimentId() {
         let (campaign, _) = BatchEventBuilder.normalizeDecisionIds(
             rawCampaignId: "   ",
             rawVariationId: "777",
@@ -94,12 +114,28 @@ class BatchEventBuilderTests_HoldoutIds: XCTestCase {
         XCTAssertEqual(campaign, "exp_42")
     }
 
-    func testNormalize_nonNumericCampaignFallsBackToExperimentId() {
+    func testNormalize_opaqueCampaignPassesThroughUnchanged() {
+        let (campaign, _) = BatchEventBuilder.normalizeDecisionIds(
+            rawCampaignId: "default-12345",
+            rawVariationId: "777",
+            experimentId: "exp_42")
+        XCTAssertEqual(campaign, "default-12345")
+    }
+
+    func testNormalize_nonNumericCampaignPassesThroughUnchanged() {
         let (campaign, _) = BatchEventBuilder.normalizeDecisionIds(
             rawCampaignId: "not_a_number",
             rawVariationId: "777",
             experimentId: "exp_42")
-        XCTAssertEqual(campaign, "exp_42")
+        XCTAssertEqual(campaign, "not_a_number")
+    }
+
+    func testNormalize_opaquePrefixedLayerIdPassesThroughUnchanged() {
+        let (campaign, _) = BatchEventBuilder.normalizeDecisionIds(
+            rawCampaignId: "layer_abc123",
+            rawVariationId: "777",
+            experimentId: "exp_42")
+        XCTAssertEqual(campaign, "layer_abc123")
     }
 
     func testNormalize_validNumericCampaignKept() {
@@ -111,8 +147,7 @@ class BatchEventBuilderTests_HoldoutIds: XCTestCase {
     }
 
     func testNormalize_invalidExperimentIdStillPassedThrough() {
-        // FR-006: never drop the event; pass invalid experiment_id through if
-        // that is all we have for the fallback.
+        // Never drop the event — pass the invalid fallback through.
         let (campaign, _) = BatchEventBuilder.normalizeDecisionIds(
             rawCampaignId: "",
             rawVariationId: "777",
@@ -120,7 +155,7 @@ class BatchEventBuilderTests_HoldoutIds: XCTestCase {
         XCTAssertEqual(campaign, "")
     }
 
-    // MARK: - normalizeDecisionIds — variation_id (FR-003/FR-004) applied uniformly
+    // MARK: - normalizeDecisionIds — variation_id
 
     func testNormalize_emptyVariationBecomesNil() {
         let (_, variation) = BatchEventBuilder.normalizeDecisionIds(
@@ -180,14 +215,13 @@ class BatchEventBuilderTests_HoldoutIds: XCTestCase {
         let data = try JSONEncoder().encode(decision)
         let json = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String: Any]
 
-        // JSONSerialization surfaces JSON `null` as `NSNull`. Verify the key is
-        // PRESENT with an explicit null (not omitted by encodeIfPresent).
+        // JSONSerialization surfaces JSON `null` as `NSNull`. The key must be
+        // present with explicit null (not omitted).
         XCTAssertTrue(json.keys.contains("variation_id"),
                       "variation_id must be present in the JSON payload")
         XCTAssertTrue(json["variation_id"] is NSNull,
                       "variation_id must serialize as explicit JSON null when nil")
 
-        // Sanity-check other fields are unchanged.
         XCTAssertEqual(json["campaign_id"] as? String, "12345")
         XCTAssertEqual(json["experiment_id"] as? String, "67890")
     }
@@ -212,7 +246,7 @@ class BatchEventBuilderTests_HoldoutIds: XCTestCase {
         XCTAssertFalse(json["variation_id"] is NSNull)
     }
 
-    // MARK: - Impression event entity_id (FR-009 / SC-006)
+    // MARK: - Impression event entity_id
 
     /// End-to-end: a holdout impression event has an empty source `layerId`,
     /// so both `decisions[0].campaign_id` AND `events[0].entity_id` must fall
@@ -220,7 +254,7 @@ class BatchEventBuilderTests_HoldoutIds: XCTestCase {
     func testImpressionEvent_holdout_entityIdMirrorsNormalizedCampaignId() throws {
         let datafile = OTUtils.loadJSONDatafile("api_datafile")!
         let eventDispatcher = MockEventDispatcher()
-        var optimizely: OptimizelyClient! = OptimizelyClient(sdkKey: "fssdk_12813_entity_id",
+        var optimizely: OptimizelyClient! = OptimizelyClient(sdkKey: "holdout_entity_id_test",
                                                              eventDispatcher: eventDispatcher)
         defer {
             optimizely?.close()
@@ -228,9 +262,7 @@ class BatchEventBuilderTests_HoldoutIds: XCTestCase {
         }
         try optimizely.start(datafile: datafile)
 
-        // Holdout struct defaults layerId to "" (see Holdout.swift) — the
-        // canonical case this fix targets. id is the fallback used by both
-        // campaign_id (FR-002) and entity_id (FR-009).
+        // Holdout defaults layerId to "" — the canonical case this targets.
         let holdoutJSON: [String: Any] = [
             "status": "Running",
             "id": "holdout_4444444",
@@ -265,14 +297,28 @@ class BatchEventBuilderTests_HoldoutIds: XCTestCase {
         let campaignId = decision["campaign_id"] as? String
         let entityId = dispatchEvent["entity_id"] as? String
 
-        // FR-002: campaign_id falls back to experiment_id (holdout.id).
         XCTAssertEqual(campaignId, holdout.id,
                        "campaign_id must fall back to holdout.id when layerId is empty")
-        // FR-009: entity_id falls back the same way.
         XCTAssertEqual(entityId, holdout.id,
                        "entity_id must fall back to holdout.id when layerId is empty")
-        // SC-006: the two fields share source + fallback; they must never diverge.
+        // entity_id mirrors normalized campaign_id; they must never diverge.
         XCTAssertEqual(campaignId, entityId,
                        "campaign_id and entity_id must hold the same normalized value")
+    }
+
+    /// Opaque non-numeric source passes through normalization unchanged.
+    /// entity_id is assigned from the normalized campaign_id in
+    /// createImpressionEvent, so proving campaign_id passthrough also proves
+    /// entity_id passthrough on the wire.
+    func testNormalize_opaqueLayerIdPassesThroughForBothCampaignAndEntity() {
+        let opaqueLayerId = "layer_abc123"
+        let (campaignId, variationId) = BatchEventBuilder.normalizeDecisionIds(
+            rawCampaignId: opaqueLayerId,
+            rawVariationId: "777",
+            experimentId: "exp_999")
+        XCTAssertEqual(campaignId, opaqueLayerId,
+                       "opaque layerId must pass through to campaign_id unchanged")
+        XCTAssertEqual(variationId, "777",
+                       "valid numeric variation_id must pass through unchanged")
     }
 }

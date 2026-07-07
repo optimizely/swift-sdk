@@ -30,19 +30,21 @@ class DecisionServiceTests_LocalHoldouts: XCTestCase {
     let experimentRuleId = "10390977673"  // From decide_datafile
     let deliveryRuleId = "3332020515"     // From decide_datafile rollout
 
+    // variation id and trafficAllocation entityId must be numeric strings.
+    // Holdout id uses numeric too for fixture uniformity. Keys are arbitrary.
     var sampleHoldout: [String: Any] {
         return [
             "status": "Running",
-            "id": "holdout_test_id",
+            "id": "9999900010",
             "key": "holdout_test_key",
             "trafficAllocation": [
-                ["entityId": "holdout_variation_id", "endOfRange": 5000] // 50% traffic
+                ["entityId": "9999900020", "endOfRange": 5000] // 50% traffic
             ],
             "audienceIds": [],
             "variations": [
                 [
                     "variables": [],
-                    "id": "holdout_variation_id",
+                    "id": "9999900020",
                     "key": "holdout_variation_key",
                     "featureEnabled": false
                 ]

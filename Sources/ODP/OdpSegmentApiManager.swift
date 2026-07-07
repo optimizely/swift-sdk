@@ -129,15 +129,14 @@ open class OdpSegmentApiManager {
         urlRequest.setValue(apiKey, forHTTPHeaderField: "x-api-key")
         
         let session = self.getSession()
-        // without this the URLSession will leak, see docs on URLSession and https://stackoverflow.com/questions/67318867
-        defer { session.finishTasksAndInvalidate() }
 
         let task = session.dataTask(with: urlRequest) { data, response, error in
             var returnError: OptimizelyError?
             var returnSegments: [String]?
-            
+
             defer {
                 completionHandler(returnSegments, returnError)
+                session.finishTasksAndInvalidate()
             }
 
             guard error == nil, let data = data, let response = response as? HTTPURLResponse else {

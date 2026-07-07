@@ -23,12 +23,12 @@ import Foundation
 // the cdn url is used to get the datafile if the datafile is not in cache
 class MockUrlSession: URLSession {
     static var validSessions = 0
+    private static let lock = DispatchQueue(label: "mock-session-lock")
     var statusCode: Int
     var withError: Bool
     var localResponseData: String?
     var settingsMap: [String: (Int, Bool)]?
     var handler: MockDatafileHandler?
-    let lock = DispatchQueue(label: "mock-session-lock")
     
     class MockDownloadTask: URLSessionDownloadTask {
         var task: () -> Void
@@ -55,7 +55,7 @@ class MockUrlSession: URLSession {
     }
 
     init(handler: MockDatafileHandler? = nil, statusCode: Int = 0, withError: Bool = false, localResponseData: String? = nil) {
-        lock.async {
+        Self.lock.sync {
             Self.validSessions += 1
         }
         self.handler = handler
@@ -63,9 +63,9 @@ class MockUrlSession: URLSession {
         self.withError = withError
         self.localResponseData = localResponseData
     }
-   
+
     init(handler: MockDatafileHandler? = nil, settingsMap: [String: (Int, Bool)]) {
-        lock.async {
+        Self.lock.sync {
             Self.validSessions += 1
         }
         self.handler = handler
@@ -118,7 +118,7 @@ class MockUrlSession: URLSession {
     }
 
     override func finishTasksAndInvalidate() {
-        lock.async {
+        Self.lock.sync {
             Self.validSessions -= 1
         }
     }

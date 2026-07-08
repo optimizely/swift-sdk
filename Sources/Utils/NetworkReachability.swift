@@ -92,7 +92,9 @@ class NetworkReachability {
     }
 
     func updateNumContiguousFails(isError: Bool) {
-        numContiguousFails = isError ? (numContiguousFails + 1) : 0
+        queue.sync {
+            numContiguousFails = isError ? (numContiguousFails + 1) : 0
+        }
     }
 
     /// Skip network access when reachability is down (optimization for iOS12+ only)
@@ -100,7 +102,14 @@ class NetworkReachability {
     func shouldBlockNetworkAccess() -> Bool {
         startMonitorIfNeeded()
 
-        if numContiguousFails < maxContiguousFails { return false }
+        var shouldBlock = false
+        queue.sync {
+            if numContiguousFails >= maxContiguousFails {
+                shouldBlock = true
+            }
+        }
+
+        guard shouldBlock else { return false }
 
         if #available(macOS 10.14, iOS 12.0, watchOS 5.0, tvOS 12.0, *) {
             return !isConnected

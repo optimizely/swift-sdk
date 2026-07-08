@@ -95,7 +95,7 @@ fileprivate class MockProjectConfig: ProjectConfig {
         attributeIdMap["attr1"] = attribute1
         attributeIdMap["attr2"] = attribute2
         attributeKeyMap["age"] = attribute1
-        attributeIdMap["location"] = attribute2
+        attributeKeyMap["location"] = attribute2
     }
     
 }
@@ -172,7 +172,7 @@ class DefaultCmabServiceTests: XCTestCase {
                                 completion: { _ in
             // Check that only the relevant attributes were passed to the client
             XCTAssertEqual(self.cmabClient.lastAttributes?.count, 1) // Only 'age' is found in the config
-            XCTAssertEqual(self.cmabClient.lastAttributes?["age"] as? Int, 25)
+            XCTAssertEqual(self.cmabClient.lastAttributes?["attr1"] as? Int, 25)
             XCTAssertNil(self.cmabClient.lastAttributes?["irrelevant"] ?? nil)
             
             expectation.fulfill()
@@ -212,10 +212,9 @@ class DefaultCmabServiceTests: XCTestCase {
                     XCTAssertEqual(decision.variationId, "variation-123")
                     XCTAssertEqual(self.cmabClient.lastRuleId, "exp-123")
                     XCTAssertEqual(self.cmabClient.lastUserId, "test-user")
-                    // We expect only the 'age' attribute as that's what's configured in the experiment
                     XCTAssertEqual(self.cmabClient.lastAttributes?.count, 2)
-                    XCTAssertEqual(self.cmabClient.lastAttributes?["age"] as? Int, 25)
-                    XCTAssertEqual(self.cmabClient.lastAttributes?["location"] as? String, "San Francisco")
+                    XCTAssertEqual(self.cmabClient.lastAttributes?["attr1"] as? Int, 25)
+                    XCTAssertEqual(self.cmabClient.lastAttributes?["attr2"] as? String, "San Francisco")
                     
                     // Verify it was cached
                     let cacheKey = "9-test-user-exp-123"
@@ -233,7 +232,7 @@ class DefaultCmabServiceTests: XCTestCase {
     
     func testCachedDecision() {
         // First, put something in the cache
-        let attributesHash = cmabService.hashAttributes(["age": 25, "location": "San Francisco"])
+        let attributesHash = cmabService.hashAttributes(["attr1": 25, "attr2": "San Francisco"])
         let cacheKey = "9-test-user-exp-123"
         
         let cacheValue = CmabCacheValue(attributesHash: attributesHash,
@@ -268,7 +267,7 @@ class DefaultCmabServiceTests: XCTestCase {
     
     func testCacheInvalidationWithChangedAttributes() {
         // First, put something in the cache
-        let attributesHash = cmabService.hashAttributes(["age": 25, "location": "San Francisco"])
+        let attributesHash = cmabService.hashAttributes(["attr1": 25, "attr2": "San Francisco"])
         let cacheKey = "9-test-user-exp-123"
         let cacheValue = CmabCacheValue(attributesHash: attributesHash,
                                         variationId: "cached-variation",
@@ -311,7 +310,7 @@ class DefaultCmabServiceTests: XCTestCase {
     
     func testIgnoreCmabCacheOption() {
         // First, put something in the cache
-        let attributesHash = cmabService.hashAttributes(["age": 25, "location": "San Francisco"])
+        let attributesHash = cmabService.hashAttributes(["attr1": 25, "attr2": "San Francisco"])
         let cacheKey = "9-test-user-exp-123"
         let cacheValue = CmabCacheValue(attributesHash: attributesHash,
                                         variationId: "cached-variation",
@@ -345,7 +344,7 @@ class DefaultCmabServiceTests: XCTestCase {
     
     func testResetCmabCacheOption() {
         // First, put something in the cache
-        let attributesHash = cmabService.hashAttributes(["age": 25, "location": "San Francisco"])
+        let attributesHash = cmabService.hashAttributes(["attr1": 25, "attr2": "San Francisco"])
         let cacheKey = "9-test-user-exp-123"
         let cacheValue = CmabCacheValue(attributesHash: attributesHash,
                                         variationId: "cached-variation",
@@ -388,7 +387,7 @@ class DefaultCmabServiceTests: XCTestCase {
     
     func testInvalidateUserCmabCacheOption() {
         // First, put something in the cache
-        let attributesHash = cmabService.hashAttributes(["age": 25, "location": "San Francisco"])
+        let attributesHash = cmabService.hashAttributes(["attr1": 25, "attr2": "San Francisco"])
         let userCacheKey = "9-test-user-exp-123"
         let cacheValue = CmabCacheValue(attributesHash: attributesHash,
                                         variationId: "cached-variation",
@@ -479,8 +478,8 @@ extension DefaultCmabServiceTests {
                 XCTAssertEqual(self.cmabClient.lastRuleId, "exp-123")
                 XCTAssertEqual(self.cmabClient.lastUserId, "test-user")
                 XCTAssertEqual(self.cmabClient.lastAttributes?.count, 2)
-                XCTAssertEqual(self.cmabClient.lastAttributes?["age"] as? Int, 25)
-                XCTAssertEqual(self.cmabClient.lastAttributes?["location"] as? String, "San Francisco")
+                XCTAssertEqual(self.cmabClient.lastAttributes?["attr1"] as? Int, 25)
+                XCTAssertEqual(self.cmabClient.lastAttributes?["attr2"] as? String, "San Francisco")
                 
                 // Verify it was cached
                 let cacheKey = "9-test-user-exp-123"
@@ -493,7 +492,7 @@ extension DefaultCmabServiceTests {
     
     func testSyncCachedDecision() {
         // First, put something in the cache
-        let attributesHash = cmabService.hashAttributes(["age": 25, "location": "San Francisco"])
+        let attributesHash = cmabService.hashAttributes(["attr1": 25, "attr2": "San Francisco"])
         let cacheKey = "9-test-user-exp-123"
         let cacheValue = CmabCacheValue(
             attributesHash: attributesHash,
@@ -546,7 +545,7 @@ extension DefaultCmabServiceTests {
     
     func testSyncIgnoreCmabCacheOption() {
         // First, put something in the cache
-        let attributesHash = cmabService.hashAttributes(["age": 25, "location": "San Francisco"])
+        let attributesHash = cmabService.hashAttributes(["attr1": 25, "attr2": "San Francisco"])
         let cacheKey = "9-test-user-exp-123"
         let cacheValue = CmabCacheValue(
             attributesHash: attributesHash,
@@ -576,7 +575,7 @@ extension DefaultCmabServiceTests {
     
     func testSyncResetCmabCacheOption() {
         // First, put something in the cache
-        let attributesHash = cmabService.hashAttributes(["age": 25, "location": "San Francisco"])
+        let attributesHash = cmabService.hashAttributes(["attr1": 25, "attr2": "San Francisco"])
         let cacheKey = "9-test-user-exp-123"
         let cacheValue = CmabCacheValue(
             attributesHash: attributesHash,
@@ -616,7 +615,7 @@ extension DefaultCmabServiceTests {
     
     func testSyncInvalidateUserCmabCacheOption() {
         // First, put something in the cache
-        let attributesHash = cmabService.hashAttributes(["age": 25, "location": "San Francisco"])
+        let attributesHash = cmabService.hashAttributes(["attr1": 25, "attr2": "San Francisco"])
         let userCacheKey = "9-test-user-exp-123"
         let otherUserCacheKey = "other-user-key"
         

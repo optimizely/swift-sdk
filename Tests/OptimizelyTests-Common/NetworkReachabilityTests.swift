@@ -141,6 +141,31 @@ class NetworkReachabilityTests: XCTestCase {
         }
     }
 
+    func testConcurrentAccessToNumContiguousFails() {
+        let reachability = NetworkReachability(maxContiguousFails: 100)
+        reachability.stop()
+        reachability.isConnected = false
+
+        let iterations = 1000
+        let exp = expectation(description: "concurrent")
+        exp.expectedFulfillmentCount = iterations * 2
+
+        for _ in 0..<iterations {
+            DispatchQueue.global().async {
+                reachability.updateNumContiguousFails(isError: true)
+                exp.fulfill()
+            }
+            DispatchQueue.global().async {
+                _ = reachability.shouldBlockNetworkAccess()
+                exp.fulfill()
+            }
+        }
+
+        wait(for: [exp], timeout: 10)
+        XCTAssertGreaterThan(reachability.numContiguousFails, 0)
+        reachability.stop()
+    }
+
     func testFetchDatafile_numContiguousFails() {
         let handler = MockDatafileHandler(withError: true, localResponseData: "{}")
         let reachability = handler.reachability

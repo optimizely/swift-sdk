@@ -96,11 +96,12 @@ class NetworkReachabilityTests: XCTestCase {
     
     func testReachabilityMonitoring() throws {
         if #available(macOS 10.14, iOS 12.0, watchOS 5.0, tvOS 12.0, *) {
-            
+
             let reachability = NetworkReachability()
-            
+            reachability.startMonitorIfNeeded()
+
             // isConnected is initially false (simulators only), and will be updated to true on updateHandler.
-            
+
             let exp = expectation(description: "x")
             DispatchQueue.global().async {
                 while true {
@@ -118,6 +119,28 @@ class NetworkReachabilityTests: XCTestCase {
         }
     }
     
+    func testMonitorNotCreatedDuringInit() {
+        if #available(macOS 10.14, iOS 12.0, watchOS 5.0, tvOS 12.0, *) {
+            let reachability = NetworkReachability()
+            XCTAssertNil(reachability.monitor, "NWPathMonitor should not be created during init")
+
+            _ = reachability.shouldBlockNetworkAccess()
+            XCTAssertNotNil(reachability.monitor, "NWPathMonitor should be created after shouldBlockNetworkAccess")
+
+            reachability.stop()
+        }
+    }
+
+    func testMonitorNotCreatedAfterStop() {
+        if #available(macOS 10.14, iOS 12.0, watchOS 5.0, tvOS 12.0, *) {
+            let reachability = NetworkReachability()
+            reachability.stop()
+
+            _ = reachability.shouldBlockNetworkAccess()
+            XCTAssertNil(reachability.monitor, "NWPathMonitor should not be created after stop was called")
+        }
+    }
+
     func testFetchDatafile_numContiguousFails() {
         let handler = MockDatafileHandler(withError: true, localResponseData: "{}")
         let reachability = handler.reachability

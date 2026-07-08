@@ -18,10 +18,11 @@ import Foundation
 import Network
 
 class NetworkReachability {
-    
+
     var monitor: AnyObject?
     let queue = DispatchQueue(label: "reachability")
-    
+    private var monitorStarted = false
+
     // the number of contiguous download failures (reachability)
     var numContiguousFails = 0
     // the maximum number of contiguous network connection failures allowed before reachability checking
@@ -33,7 +34,7 @@ class NetworkReachability {
     #else
     private var connected = true        // initially true for safety in production
     #endif
-    
+
     var isConnected: Bool {
         get {
             var result = false
@@ -49,30 +50,37 @@ class NetworkReachability {
             }
         }
     }
-    
+
     init(maxContiguousFails: Int? = nil) {
         self.maxContiguousFails = maxContiguousFails ?? NetworkReachability.defaultMaxContiguousFails
-     
-        if #available(macOS 10.14, iOS 12.0, watchOS 5.0, tvOS 12.0, *) {
-            
-            // NOTE: test with real devices only (simulator not updating properly)
+    }
 
-            self.monitor = NWPathMonitor()
-            
-            (monitor as! NWPathMonitor).pathUpdateHandler = { [weak self] (path: NWPath) -> Void in
-                // "Reachability path: satisfied (Path is satisfied), interface: en0, ipv4, ipv6, dns, expensive, constrained"
-                // "Reachability path: unsatisfied (No network route)"
-                // print("Reachability path: \(path)")
-                
+    // NOTE: NWPathMonitor can only be tested with real devices (simulator not updating properly)
+    func startMonitorIfNeeded() {
+        var shouldStart = false
+        queue.sync {
+            guard !monitorStarted else { return }
+            monitorStarted = true
+            shouldStart = true
+        }
+
+        guard shouldStart else { return }
+
+        if #available(macOS 10.14, iOS 12.0, watchOS 5.0, tvOS 12.0, *) {
+            let pathMonitor = NWPathMonitor()
+            self.monitor = pathMonitor
+
+            pathMonitor.pathUpdateHandler = { [weak self] (path: NWPath) -> Void in
                 // this task runs in sync queue. set private variable (instead of isConnected to avoid deadlock)
                 self?.connected = (path.status == .satisfied)
             }
-            
-            (monitor as! NWPathMonitor).start(queue: queue)
+
+            pathMonitor.start(queue: queue)
         }
     }
-    
+
     func stop() {
+        monitorStarted = true
         if #available(macOS 10.14, iOS 12.0, watchOS 5.0, tvOS 12.0, *) {
             guard let monitor = monitor as? NWPathMonitor else { return }
 
@@ -80,14 +88,16 @@ class NetworkReachability {
             monitor.cancel()
         }
     }
-    
+
     func updateNumContiguousFails(isError: Bool) {
         numContiguousFails = isError ? (numContiguousFails + 1) : 0
     }
-            
+
     /// Skip network access when reachability is down (optimization for iOS12+ only)
     /// - Returns: true when network access should be blocked
     func shouldBlockNetworkAccess() -> Bool {
+        startMonitorIfNeeded()
+
         if numContiguousFails < maxContiguousFails { return false }
 
         if #available(macOS 10.14, iOS 12.0, watchOS 5.0, tvOS 12.0, *) {
@@ -96,5 +106,5 @@ class NetworkReachability {
             return false
         }
     }
-    
+
 }

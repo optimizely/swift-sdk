@@ -122,10 +122,10 @@ class NetworkReachabilityTests: XCTestCase {
     func testMonitorNotCreatedDuringInit() {
         if #available(macOS 10.14, iOS 12.0, watchOS 5.0, tvOS 12.0, *) {
             let reachability = NetworkReachability()
-            XCTAssertNil(reachability.monitor, "NWPathMonitor should not be created during init")
+            XCTAssertFalse(reachability.isMonitorActive, "NWPathMonitor should not be created during init")
 
             _ = reachability.shouldBlockNetworkAccess()
-            XCTAssertNotNil(reachability.monitor, "NWPathMonitor should be created after shouldBlockNetworkAccess")
+            XCTAssertTrue(reachability.isMonitorActive, "NWPathMonitor should be created after shouldBlockNetworkAccess")
 
             reachability.stop()
         }
@@ -137,7 +137,7 @@ class NetworkReachabilityTests: XCTestCase {
             reachability.stop()
 
             _ = reachability.shouldBlockNetworkAccess()
-            XCTAssertNil(reachability.monitor, "NWPathMonitor should not be created after stop was called")
+            XCTAssertFalse(reachability.isMonitorActive, "NWPathMonitor should not be created after stop was called")
         }
     }
 

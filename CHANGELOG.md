@@ -1,5 +1,15 @@
 # Optimizely Swift SDK Changelog
 
+## 5.4.2
+July 9, 2026
+
+### Fixes
+
+- Use attribute id instead of key for CMAB prediction requests ([#648](https://github.com/optimizely/swift-sdk/pull/648))
+- fix: defer NWPathMonitor creation to avoid crash during multi-SDK startup ([#650](https://github.com/optimizely/swift-sdk/pull/650))
+- fix: prevent EXC_BAD_ACCESS from premature URLSession deallocation ([#649](https://github.com/optimizely/swift-sdk/pull/649))
+- Replace non-numeric holdout placeholder IDs in event-construction tests ([#646](https://github.com/optimizely/swift-sdk/pull/646))
+
 ## 5.4.1
 June 24, 2026
 

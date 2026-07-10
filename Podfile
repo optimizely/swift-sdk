@@ -34,21 +34,6 @@ target 'DemoSwifttvOS' do
   #pod 'OptimizelySwiftSDK','3.0.0'
 end
 
-target 'DemoObjciOS' do
-  project 'DemoObjcApp/DemoObjcApp.xcodeproj/'
-  platform :ios, '10.0'
-  use_frameworks!
-  analytics_pods
-  #pod 'OptimizelySwiftSDK','3.0.0'
-end
-
-target 'DemoObjctvOS' do
-  project 'DemoObjcApp/DemoObjcApp.xcodeproj/'
-  platform :tvos, '10.0'
-  use_frameworks!
-  #pod 'OptimizelySwiftSDK','3.0.0'
-end
-
 target 'OptimizelyTests-Common-iOS' do
   project 'OptimizelySwiftSDK.xcodeproj/'
   platform :ios, '10.0'

@@ -13,10 +13,6 @@ def linter_pods
   pod 'SwiftLint', '0.43.1'
 end
 
-def common_test_pods
-  pod 'OCMock', '3.7.1'
-end
-
 target 'DemoSwiftiOS' do
   project 'DemoSwiftApp/DemoSwiftApp.xcodeproj/'
   platform :ios, '10.0'
@@ -34,25 +30,11 @@ target 'DemoSwifttvOS' do
   #pod 'OptimizelySwiftSDK','3.0.0'
 end
 
-target 'OptimizelyTests-Common-iOS' do
-  project 'OptimizelySwiftSDK.xcodeproj/'
-  platform :ios, '10.0'
-  common_test_pods
-end
-
-target 'OptimizelyTests-Common-tvOS' do
-  project 'OptimizelySwiftSDK.xcodeproj/'
-  platform :tvos, '10.0'
-  common_test_pods
-end
-
 # Disable Code Coverage for Pods projects
 post_install do |installer_representation|
     installer_representation.pods_project.targets.each do |target|
         target.build_configurations.each do |config|
             config.build_settings['CLANG_ENABLE_CODE_COVERAGE'] = 'NO'
-            # fix OCMock old iOS8 target warning
-            config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '10.0'
         end
     end
 end

@@ -69,14 +69,18 @@ open class DefaultDatafileHandler: OPTDatafileHandler {
             }
             
             let session = self.getSession(resourceTimeoutInterval: resourceTimeoutInterval)
-            // without this the URLSession will leak, see docs on URLSession and https://stackoverflow.com/questions/67318867
-            defer { session.finishTasksAndInvalidate() }
-            
-            guard let request = self.getRequest(sdkKey: sdkKey) else { return }
-            
+
+            guard let request = self.getRequest(sdkKey: sdkKey) else {
+                let optError = OptimizelyError.datafileDownloadFailed("Invalid URL for sdkKey: \(sdkKey)")
+                self.logger.e(optError)
+                completionHandler(.failure(optError))
+                session.finishTasksAndInvalidate()
+                return
+            }
+
             let task = session.downloadTask(with: request) { (url, response, error) in
                 var result = OptimizelyResult<Data?>.failure(.generic)
-                
+
                 if error != nil {
                     let optError = OptimizelyError.datafileDownloadFailed(error.debugDescription)
                     self.logger.e(optError)
@@ -91,7 +95,7 @@ open class DefaultDatafileHandler: OPTDatafileHandler {
                         }
                     case 304:
                         self.logger.d("The datafile was not modified and won't be downloaded again")
-                        
+
                         if returnCacheIfNoChange {
                             result = returnCached()
                         } else {
@@ -102,10 +106,11 @@ open class DefaultDatafileHandler: OPTDatafileHandler {
                         result = returnCached() // error recovery
                     }
                 }
-                
+
                 self.reachability.updateNumContiguousFails(isError: (error != nil))
-                
+
                 completionHandler(result)
+                session.finishTasksAndInvalidate()
             }
             
             task.resume()

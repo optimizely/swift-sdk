@@ -96,11 +96,12 @@ class NetworkReachabilityTests: XCTestCase {
     
     func testReachabilityMonitoring() throws {
         if #available(macOS 10.14, iOS 12.0, watchOS 5.0, tvOS 12.0, *) {
-            
+
             let reachability = NetworkReachability()
-            
+            reachability.startMonitorIfNeeded()
+
             // isConnected is initially false (simulators only), and will be updated to true on updateHandler.
-            
+
             let exp = expectation(description: "x")
             DispatchQueue.global().async {
                 while true {
@@ -118,6 +119,53 @@ class NetworkReachabilityTests: XCTestCase {
         }
     }
     
+    func testMonitorNotCreatedDuringInit() {
+        if #available(macOS 10.14, iOS 12.0, watchOS 5.0, tvOS 12.0, *) {
+            let reachability = NetworkReachability()
+            XCTAssertFalse(reachability.isMonitorActive, "NWPathMonitor should not be created during init")
+
+            _ = reachability.shouldBlockNetworkAccess()
+            XCTAssertTrue(reachability.isMonitorActive, "NWPathMonitor should be created after shouldBlockNetworkAccess")
+
+            reachability.stop()
+        }
+    }
+
+    func testMonitorNotCreatedAfterStop() {
+        if #available(macOS 10.14, iOS 12.0, watchOS 5.0, tvOS 12.0, *) {
+            let reachability = NetworkReachability()
+            reachability.stop()
+
+            _ = reachability.shouldBlockNetworkAccess()
+            XCTAssertFalse(reachability.isMonitorActive, "NWPathMonitor should not be created after stop was called")
+        }
+    }
+
+    func testConcurrentAccessToNumContiguousFails() {
+        let reachability = NetworkReachability(maxContiguousFails: 100)
+        reachability.stop()
+        reachability.isConnected = false
+
+        let iterations = 1000
+        let exp = expectation(description: "concurrent")
+        exp.expectedFulfillmentCount = iterations * 2
+
+        for _ in 0..<iterations {
+            DispatchQueue.global().async {
+                reachability.updateNumContiguousFails(isError: true)
+                exp.fulfill()
+            }
+            DispatchQueue.global().async {
+                _ = reachability.shouldBlockNetworkAccess()
+                exp.fulfill()
+            }
+        }
+
+        wait(for: [exp], timeout: 10)
+        XCTAssertGreaterThan(reachability.numContiguousFails, 0)
+        reachability.stop()
+    }
+
     func testFetchDatafile_numContiguousFails() {
         let handler = MockDatafileHandler(withError: true, localResponseData: "{}")
         let reachability = handler.reachability

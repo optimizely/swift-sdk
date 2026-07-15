@@ -230,25 +230,24 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
         }
         
         let session = getSession()
-        // without this the URLSession will leak, see docs on URLSession and https://stackoverflow.com/questions/67318867
-        defer { session.finishTasksAndInvalidate() }
-        
+
         var request = URLRequest(url: event.url)
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        
+
         // send notification BEFORE sending event to the server
         NotificationCenter.default.post(name: .willSendOptimizelyEvents, object: event)
 
-        let task = session.uploadTask(with: request, from: event.body) { (_, _, error) in            
+        let task = session.uploadTask(with: request, from: event.body) { (_, _, error) in
             if let error = error {
                 completionHandler(.failure(.eventDispatchFailed(error.localizedDescription)))
             } else {
                 self.logger.d("Event Sent")
                 completionHandler(.success(event.body))
             }
-            
+
             self.reachability.updateNumContiguousFails(isError: (error != nil))
+            session.finishTasksAndInvalidate()
         }
         
         task.resume()

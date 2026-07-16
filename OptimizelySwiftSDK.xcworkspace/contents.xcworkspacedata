@@ -4,10 +4,7 @@
    <FileRef
       location = "group:DemoSwiftApp/DemoSwiftApp.xcodeproj">
    </FileRef>
-   <FileRef
-      location = "group:DemoObjcApp/DemoObjcApp.xcodeproj">
-   </FileRef>
-   <FileRef
+<FileRef
       location = "group:OptimizelySwiftSDK.xcodeproj">
    </FileRef>
    <FileRef

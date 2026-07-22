@@ -22,6 +22,7 @@ struct FeatureDecision {
     let source: String
     var cmabUUID: String?
     var error = false
+    var holdoutToSend: (experiment: ExperimentCore, variation: Variation)? = nil
 }
 
 struct VariationDecision {
@@ -443,7 +444,11 @@ class DefaultDecisionService: OPTDecisionService {
                                     let featureDecision = FeatureDecision(experiment: holdout, variation: variation, source: Constants.DecisionSource.holdout.rawValue, cmabUUID: result.cmabUUID)
                                     return DecisionResponse(result: featureDecision, reasons: reasons)
                                 } else {
-                                    let featureDecision = FeatureDecision(experiment: experiment, variation: variation, source: Constants.DecisionSource.featureTest.rawValue, cmabUUID: result.cmabUUID)
+                                    var featureDecision = FeatureDecision(experiment: experiment, variation: variation, source: Constants.DecisionSource.featureTest.rawValue, cmabUUID: result.cmabUUID)
+                                    if let holdoutExperiment = storedHoldout.experiment,
+                                       let holdoutVariation = storedHoldout.variation {
+                                        featureDecision.holdoutToSend = (experiment: holdoutExperiment, variation: holdoutVariation)
+                                    }
                                     return DecisionResponse(result: featureDecision, reasons: reasons)
                                 }
                             }
@@ -454,7 +459,7 @@ class DefaultDecisionService: OPTDecisionService {
                 }
             }
 
-            return DecisionResponse(result: storedHoldout, reasons: reasons)
+            return DecisionResponse(result: nil, reasons: reasons)
         }
 
         let flagExpDecision = getVariationForFeatureExperiments(config: config, featureFlag: featureFlag, user: user, userProfileTracker: userProfileTracker, isAsync: isAsync, options: options)
@@ -703,12 +708,6 @@ class DefaultDecisionService: OPTDecisionService {
         // check local holdouts targeting this rule
         let localHoldouts = config.getHoldoutsForRule(ruleId: rule.id)
         for holdout in localHoldouts {
-            if holdout.excludeTargetedDeliveries && rule.type == .targetedDelivery {
-                let info = LogMessage.holdoutExcludesTargetedDelivery(holdout.key, rule.key)
-                logger.d(info)
-                reasons.addInfo(info)
-                continue
-            }
             let holdoutDecision = getVariationForHoldout(config: config,
                                                          flagKey: flagKey,
                                                          holdout: holdout,
@@ -766,12 +765,6 @@ class DefaultDecisionService: OPTDecisionService {
         // check local holdouts targeting this delivery rule
         let localHoldouts = config.getHoldoutsForRule(ruleId: rule.id)
         for holdout in localHoldouts {
-            if holdout.excludeTargetedDeliveries && rule.type == .targetedDelivery {
-                let info = LogMessage.holdoutExcludesTargetedDelivery(holdout.key, rule.key)
-                logger.d(info)
-                reasons.addInfo(info)
-                continue
-            }
             let holdoutDecision = getVariationForHoldout(config: config,
                                                          flagKey: flagKey,
                                                          holdout: holdout,

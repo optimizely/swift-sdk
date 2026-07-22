@@ -1,5 +1,5 @@
 //
-// Copyright 2021-2022, Optimizely, Inc. and contributors
+// Copyright 2021-2022, 2026, Optimizely, Inc. and contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -324,8 +324,18 @@ extension OptimizelyClient {
                                     cmabUUID: flagDecision?.cmabUUID)
                 decisionEventDispatched = true
             }
+            if let holdoutInfo = flagDecision?.holdoutToSend {
+                sendImpressionEvent(experiment: holdoutInfo.experiment,
+                                    variation: holdoutInfo.variation,
+                                    userId: userId,
+                                    attributes: attributes,
+                                    flagKey: feature.key,
+                                    ruleType: Constants.DecisionSource.holdout.rawValue,
+                                    enabled: false,
+                                    cmabUUID: nil)
+            }
         }
-        
+
         var variableMap = [String: Any]()
         if !allOptions.contains(.excludeVariables) {
             let decisionResponse = getDecisionVariableMap(feature: feature,

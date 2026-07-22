@@ -78,7 +78,7 @@ class DecisionServiceTests_ExcludeTargetedDeliveries: XCTestCase {
 
     // MARK: - excludeTargetedDeliveries = true with TD rule
 
-    func testExcludeTargetedDeliveriesTrue_TDRule_HoldoutSkipped() {
+    func testExcludeTargetedDeliveriesTrue_TDRule_LocalHoldoutStillApplies() {
         var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
         holdout.includedRules = [experimentRuleId]
         holdout.excludeTargetedDeliveries = true
@@ -95,7 +95,8 @@ class DecisionServiceTests_ExcludeTargetedDeliveries: XCTestCase {
         let user = optimizely.createUserContext(userId: userId)
         let decision = user.decide(key: flagKey)
 
-        XCTAssertNotEqual(decision.variationKey, "holdout_variation_key")
+        XCTAssertEqual(decision.variationKey, "holdout_variation_key")
+        XCTAssertFalse(decision.enabled)
     }
 
     // MARK: - excludeTargetedDeliveries = true with AB rule
@@ -178,7 +179,7 @@ class DecisionServiceTests_ExcludeTargetedDeliveries: XCTestCase {
 
     // MARK: - Local holdout with excludeTargetedDeliveries true and TD delivery rule
 
-    func testLocalHoldout_ExcludeTargetedDeliveriesTrue_DeliveryTDRule_HoldoutSkipped() {
+    func testLocalHoldout_ExcludeTargetedDeliveriesTrue_DeliveryTDRule_HoldoutStillApplies() {
         var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
         holdout.includedRules = [deliveryRuleId]
         holdout.excludeTargetedDeliveries = true
@@ -198,7 +199,8 @@ class DecisionServiceTests_ExcludeTargetedDeliveries: XCTestCase {
         let user = optimizely.createUserContext(userId: userId)
         let decision = user.decide(key: flagKey)
 
-        XCTAssertNotEqual(decision.variationKey, "holdout_variation_key")
+        XCTAssertEqual(decision.variationKey, "holdout_variation_key")
+        XCTAssertFalse(decision.enabled)
     }
 
     // MARK: - Forced decision beats 100% traffic local holdout
@@ -245,5 +247,83 @@ class DecisionServiceTests_ExcludeTargetedDeliveries: XCTestCase {
         let decision = user.decide(key: flagKey)
 
         XCTAssertEqual(decision.variationKey, "a", "Forced decision should take precedence over 100% traffic local holdout")
+    }
+
+    // MARK: - Global holdout excludeTrue, TD returns null => returns null
+
+    func testGlobalHoldout_ExcludeTrue_TDReturnsNull_ReturnsNull() {
+        var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
+        holdout.includedRules = nil
+        holdout.excludeTargetedDeliveries = true
+        config.holdoutConfig = HoldoutConfig(globalHoldouts: [holdout], localHoldouts: [])
+
+        var experiment = config.getExperiment(id: experimentRuleId)!
+        experiment.type = .targetedDelivery
+        config.project.experiments = [experiment]
+
+        let mockBucketer = MockBucketer(mockBucketValue: 2500)
+        let mockDecisionService = DefaultDecisionService(userProfileService: OTUtils.createClearUserProfileService(), bucketer: mockBucketer)
+        optimizely.decisionService = mockDecisionService
+
+        let user = optimizely.createUserContext(userId: userId)
+        let decision = user.decide(key: flagKey)
+
+        XCTAssertNil(decision.variationKey)
+    }
+
+    // MARK: - Local holdout with excludeTrue still applies
+
+    func testLocalHoldout_ExcludeTrue_StillApplies() {
+        var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
+        holdout.includedRules = [experimentRuleId]
+        holdout.excludeTargetedDeliveries = true
+        config.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [holdout])
+
+        var experiment = config.getExperiment(id: experimentRuleId)!
+        experiment.type = .targetedDelivery
+        config.project.experiments = [experiment]
+
+        let mockBucketer = MockBucketer(mockBucketValue: 2500)
+        let mockDecisionService = DefaultDecisionService(userProfileService: OTUtils.createClearUserProfileService(), bucketer: mockBucketer)
+        optimizely.decisionService = mockDecisionService
+
+        let user = optimizely.createUserContext(userId: userId)
+        let decision = user.decide(key: flagKey)
+
+        XCTAssertEqual(decision.variationKey, "holdout_variation_key")
+        XCTAssertFalse(decision.enabled)
+    }
+
+    // MARK: - Global holdout excludeTrue, TD matches => holdoutToSend populated
+
+    func testGlobalHoldout_ExcludeTrue_HoldoutEventSent() {
+        var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
+        holdout.includedRules = nil
+        holdout.excludeTargetedDeliveries = true
+        config.holdoutConfig = HoldoutConfig(globalHoldouts: [holdout], localHoldouts: [])
+
+        var experiment = config.getExperiment(id: experimentRuleId)!
+        experiment.type = .targetedDelivery
+        experiment.audienceIds = []
+        experiment.audienceConditions = nil
+        config.project.experiments = [experiment]
+
+        let mockBucketer = MockBucketer(mockBucketValue: 2500)
+        let mockDecisionService = DefaultDecisionService(userProfileService: OTUtils.createClearUserProfileService(), bucketer: mockBucketer)
+        optimizely.decisionService = mockDecisionService
+
+        let user = optimizely.createUserContext(userId: userId)
+        let featureFlag = config.getFeatureFlag(key: flagKey)!
+        let response = mockDecisionService.getDecisionForFlag(config: config,
+                                                               featureFlag: featureFlag,
+                                                               user: user,
+                                                               isAsync: false,
+                                                               options: nil)
+
+        XCTAssertNotNil(response.result)
+        XCTAssertEqual(response.result?.source, Constants.DecisionSource.featureTest.rawValue)
+        XCTAssertNotNil(response.result?.holdoutToSend)
+        XCTAssertEqual(response.result?.holdoutToSend?.experiment.key, "holdout_test_key")
+        XCTAssertEqual(response.result?.holdoutToSend?.variation.key, "holdout_variation_key")
     }
 }

@@ -1,5 +1,5 @@
 //
-// Copyright 2019-2022, Optimizely, Inc. and contributors
+// Copyright 2019-2022, 2026, Optimizely, Inc. and contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ struct FeatureDecision {
     let source: String
     var cmabUUID: String?
     var error = false
+    var holdoutToSend: (experiment: ExperimentCore, variation: Variation)? = nil
 }
 
 struct VariationDecision {
@@ -400,6 +401,8 @@ class DefaultDecisionService: OPTDecisionService {
                             options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<FeatureDecision> {
         let reasons = DecisionReasons(options: options)
 
+        var storedHoldoutDecision: FeatureDecision?
+
         let holdouts = config.getGlobalHoldouts()
         for holdout in holdouts {
             let holdoutDecision = getVariationForHoldout(config: config,
@@ -410,21 +413,68 @@ class DefaultDecisionService: OPTDecisionService {
             reasons.merge(holdoutDecision.reasons)
             if let variation = holdoutDecision.result {
                 let featureDecision = FeatureDecision(experiment: holdout, variation: variation, source: Constants.DecisionSource.holdout.rawValue)
-                return DecisionResponse(result: featureDecision, reasons: reasons)
+                if holdout.excludeTargetedDeliveries {
+                    storedHoldoutDecision = featureDecision
+                    let info = LogMessage.holdoutExcludeTargetedDeliveriesEnabled(holdout.key)
+                    reasons.addInfo(info)
+                } else {
+                    return DecisionResponse(result: featureDecision, reasons: reasons)
+                }
+                break
             }
         }
-        
+
+        if let storedHoldout = storedHoldoutDecision {
+            let experimentIds = featureFlag.experimentIds
+            for experimentId in experimentIds {
+                if let experiment = config.getExperiment(id: experimentId) {
+                    if experiment.type == .targetedDelivery {
+                        let decisionResponse = getVariationFromExperimentRule(config: config,
+                                                                              flagKey: featureFlag.key,
+                                                                              rule: experiment,
+                                                                              user: user,
+                                                                              userProfileTracker: userProfileTracker,
+                                                                              isAsync: isAsync,
+                                                                              options: options)
+                        reasons.merge(decisionResponse.reasons)
+                        if let result = decisionResponse.result {
+                            if result.cmabError {
+                                let featureDecision = FeatureDecision(experiment: experiment, variation: nil, source: Constants.DecisionSource.featureTest.rawValue, error: true)
+                                return DecisionResponse(result: featureDecision, reasons: reasons)
+                            } else if let variation = result.variation {
+                                if let holdout = result.holdout {
+                                    let featureDecision = FeatureDecision(experiment: holdout, variation: variation, source: Constants.DecisionSource.holdout.rawValue, cmabUUID: result.cmabUUID)
+                                    return DecisionResponse(result: featureDecision, reasons: reasons)
+                                } else {
+                                    var featureDecision = FeatureDecision(experiment: experiment, variation: variation, source: Constants.DecisionSource.featureTest.rawValue, cmabUUID: result.cmabUUID)
+                                    if let holdoutExperiment = storedHoldout.experiment,
+                                       let holdoutVariation = storedHoldout.variation {
+                                        featureDecision.holdoutToSend = (experiment: holdoutExperiment, variation: holdoutVariation)
+                                    }
+                                    return DecisionResponse(result: featureDecision, reasons: reasons)
+                                }
+                            }
+                        }
+                    } else {
+                        return DecisionResponse(result: storedHoldout, reasons: reasons)
+                    }
+                }
+            }
+
+            return DecisionResponse(result: nil, reasons: reasons)
+        }
+
         let flagExpDecision = getVariationForFeatureExperiments(config: config, featureFlag: featureFlag, user: user, userProfileTracker: userProfileTracker, isAsync: isAsync, options: options)
-        
+
         reasons.merge(flagExpDecision.reasons)
-        
+
         if let decision = flagExpDecision.result {
             return DecisionResponse(result: decision, reasons: reasons)
         }
-        
+
         let rolloutDecision = getVariationForFeatureRollout(config: config, featureFlag: featureFlag, user: user, options: options)
         reasons.merge(rolloutDecision.reasons)
-        
+
         if let decision = rolloutDecision.result {
             return DecisionResponse(result: decision, reasons: reasons)
         } else {
@@ -667,7 +717,6 @@ class DefaultDecisionService: OPTDecisionService {
                                                          options: options)
             reasons.merge(holdoutDecision.reasons)
             if let variation = holdoutDecision.result {
-                // User is in holdout — return holdout variation immediately, skip this rule
                 let variationDecision = VariationDecision(variation: variation, holdout: holdout)
                 return DecisionResponse(result: variationDecision, reasons: reasons)
             }
@@ -725,7 +774,6 @@ class DefaultDecisionService: OPTDecisionService {
                                                          options: options)
             reasons.merge(holdoutDecision.reasons)
             if let variation = holdoutDecision.result {
-                // User is in holdout — return holdout variation with holdout info
                 let decision = DeliveryRuleDecision(variation: variation, skipToEveryoneElse: skipToEveryoneElse, holdout: holdout)
                 return DecisionResponse(result: decision, reasons: reasons)
             }

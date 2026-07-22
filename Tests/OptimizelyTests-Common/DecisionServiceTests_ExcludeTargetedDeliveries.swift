@@ -294,6 +294,62 @@ class DecisionServiceTests_ExcludeTargetedDeliveries: XCTestCase {
         XCTAssertFalse(decision.enabled)
     }
 
+    // MARK: - Decision reason for excludeTargetedDeliveries bypass
+
+    func testGlobalHoldout_ExcludeTrue_DecisionReasonPresent() {
+        var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
+        holdout.includedRules = nil
+        holdout.excludeTargetedDeliveries = true
+        config.holdoutConfig = HoldoutConfig(globalHoldouts: [holdout], localHoldouts: [])
+
+        var experiment = config.getExperiment(id: experimentRuleId)!
+        experiment.type = .targetedDelivery
+        config.project.experiments = [experiment]
+
+        let mockBucketer = MockBucketer(mockBucketValue: 2500)
+        let mockDecisionService = DefaultDecisionService(userProfileService: OTUtils.createClearUserProfileService(), bucketer: mockBucketer)
+        optimizely.decisionService = mockDecisionService
+
+        let user = optimizely.createUserContext(userId: userId)
+        let decision = user.decide(key: flagKey, options: [.includeReasons])
+
+        let reasons = decision.reasons
+        let expectedReason = "Holdout 'holdout_test_key' has excludeTargetedDeliveries enabled, continuing to rollout evaluation."
+        XCTAssertTrue(reasons.contains(expectedReason),
+                      "Decision reasons should contain excludeTargetedDeliveries bypass reason. Got: \(reasons)")
+    }
+
+    // MARK: - decisionEventDispatched for holdout impression
+
+    func testGlobalHoldout_ExcludeTrue_TDMatch_DecisionEventDispatched() {
+        var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
+        holdout.includedRules = nil
+        holdout.excludeTargetedDeliveries = true
+        config.holdoutConfig = HoldoutConfig(globalHoldouts: [holdout], localHoldouts: [])
+
+        var experiment = config.getExperiment(id: experimentRuleId)!
+        experiment.type = .targetedDelivery
+        experiment.audienceIds = []
+        experiment.audienceConditions = nil
+        config.project.experiments = [experiment]
+
+        let mockBucketer = MockBucketer(mockBucketValue: 2500)
+        let mockDecisionService = DefaultDecisionService(userProfileService: OTUtils.createClearUserProfileService(), bucketer: mockBucketer)
+        optimizely.decisionService = mockDecisionService
+
+        let exp = expectation(description: "decision notification")
+        let user = optimizely.createUserContext(userId: userId)
+
+        optimizely.notificationCenter?.addDecisionNotificationListener { (_, _, _, decisionInfo) in
+            let dispatched = decisionInfo[Constants.DecisionInfoKeys.decisionEventDispatched] as? Bool
+            XCTAssertEqual(dispatched, true, "decisionEventDispatched should be true when holdout impression is sent")
+            exp.fulfill()
+        }
+
+        _ = user.decide(key: flagKey)
+        wait(for: [exp], timeout: 1)
+    }
+
     // MARK: - Global holdout excludeTrue, TD matches => holdoutToSend populated
 
     func testGlobalHoldout_ExcludeTrue_HoldoutEventSent() {

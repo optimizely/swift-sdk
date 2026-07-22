@@ -415,6 +415,8 @@ class DefaultDecisionService: OPTDecisionService {
                 let featureDecision = FeatureDecision(experiment: holdout, variation: variation, source: Constants.DecisionSource.holdout.rawValue)
                 if holdout.excludeTargetedDeliveries {
                     storedHoldoutDecision = featureDecision
+                    let info = LogMessage.holdoutExcludeTargetedDeliveriesEnabled(holdout.key)
+                    reasons.addInfo(info)
                 } else {
                     return DecisionResponse(result: featureDecision, reasons: reasons)
                 }

@@ -333,6 +333,7 @@ extension OptimizelyClient {
                                     ruleType: Constants.DecisionSource.holdout.rawValue,
                                     enabled: false,
                                     cmabUUID: nil)
+                decisionEventDispatched = true
             }
         }
 

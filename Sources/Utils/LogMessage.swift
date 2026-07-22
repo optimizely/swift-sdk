@@ -80,6 +80,7 @@ enum LogMessage {
     case cmabFetchFailed(_ expKey: String)
     case cmabNotSupportedInSyncMode
     case holdoutExcludesTargetedDelivery(_ holdoutKey: String, _ ruleKey: String)
+    case holdoutExcludeTargetedDeliveriesEnabled(_ holdoutKey: String)
 }
 
 extension LogMessage: CustomStringConvertible {
@@ -154,6 +155,7 @@ extension LogMessage: CustomStringConvertible {
         case .cmabFetchFailed(let key):                                         message = "Failed to fetch CMAB data for experiment \(key)."
         case .cmabNotSupportedInSyncMode:                                       message = "CMAB is not supported in sync mode."
         case .holdoutExcludesTargetedDelivery(let holdoutKey, let ruleKey):      message = "Holdout (\(holdoutKey)) excludes targeted deliveries, skipping holdout for rule (\(ruleKey))."
+        case .holdoutExcludeTargetedDeliveriesEnabled(let holdoutKey):          message = "Holdout '\(holdoutKey)' has excludeTargetedDeliveries enabled, continuing to rollout evaluation."
         }
         
         return message

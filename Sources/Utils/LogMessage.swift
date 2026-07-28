@@ -81,6 +81,8 @@ enum LogMessage {
     case cmabNotSupportedInSyncMode
     case holdoutExcludesTargetedDelivery(_ holdoutKey: String, _ ruleKey: String)
     case holdoutExcludeTargetedDeliveriesEnabled(_ holdoutKey: String)
+    case userBucketedIntoRollout(_ userId: String, _ flagKey: String)
+    case userNotBucketedIntoRollout(_ userId: String, _ flagKey: String)
 }
 
 extension LogMessage: CustomStringConvertible {
@@ -156,6 +158,8 @@ extension LogMessage: CustomStringConvertible {
         case .cmabNotSupportedInSyncMode:                                       message = "CMAB is not supported in sync mode."
         case .holdoutExcludesTargetedDelivery(let holdoutKey, let ruleKey):      message = "Holdout (\(holdoutKey)) excludes targeted deliveries, skipping holdout for rule (\(ruleKey))."
         case .holdoutExcludeTargetedDeliveriesEnabled(let holdoutKey):          message = "Holdout '\(holdoutKey)' has excludeTargetedDeliveries enabled, continuing to rollout evaluation."
+        case .userBucketedIntoRollout(let userId, let flagKey):                 message = "The user \"\(userId)\" was bucketed into a rollout for feature flag \"\(flagKey)\"."
+        case .userNotBucketedIntoRollout(let userId, let flagKey):              message = "The user \"\(userId)\" was not bucketed into a rollout for feature flag \"\(flagKey)\"."
         }
         
         return message

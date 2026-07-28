@@ -16,13 +16,25 @@
 
 import Foundation
 
+struct HoldoutDecision {
+    let experiment: ExperimentCore
+    let variation: Variation
+
+    init?(from featureDecision: FeatureDecision?) {
+        guard let experiment = featureDecision?.experiment,
+              let variation = featureDecision?.variation else { return nil }
+        self.experiment = experiment
+        self.variation = variation
+    }
+}
+
 struct FeatureDecision {
     var experiment: ExperimentCore?
     let variation: Variation?
     let source: String
     var cmabUUID: String?
     var error = false
-    var holdoutToSend: (experiment: ExperimentCore, variation: Variation)? = nil
+    var holdoutDecision: HoldoutDecision? = nil
 }
 
 struct VariationDecision {
@@ -423,61 +435,35 @@ class DefaultDecisionService: OPTDecisionService {
                 break
             }
         }
+        
+        if storedHoldoutDecision == nil {
+            let flagExpDecision = getVariationForFeatureExperiments(config: config, featureFlag: featureFlag, user: user, userProfileTracker: userProfileTracker, isAsync: isAsync, options: options)
 
-        if let storedHoldout = storedHoldoutDecision {
-            let experimentIds = featureFlag.experimentIds
-            for experimentId in experimentIds {
-                if let experiment = config.getExperiment(id: experimentId) {
-                    if experiment.type == .targetedDelivery {
-                        let decisionResponse = getVariationFromExperimentRule(config: config,
-                                                                              flagKey: featureFlag.key,
-                                                                              rule: experiment,
-                                                                              user: user,
-                                                                              userProfileTracker: userProfileTracker,
-                                                                              isAsync: isAsync,
-                                                                              options: options)
-                        reasons.merge(decisionResponse.reasons)
-                        if let result = decisionResponse.result {
-                            if result.cmabError {
-                                let featureDecision = FeatureDecision(experiment: experiment, variation: nil, source: Constants.DecisionSource.featureTest.rawValue, error: true)
-                                return DecisionResponse(result: featureDecision, reasons: reasons)
-                            } else if let variation = result.variation {
-                                if let holdout = result.holdout {
-                                    let featureDecision = FeatureDecision(experiment: holdout, variation: variation, source: Constants.DecisionSource.holdout.rawValue, cmabUUID: result.cmabUUID)
-                                    return DecisionResponse(result: featureDecision, reasons: reasons)
-                                } else {
-                                    var featureDecision = FeatureDecision(experiment: experiment, variation: variation, source: Constants.DecisionSource.featureTest.rawValue, cmabUUID: result.cmabUUID)
-                                    if let holdoutExperiment = storedHoldout.experiment,
-                                       let holdoutVariation = storedHoldout.variation {
-                                        featureDecision.holdoutToSend = (experiment: holdoutExperiment, variation: holdoutVariation)
-                                    }
-                                    return DecisionResponse(result: featureDecision, reasons: reasons)
-                                }
-                            }
-                        }
-                    } else {
-                        return DecisionResponse(result: storedHoldout, reasons: reasons)
-                    }
-                }
+            reasons.merge(flagExpDecision.reasons)
+
+            if let decision = flagExpDecision.result {
+                return DecisionResponse(result: decision, reasons: reasons)
             }
-
-            return DecisionResponse(result: nil, reasons: reasons)
         }
-
-        let flagExpDecision = getVariationForFeatureExperiments(config: config, featureFlag: featureFlag, user: user, userProfileTracker: userProfileTracker, isAsync: isAsync, options: options)
-
-        reasons.merge(flagExpDecision.reasons)
-
-        if let decision = flagExpDecision.result {
-            return DecisionResponse(result: decision, reasons: reasons)
-        }
-
+        
         let rolloutDecision = getVariationForFeatureRollout(config: config, featureFlag: featureFlag, user: user, options: options)
         reasons.merge(rolloutDecision.reasons)
 
-        if let decision = rolloutDecision.result {
+        if var decision: FeatureDecision = rolloutDecision.result {
+            decision.holdoutDecision = HoldoutDecision(from: storedHoldoutDecision)
+            let info = LogMessage.userBucketedIntoRollout(user.userId, featureFlag.key)
+            logger.i(info)
+            reasons.addInfo(info)
             return DecisionResponse(result: decision, reasons: reasons)
         } else {
+            let info = LogMessage.userNotBucketedIntoRollout(user.userId, featureFlag.key)
+            logger.i(info)
+            reasons.addInfo(info)
+            if let holdout = HoldoutDecision(from: storedHoldoutDecision) {
+                var emptyDecision = FeatureDecision(experiment: nil, variation: nil, source: Constants.DecisionSource.rollout.rawValue)
+                emptyDecision.holdoutDecision = holdout
+                return DecisionResponse(result: emptyDecision, reasons: reasons)
+            }
             return DecisionResponse(result: nil, reasons: reasons)
         }
     }
@@ -896,7 +882,7 @@ class DefaultDecisionService: OPTDecisionService {
     }
     
     // MARK: - Utilities
-    
+
     /// Retrieves the bucketing ID for a user, defaulting to user ID unless overridden in attributes.
     /// - Parameters:
     ///   - userId: The user's ID.

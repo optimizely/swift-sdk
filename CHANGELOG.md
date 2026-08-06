@@ -1,7 +1,7 @@
 # Optimizely Swift SDK Changelog
 
 ## 5.4.2
-July 9, 2026
+July 9th, 2026
 
 ### Fixes
 

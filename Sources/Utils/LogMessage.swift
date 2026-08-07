@@ -157,7 +157,7 @@ extension LogMessage: CustomStringConvertible {
         case .cmabFetchFailed(let key):                                         message = "Failed to fetch CMAB data for experiment \(key)."
         case .cmabNotSupportedInSyncMode:                                       message = "CMAB is not supported in sync mode."
         case .holdoutExcludesTargetedDelivery(let holdoutKey, let ruleKey):      message = "Holdout (\(holdoutKey)) excludes targeted deliveries, skipping holdout for rule (\(ruleKey))."
-        case .holdoutExcludeTargetedDeliveriesEnabled(let holdoutKey):          message = "Holdout '\(holdoutKey)' has excludeTargetedDeliveries enabled, continuing to rollout evaluation."
+        case .holdoutExcludeTargetedDeliveriesEnabled(let holdoutKey):          message = "Holdout \"\(holdoutKey)\" has excludeTargetedDeliveries enabled, continuing to rollout evaluation."
         case .userBucketedIntoRollout(let userId, let flagKey):                 message = "The user \"\(userId)\" was bucketed into a rollout for feature flag \"\(flagKey)\"."
         case .userNotBucketedIntoRollout(let userId, let flagKey):              message = "The user \"\(userId)\" was not bucketed into a rollout for feature flag \"\(flagKey)\"."
         }

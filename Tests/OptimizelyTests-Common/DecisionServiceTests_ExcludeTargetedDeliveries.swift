@@ -328,7 +328,7 @@ class DecisionServiceTests_ExcludeTargetedDeliveries: XCTestCase {
         let decision = user.decide(key: flagKey, options: [.includeReasons])
 
         let reasons = decision.reasons
-        let expectedReason = "Holdout 'holdout_test_key' has excludeTargetedDeliveries enabled, continuing to rollout evaluation."
+        let expectedReason = "Holdout \"holdout_test_key\" has excludeTargetedDeliveries enabled, continuing to rollout evaluation."
         XCTAssertTrue(reasons.contains(expectedReason),
                       "Decision reasons should contain excludeTargetedDeliveries bypass reason. Got: \(reasons)")
     }

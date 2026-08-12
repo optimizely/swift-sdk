@@ -1,7 +1,7 @@
 # Optimizely Swift SDK Changelog
 
 ## 5.4.2
-July 9, 2026
+July 9th, 2026
 
 ### Fixes
 
@@ -15,7 +15,7 @@ June 24, 2026
 
 ### Fixes
 
-- normalize campaign_id, variation_id, and entity_id on decision events ([#642](https://github.com/optimizely/swift-sdk/pull/642))
+- Normalize campaign_id, variation_id, and entity_id on decision events ([#642](https://github.com/optimizely/swift-sdk/pull/642))
 
 ## 5.4.0
 June 22, 2026

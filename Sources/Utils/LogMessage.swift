@@ -1,5 +1,5 @@
 //
-// Copyright 2019-2021, 2023 Optimizely, Inc. and contributors
+// Copyright 2019-2021, 2023, 2026 Optimizely, Inc. and contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -79,6 +79,10 @@ enum LogMessage {
     case cmabFetchSuccess(_ variationId: String, _ cmabUUID: String, _expKey: String)
     case cmabFetchFailed(_ expKey: String)
     case cmabNotSupportedInSyncMode
+    case holdoutExcludesTargetedDelivery(_ holdoutKey: String, _ ruleKey: String)
+    case holdoutExcludeTargetedDeliveriesEnabled(_ holdoutKey: String)
+    case userBucketedIntoRollout(_ userId: String, _ flagKey: String)
+    case userNotBucketedIntoRollout(_ userId: String, _ flagKey: String)
 }
 
 extension LogMessage: CustomStringConvertible {
@@ -152,6 +156,10 @@ extension LogMessage: CustomStringConvertible {
         case .cmabFetchSuccess(let variationId, let cmabUUID, let expKey):      message = "Successfully fetched CMAB decision, variationId: \(variationId), cmabUUID: \(cmabUUID) for experiment \(expKey)."
         case .cmabFetchFailed(let key):                                         message = "Failed to fetch CMAB data for experiment \(key)."
         case .cmabNotSupportedInSyncMode:                                       message = "CMAB is not supported in sync mode."
+        case .holdoutExcludesTargetedDelivery(let holdoutKey, let ruleKey):      message = "Holdout (\(holdoutKey)) excludes targeted deliveries, skipping holdout for rule (\(ruleKey))."
+        case .holdoutExcludeTargetedDeliveriesEnabled(let holdoutKey):          message = "Holdout \"\(holdoutKey)\" has excludeTargetedDeliveries enabled, continuing to rollout evaluation."
+        case .userBucketedIntoRollout(let userId, let flagKey):                 message = "The user \"\(userId)\" was bucketed into a rollout for feature flag \"\(flagKey)\"."
+        case .userNotBucketedIntoRollout(let userId, let flagKey):              message = "The user \"\(userId)\" was not bucketed into a rollout for feature flag \"\(flagKey)\"."
         }
         
         return message

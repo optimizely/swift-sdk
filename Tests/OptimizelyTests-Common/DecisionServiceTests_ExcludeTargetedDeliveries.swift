@@ -48,8 +48,7 @@ class DecisionServiceTests_ExcludeTargetedDeliveries: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        optimizely = OTUtils.createOptimizely(datafileName: "decide_datafile",
-                                             clearUserProfileService: true)
+        optimizely = OTUtils.createOptimizely(datafileName: "decide_datafile", clearUserProfileService: true)
         config = optimizely.config!
     }
 

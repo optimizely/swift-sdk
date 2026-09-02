@@ -1,5 +1,15 @@
 # Optimizely Swift SDK Changelog
 
+## 5.5.0
+September 2, 2026
+
+### New Features
+
+**Holdout Targeted Delivery Exclusion**: Holdouts can now be configured to exclude Targeted Delivery rules, so users held out of experiments still receive their Targeted Delivery experiences. This gives you a cleaner measure of experiment impact without holding users back from ongoing rollouts.
+
+- Add holdout exclusion logic for Targeted Delivery rules ([#654](https://github.com/optimizely/swift-sdk/pull/654))
+- Remove DemoObjcApp (Objective-C demo targets) ([#653](https://github.com/optimizely/swift-sdk/pull/653))
+
 ## 5.4.2
 July 9th, 2026
 

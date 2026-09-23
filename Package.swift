@@ -21,7 +21,7 @@ let package = Package(
         .target(
             name: "Optimizely",
             path: "Sources",
-            exclude: ["CLAUDE.md"],
+            exclude: ["Supporting Files/Info.plist"],
             resources: [.copy("Supporting Files/PrivacyInfo.xcprivacy")]
         )
     ],

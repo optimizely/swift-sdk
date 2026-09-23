@@ -39,20 +39,11 @@ function do_stuff {
   trap "kill $!" EXIT
   trap 'error_handler' ERR
 
-  # we need pod install or test_all.sh fails
- 
   # we skip "test_all.sh" until we have a good reason to repeat it heere
   # 1. this test takes long and also flaky tests can interrupt release process
   # 2. this "test_all.sh" is supposed to pass before starting pre-release
   # 3. prep auto PRs will be tested in CI/CD before starting release process.
 
-  # - cocoapods requires ENV['HOME'] with absolute path
-  #
-  # HOME=$(pwd)
-  # gem install cocoapods -v $COCOAPODS_VERSION
-  # pod _${COCOAPODS_VERSION}_ repo update
-  # pod _${COCOAPODS_VERSION}_ install
-  #
   # myscripts=( "update_version.sh ${VERSION}" "build_all.sh" "test_all.sh" )
   myscripts=( "update_version.sh ${VERSION}" "build_all.sh" )
 
@@ -99,7 +90,7 @@ END
 
   PR_URL=$(hub pull-request -b ${BRANCH} -h ${AUTOBRANCH} -m "${MESSAGE}") 
   echo -e "${COLOR_CYAN}ATTENTION:${COLOR_RESET} review and merge ${COLOR_CYAN}${PR_URL}${COLOR_RESET}"
-  echo "then to release to cocoapods use Git action's Trigger build with the following payload:"
+  echo "then to publish the GitHub release use Git action's Trigger build with the following payload:"
   echo -e "${COLOR_MAGENTA}env:${COLOR_RESET}"
   echo -e "${COLOR_MAGENTA}  - RELEASE=true${COLOR_RESET}"
 }

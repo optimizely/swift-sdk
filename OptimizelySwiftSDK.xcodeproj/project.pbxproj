@@ -2784,7 +2784,6 @@
 				6E75165D22C520D400B2B157 /* Sources */,
 				6E75196022C5211100B2B157 /* Tests */,
 				0B7CB0C321AC5FE2007B77E5 /* Products */,
-				5793E12CFD024A5E8594F535 /* Pods */,
 				87DE4DE091B80D1F13BBD781 /* Frameworks */,
 			);
 			sourceTree = "<group>";
@@ -2810,13 +2809,6 @@
 				6E424C3C263249620081004A /* OptimizelyTests-MultiClients-iOS.xctest */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		5793E12CFD024A5E8594F535 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Pods;
 			sourceTree = "<group>";
 		};
 		6E14CD642423F80B00010234 /* OptimizelyTests-Batch-iOS */ = {

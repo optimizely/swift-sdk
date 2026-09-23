@@ -1,10 +1,7 @@
 # Optimizely Swift SDK
 [![Apache 2.0](https://img.shields.io/github/license/nebula-plugins/gradle-extra-configurations-plugin.svg)](http://www.apache.org/licenses/LICENSE-2.0)
-[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/carthage/carthage)
 [![Build Status](https://github.com/optimizely/swift-sdk/actions/workflows/swift.yml/badge.svg?branch=master)](https://github.com/optimizely/swift-sdk/actions)
 [![Coverage Status](https://coveralls.io/repos/github/optimizely/swift-sdk/badge.svg?branch=master)](https://coveralls.io/github/optimizely/swift-sdk?branch=master)
-[![Platforms](https://img.shields.io/cocoapods/p/OptimizelySwiftSDK.svg)](https://img.shields.io/cocoapods/p/OptimizelySwiftSDK.svg)
-[![Podspec](https://img.shields.io/cocoapods/v/OptimizelySwiftSDK.svg)](https://cocoapods.org/pods/OptimizelySwiftSDK)
 
 This repository houses the Swift SDK for use with Optimizely Feature Experimentation and Optimizely Full Stack (legacy) for Mobile and OTT.
 
@@ -28,7 +25,7 @@ Refer to the [Swift SDK's developer documentation](https://docs.developers.optim
 Please note below that _\<platform\>_ is used to represent the platform on which you are building your app. Currently, we support ```iOS```, ```tvOS```, and ```watchOS``` platforms.
 
 #### Swift Package Manager
-Add the dependency on the Optimizely Swift SDK with Swift Package Manager in `Xcode`
+Add the dependency on the Optimizely Swift SDK with Swift Package Manager in `Xcode`.
 
 1. `File` -> `Swift Packages` -> `Add Package Dependency`
 2. Enter `https://github.com/optimizely/swift-sdk`.
@@ -36,33 +33,11 @@ Add the dependency on the Optimizely Swift SDK with Swift Package Manager in `Xc
 
 If you have a name conflict with other swift packages when you add the Optimizely swift-sdk dependency to Xcode, you can also try with its aliased repo: "https://github.com/optimizely/optimizely-swift-sdk.git".
 
-#### CocoaPods 
-1. Add the following lines to the _Podfile_:<pre>
-```use_frameworks!```
-```pod 'OptimizelySwiftSDK', '~> 5.5.0'```
-</pre>
+#### Migration note
+CocoaPods support has been removed as part of the SDK's move to Swift Package Manager ahead of the ecosystem's end-of-2026 support sunset.
 
-2. Run the following command: <pre>``` pod install ```</pre>
-
-Further installation instructions for Cocoapods: https://guides.cocoapods.org/using/getting-started.html
-
-#### Carthage
-1. Add the following lines to the _Cartfile_:<pre>```github "optimizely/swift-sdk" ~> 4.1.0```</pre>
-
-2. Run the following command:<pre>```carthage update```</pre>
-
-3. Link the frameworks to your project. Go to your project target's **Link Binary With Libraries** and drag over the following from the _Carthage/Build/\<platform\>_ folder: <pre>```Optimizely.framework```</pre>
-
-4. To ensure that proper bitcode-related files and dSYMs are copied when archiving your app, you will need to install a Carthage build script:
-      - Add a new **Run Script** phase in your target's **Build Phase**.</br>
-      - In the script area include:<pre>
-      ```/usr/local/bin/carthage copy-frameworks```</pre>
-      - Add the frameworks to the **Input Files** list:<pre>
-      ```$(SRCROOT)/Carthage/Build/<platform>/Optimizely.framework```</pre>
-      - Add the paths to the copied frameworks to the Output Files list:<pre>
-      ```$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/Optimizely.framework```</pre>
-
-Futher installation instructions for Carthage: https://github.com/Carthage/Carthage
+- Use Swift Package Manager for all new and existing integrations.
+- The module name remains `Optimizely`, so existing `import Optimizely` statements do not change.
 
 ### Feature Management Access
 

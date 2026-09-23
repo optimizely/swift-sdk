@@ -16,6 +16,9 @@ on:
         type: boolean
         description: release
 
+permissions:
+  contents: read
+
 env:
   VERSION: 5.5.0
 

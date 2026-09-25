@@ -17,7 +17,7 @@ Optimizely Rollouts is [free feature flags](https://www.optimizely.com/free-feat
 Refer to the [Swift SDK's developer documentation](https://docs.developers.optimizely.com/experimentation/v4.0.0-full-stack/docs/swift-sdk) for detailed instructions on getting started with using the SDK.
 
 ### Requirements
-* iOS 10.0+ / tvOS 10.0+ / watchOS 3.0+
+* iOS 15.0+ / tvOS 15.0+ / watchOS 8.0+ / macOS 12.0+
 * Swift 5+
 
 ### Install the SDK

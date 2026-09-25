@@ -7,7 +7,7 @@ We welcome contributions and feedback! All contributors must sign our [Contribut
 1. Create a branch off of `master`: `git checkout -b YOUR_NAME/branch_name`.
 2. Commit your changes. We follow the [commit message guidelines](https://github.com/angular/angular/blob/master/CONTRIBUTING.md#-commit-message-guidelines) from Angular.
 3. Make sure to add tests!
-4. Run `swift build` and SwiftLint.
+4. Run `swift build` and SwiftLint ([install via Homebrew](https://github.com/realm/SwiftLint#installation): `brew install swiftlint`).
 5. Run the relevant `xcodebuild test -project OptimizelySwiftSDK.xcodeproj ...` commands for the platforms you changed.
 6. `git push` your changes to GitHub.
 7. Make sure that all unit tests are passing and that there are no merge conflicts between your branch and `master`.

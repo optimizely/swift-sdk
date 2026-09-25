@@ -438,7 +438,7 @@
 			isa = PBXGroup;
 			children = (
 				6E4D2FB822C5454400062EB3 /* OptimizelySwiftSDK.xcodeproj */,
-							);
+			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};

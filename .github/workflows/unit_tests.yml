@@ -2,56 +2,45 @@ name: Reusable action of Unit tests
 
 on: [workflow_call]
 
+permissions:
+  contents: read
+
 env:
   COVERAGE_DIR: ./COVERAGE
 
 jobs:
   unittests:
-    runs-on: macos-14
+    runs-on: xcode-27
     strategy:
       fail-fast: false
       matrix:
-        # github actions are very poor in supporting iOS simulators:
-        # - multiple Xcode versions are pre installed (not all versions and they change supported xcode versions frequently)
-        # - each xcode version has own simulator os versions.
-        # - so to run tests with the target simulator, we have to find a proper xcode version pre-installed and support the target simulator os version.
-        #   also, the xcode version (simulator_xcode_version) and simulator os versions (os) are moving target. We have to change these time to time.
-        # - see "https://github.com/actions/runner-images/blob/main/images/macos/macos-15-Readme.md" for installed macOS, xcode and simulator versions.
         include:
-          - os: 17.2
-            device: "iPhone 15"
+          - os: 27.0
+            device: "iPhone 17"
             scheme: "OptimizelySwiftSDK-iOS"
             test_sdk: "iphonesimulator"
             platform: "iOS Simulator"
             os_type: "iOS"
-            simulator_xcode_version: 15.3
-          - os: 17.4
-            device: "iPad Pro 11-inch (M4)"
+          - os: 27.0
+            device: "iPad Pro 11-inch (M5)"
             scheme: "OptimizelySwiftSDK-iOS"
             test_sdk: "iphonesimulator"
             platform: "iOS Simulator"
             os_type: "iOS"
-            simulator_xcode_version: 15.3
-          - os: 18.2
-            device: "iPhone 16"
+          - os: 27.0
+            device: "iPhone 17 Pro"
             scheme: "OptimizelySwiftSDK-iOS"
             test_sdk: "iphonesimulator"
             platform: "iOS Simulator"
             os_type: "iOS"
-            simulator_xcode_version: 15.3
-          - os: 17.5
-            device: "Apple TV"
+          - os: 27.0
+            device: "Apple TV 4K (3rd generation)"
             scheme: "OptimizelySwiftSDK-tvOS"
             test_sdk: "appletvsimulator"
             platform: "tvOS Simulator"
             os_type: "tvOS"
-            simulator_xcode_version: 15.3
     steps:
       - uses: actions/checkout@v3
-      - uses: maxim-lobanov/setup-xcode@v1
-        with:
-          # macos version and supported simulator_xcode_versions are all related to this xcode_version, so be careful when you upgrade this.
-          xcode-version: 15.3
       - name: set SDK Branch if PR
         env:
           BASE_REF: ${{ github.base_ref }}
@@ -71,25 +60,9 @@ jobs:
           PLATFORM: ${{ matrix.platform }}
           OS: ${{ matrix.os }}
           OS_TYPE: ${{ matrix.os_type }}
-          SIMULATOR_XCODE_VERSION: ${{ matrix.simulator_xcode_version }}
           NAME: ${{ matrix.device }}
         run: |
           gem install coveralls-lcov
-          gem install cocoapods -v '1.15.2'
-          pod repo update
-          pod install
-          HOMEBREW_NO_INSTALL_CLEANUP=true brew update && brew install jq
-
-          # github actions are very poor in supporting iOS simulators:
-          # - to find pre-installed xcode version, run this:
-          ##ls /Applications/
-          # - to find supported simulator os versions, run this (and find simulator with non-error "datapath")
-          # xcrun simctl list --json devices
-
-          # switch to the target xcode version
-          sudo xcode-select -switch /Applications/Xcode_$SIMULATOR_XCODE_VERSION.app
-
-          Scripts/prepare_simulator.sh
           Scripts/run_unit_tests.sh
       - name: Check on failures (Archive Test Results)
         uses: actions/upload-artifact@v4
@@ -97,11 +70,10 @@ jobs:
         with:
           name: build-logs-${{ matrix.device }}-${{ matrix.os }}
           path: build/Logs
-      - # - report coverage for PR and iPhone 16 only (avoid redundant ones)
-        # - use Xcode16+ (older Xcode reports a wrong number)
-        name: Check on success
+      # - report coverage for the main iPhone simulator job only (avoid redundant ones)
+      - name: Check on success
         id: coveralls
-        if: ${{ steps.unit_tests.outcome == 'success' && env.BRANCH == 'master' && env.PLATFORM == 'iOS Simulator' && env.NAME == 'iPhone 16' }}
+        if: ${{ steps.unit_tests.outcome == 'success' && env.BRANCH == 'master' && env.PLATFORM == 'iOS Simulator' && env.NAME == 'iPhone 17' }}
         env:
           PLATFORM: ${{ matrix.platform }}
           NAME: ${{ matrix.device }}

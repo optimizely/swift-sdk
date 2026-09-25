@@ -6,28 +6,27 @@ This is the Optimizely Swift SDK for Feature Experimentation and Full Stack. It 
 ## Getting Started
 
 ### Platform Support
-- iOS 10.0+
-- tvOS 10.0+
-- watchOS 3.0+
+- iOS 15.0+
+- tvOS 15.0+
+- watchOS 8.0+
 - Swift 5+
 
 ### Installation Methods
-- Swift Package Manager (preferred)
-- CocoaPods
+- Swift Package Manager
 
 ### Dependencies
 - SwiftLint (development)
 
 ### Initial Setup
 ```bash
-# Install dependencies
-pod install
-
 # Build the SDK
 swift build
 
 # Verify setup (see "Testing" section for detailed commands)
-swift test
+xcodebuild test \
+  -project OptimizelySwiftSDK.xcodeproj \
+  -scheme OptimizelySwiftSDK-iOS \
+  -destination 'platform=iOS Simulator,name=iPhone 17,OS=27.0'
 ```
 
 ## Project Structure
@@ -124,33 +123,33 @@ The SDK uses protocols for extensibility:
 
 #### Using Swift Package Manager
 ```bash
-# Run all tests
-swift test
+# Resolve package dependencies
+swift package resolve
 
-# Run with verbose output
-swift test --verbose
+# Build the package
+swift build
 ```
 
 #### Using Xcode
 ```bash
 # Run all tests for iOS
 xcodebuild test \
-  -workspace OptimizelySwiftSDK.xcworkspace \
+  -project OptimizelySwiftSDK.xcodeproj \
   -scheme OptimizelySwiftSDK-iOS \
-  -destination 'platform=iOS Simulator,name=iPhone 16'
+  -destination 'platform=iOS Simulator,name=iPhone 17,OS=27.0'
 
 # Run a specific test target
 xcodebuild test \
-  -workspace OptimizelySwiftSDK.xcworkspace \
+  -project OptimizelySwiftSDK.xcodeproj \
   -scheme OptimizelySwiftSDK-iOS \
-  -destination 'platform=iOS Simulator,name=iPhone 16' \
+  -destination 'platform=iOS Simulator,name=iPhone 17,OS=27.0' \
   -only-testing:TestTarget/TestClass
 
 # Run a specific test method
 xcodebuild test \
-  -workspace OptimizelySwiftSDK.xcworkspace \
+  -project OptimizelySwiftSDK.xcodeproj \
   -scheme OptimizelySwiftSDK-iOS \
-  -destination 'platform=iOS Simulator,name=iPhone 16' \
+  -destination 'platform=iOS Simulator,name=iPhone 17,OS=27.0' \
   -only-testing:TestTarget/TestClass/testMethodName
 ```
 
@@ -186,7 +185,7 @@ Similar test targets exist for tvOS and other platforms.
    - Add PBXFileReference entry (~line 2640)
    - Add to file group listing (~line 3180)
    - Add to PBXSourcesBuildPhase for each target (~lines 5200, 5510)
-4. Verify: `swift build && swift test --filter YourTestClass`
+4. Verify with `xcodebuild test -project OptimizelySwiftSDK.xcodeproj -scheme OptimizelySwiftSDK-iOS -only-testing:YourTestTarget/YourTestClass -destination 'platform=iOS Simulator,name=iPhone 17,OS=27.0'`
 
 **Pattern**: Common tests need 2 targets (iOS + tvOS); base classes may need 4 targets.
 
@@ -308,16 +307,10 @@ Month Day, Year
 - ✅ Include: New features, bug fixes, API changes, breaking changes
 - ❌ Exclude: Internal refactoring, test improvements, CI updates, documentation changes
 
-**File 3: `README.md`** (Line ~42)
-```diff
--```pod 'OptimizelySwiftSDK', '~> 5.2.0'```
-+```pod 'OptimizelySwiftSDK', '~> 5.2.1'```
-```
-
 #### 4. Create Release Commit
 ```bash
 # Stage all changes
-git add .github/workflows/swift.yml CHANGELOG.md README.md
+git add .github/workflows/swift.yml CHANGELOG.md
 
 # Create release commit
 git commit -m "chore: prepare release X.Y.Z
@@ -345,7 +338,7 @@ Prepare for Release X.Y.Z: [Brief description of changes]
 #### 6. After PR Merge
 After the release PR is merged to master:
 1. Maintainers will tag the release
-2. GitHub Actions will build and publish to CocoaPods
+2. GitHub Actions will publish the GitHub release
 3. Release notes will be published automatically
 
 ### Example Release PRs
@@ -356,7 +349,6 @@ After the release PR is merged to master:
 - [ ] Created release branch: `prepare-release-X.Y.Z`
 - [ ] Updated VERSION in `.github/workflows/swift.yml`
 - [ ] Added release notes to `CHANGELOG.md` (user-facing changes only)
-- [ ] Updated version in `README.md`
 - [ ] Created commit with message: `chore: prepare release X.Y.Z`
 - [ ] Created PR with proper title and description
 - [ ] All CI tests passing
@@ -446,9 +438,9 @@ git merge origin/master
 xcrun simctl list devices available
 
 # List schemes and build targets
-xcodebuild -workspace OptimizelySwiftSDK.xcworkspace -list
+xcodebuild -project OptimizelySwiftSDK.xcodeproj -list
 
 # Show build settings for a scheme
-xcodebuild -workspace OptimizelySwiftSDK.xcworkspace \
+xcodebuild -project OptimizelySwiftSDK.xcodeproj \
   -scheme OptimizelySwiftSDK-iOS -showBuildSettings
 ```

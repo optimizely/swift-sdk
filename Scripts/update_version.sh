@@ -2,9 +2,7 @@
 
 # update_version.sh
 #
-# This script consistently updates the SDK version numbers in several places:
-# 1. {XcodeProject}/OptimizelySDK/Utils/SDKVersion.swift
-# 2. {XcodeProject}.podspec
+# This script consistently updates the SDK version number in the SDK source.
 #
 # Usage:
 #  $ ./update_version.sh [releaseSDKVersion]
@@ -50,25 +48,5 @@ else
     exit 1
 fi
 
-
-#----------------------------------------------------------------------------------
-# 2. update the SDK version in all podspecs
-#----------------------------------------------------------------------------------
-printf "\n\nReplacing all versions in *.podspec files\n"
-
-curPodSpec="OptimizelySwiftSDK.podspec"
-
-printf "\t[${curPodSpec}] Updating podspec to ${releaseSDKVersion}.\n"
-sed -i '' -e "s/\(s\.version[ ]*\)=[ ]*\".*\"/\1= \"${releaseSDKVersion}\"/g" ${curPodSpec}
-
-# pod-spec-lint cannot be run here due to dependency issues
-# all podspecs will be validated anyway when uploading to CocoaPods repo
-
-printf "Verifying *.podspec files\n"
-
-vm=$(sed -n "s/s\.version.*=.*\"\(.*\)\"/\1/p" ${curPodSpec} | sed "s/ //g" )
-if [ "${vm}" == "${releaseSDKVersion}" ]; then
-    printf "\t[${curPodSpec}] Verified podspec: ${vm} === ${releaseSDKVersion}\n"
-fi
 
 printf "\n\n[SUCCESS] All release-sdk-version settings have been updated successfully!\n\n\n"

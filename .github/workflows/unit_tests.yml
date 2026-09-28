@@ -15,25 +15,25 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: 27.0
+          - os: "27.0"
             device: "iPhone 17"
             scheme: "OptimizelySwiftSDK-iOS"
             test_sdk: "iphonesimulator"
             platform: "iOS Simulator"
             os_type: "iOS"
-          - os: 27.0
+          - os: "27.0"
             device: "iPad Pro 11-inch (M5)"
             scheme: "OptimizelySwiftSDK-iOS"
             test_sdk: "iphonesimulator"
             platform: "iOS Simulator"
             os_type: "iOS"
-          - os: 27.0
+          - os: "27.0"
             device: "iPhone 17 Pro"
             scheme: "OptimizelySwiftSDK-iOS"
             test_sdk: "iphonesimulator"
             platform: "iOS Simulator"
             os_type: "iOS"
-          - os: 27.0
+          - os: "27.0"
             device: "Apple TV 4K (3rd generation)"
             scheme: "OptimizelySwiftSDK-tvOS"
             test_sdk: "appletvsimulator"

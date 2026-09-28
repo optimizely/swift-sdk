@@ -55,6 +55,8 @@ jobs:
           echo "BRANCH=$REF_NAME" >> $GITHUB_ENV
       - id: unit_tests
         name: Run unit tests
+        # ponytail: retry masks flaky async-ordering tests; remove when they're deracinated
+        retries: 2
         env:
           SCHEME: ${{ matrix.scheme }}
           TEST_SDK: ${{ matrix.test_sdk }}

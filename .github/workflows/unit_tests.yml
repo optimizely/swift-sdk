@@ -28,7 +28,7 @@ jobs:
             platform: "iOS Simulator"
             os_type: "iOS"
           - os: "27.0"
-            device: "iPhone 17 Pro"
+            device: "iPhone Air"
             scheme: "OptimizelySwiftSDK-iOS"
             test_sdk: "iphonesimulator"
             platform: "iOS Simulator"

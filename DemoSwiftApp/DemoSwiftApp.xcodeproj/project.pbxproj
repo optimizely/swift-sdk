@@ -8,8 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		25C6F3B621C95D1700C2EBDD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA299EE21E55313B00931399 /* AppDelegate.swift */; };
-		AA5C0DE19BF54A7D8C7E2F01 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA5C0DE29BF54A7D8C7E2F02 /* SceneDelegate.swift */; };
-		AA5C0DE39BF54A7D8C7E2F03 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA5C0DE29BF54A7D8C7E2F02 /* SceneDelegate.swift */; };
 		25C6F3B721C95D1800C2EBDD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA299EE21E55313B00931399 /* AppDelegate.swift */; };
 		25C6F3BC21C95D2100C2EBDD /* VariationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA299EE51E55313B00931399 /* VariationViewController.swift */; };
 		25C6F3BD21C95D2100C2EBDD /* VariationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA299EE51E55313B00931399 /* VariationViewController.swift */; };
@@ -39,6 +37,8 @@
 		75C71C6925E45A980084187E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 75C71C6825E45A980084187E /* Assets.xcassets */; };
 		75C71C8825E45B5C0084187E /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 75C71C8125E45A980084187E /* Optimizely.framework */; };
 		75C71C8925E45B5C0084187E /* Optimizely.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 75C71C8125E45A980084187E /* Optimizely.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		AA5C0DE19BF54A7D8C7E2F01 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA5C0DE29BF54A7D8C7E2F02 /* SceneDelegate.swift */; };
+		AA5C0DE39BF54A7D8C7E2F03 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA5C0DE29BF54A7D8C7E2F02 /* SceneDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -252,10 +252,10 @@
 		75C71C6425E45A980084187E /* ExtensionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionDelegate.swift; sourceTree = "<group>"; };
 		75C71C6825E45A980084187E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		75C71C6A25E45A980084187E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AA5C0DE29BF54A7D8C7E2F02 /* SceneDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		EA299ED81E5530B800931399 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EA299EDE1E55312200931399 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/iOSMain.storyboard; sourceTree = "<group>"; };
 		EA299EE21E55313B00931399 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		AA5C0DE29BF54A7D8C7E2F02 /* SceneDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		EA299EE51E55313B00931399 /* VariationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VariationViewController.swift; sourceTree = "<group>"; };
 		EA5246CC1DC7186800AF6685 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -1009,7 +1009,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 8.0;
+				WATCHOS_DEPLOYMENT_TARGET = 9.0;
 			};
 			name = Debug;
 		};
@@ -1036,7 +1036,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 8.0;
+				WATCHOS_DEPLOYMENT_TARGET = 9.0;
 			};
 			name = Release;
 		};
@@ -1066,7 +1066,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 8.0;
+				WATCHOS_DEPLOYMENT_TARGET = 9.0;
 			};
 			name = Debug;
 		};
@@ -1091,7 +1091,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 8.0;
+				WATCHOS_DEPLOYMENT_TARGET = 9.0;
 			};
 			name = Release;
 		};
@@ -1161,7 +1161,7 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TVOS_DEPLOYMENT_TARGET = 15.0;
-				WATCHOS_DEPLOYMENT_TARGET = 8.0;
+				WATCHOS_DEPLOYMENT_TARGET = 9.0;
 			};
 			name = Debug;
 		};
@@ -1221,7 +1221,7 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TVOS_DEPLOYMENT_TARGET = 15.0;
 				VALIDATE_PRODUCT = YES;
-				WATCHOS_DEPLOYMENT_TARGET = 8.0;
+				WATCHOS_DEPLOYMENT_TARGET = 9.0;
 			};
 			name = Release;
 		};

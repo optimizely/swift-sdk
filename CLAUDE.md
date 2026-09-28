@@ -8,7 +8,7 @@ This is the Optimizely Swift SDK for Feature Experimentation and Full Stack. It 
 ### Platform Support
 - iOS 15.0+
 - tvOS 15.0+
-- watchOS 8.0+
+- watchOS 9.0+
 - Swift 5+
 
 ### Installation Methods

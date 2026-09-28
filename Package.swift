@@ -11,7 +11,7 @@ let package = Package(
         .iOS(.v15),
         .tvOS(.v15),
         .macOS(.v12),
-        .watchOS(.v8)
+        .watchOS(.v9)
     ],
     products: [
         .library(name: "Optimizely",

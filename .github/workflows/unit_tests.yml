@@ -54,6 +54,7 @@ jobs:
         run: |
           echo "BRANCH=$REF_NAME" >> $GITHUB_ENV
       - id: unit_tests
+        name: Run unit tests
         env:
           SCHEME: ${{ matrix.scheme }}
           TEST_SDK: ${{ matrix.test_sdk }}
@@ -62,7 +63,6 @@ jobs:
           OS_TYPE: ${{ matrix.os_type }}
           NAME: ${{ matrix.device }}
         run: |
-          gem install coveralls-lcov
           Scripts/run_unit_tests.sh
       - name: Check on failures (Archive Test Results)
         uses: actions/upload-artifact@v4

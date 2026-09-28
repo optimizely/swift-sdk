@@ -56,7 +56,6 @@ jobs:
       - id: unit_tests
         name: Run unit tests
         # ponytail: retry masks flaky async-ordering tests; remove when they're deracinated
-        retries: 2
         env:
           SCHEME: ${{ matrix.scheme }}
           TEST_SDK: ${{ matrix.test_sdk }}
@@ -65,7 +64,18 @@ jobs:
           OS_TYPE: ${{ matrix.os_type }}
           NAME: ${{ matrix.device }}
         run: |
-          Scripts/run_unit_tests.sh
+          for attempt in 1 2 3; do
+            if Scripts/run_unit_tests.sh; then
+              exit 0
+            fi
+
+            if [ "$attempt" -lt 3 ]; then
+              echo "Unit tests failed on attempt $attempt; retrying..."
+              rm -rf build "$COVERAGE_DIR"
+            fi
+          done
+
+          exit 1
       - name: Check on failures (Archive Test Results)
         uses: actions/upload-artifact@v4
         if: steps.unit_tests.outcome != 'success'

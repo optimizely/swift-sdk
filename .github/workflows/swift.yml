@@ -47,7 +47,7 @@ jobs:
 
   unittests: 
     if: "${{ github.event.inputs.PREP == '' && github.event.inputs.RELEASE == '' }}" 
-    uses: optimizely/swift-sdk/.github/workflows/unit_tests.yml@copilot/remove-cocoapod-support
+    uses: ./.github/workflows/unit_tests.yml
   prepare_for_release:
     runs-on: xcode-27
     if: "${{ github.event.inputs.PREP == 'true' && github.event_name == 'workflow_dispatch' }}"

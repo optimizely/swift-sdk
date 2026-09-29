@@ -86,6 +86,8 @@ jobs:
       - name: Check on success
         id: coveralls
         if: ${{ steps.unit_tests.outcome == 'success' && env.BRANCH == 'master' && env.PLATFORM == 'iOS Simulator' && env.NAME == 'iPhone 17' }}
+        # coverage is informational; a broken report must not fail the test job
+        continue-on-error: true
         env:
           PLATFORM: ${{ matrix.platform }}
           NAME: ${{ matrix.device }}
@@ -94,7 +96,8 @@ jobs:
           sleep 5
       - name: Upload coveralls report
         if: steps.coveralls.outcome == 'success'
-        uses: coverallsapp/github-action@master
+        continue-on-error: true
+        uses: coverallsapp/github-action@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path-to-lcov: ./xccov2lcov/lcov.info

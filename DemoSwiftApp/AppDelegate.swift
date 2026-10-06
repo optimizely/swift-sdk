@@ -32,7 +32,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                      "bool_attr": false,
                                      "semanticVersioning": "1.2"]
     
-    var window: UIWindow?
     var optimizely: OptimizelyClient!
     var user: OptimizelyUserContext!
     
@@ -168,17 +167,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         _ = notificationCenter.addDatafileChangeNotificationListener(datafileListener: { _ in
             DispatchQueue.main.async {
-                #if os(iOS)
-                if let controller = self.window?.rootViewController {
+                if let controller = self.rootViewController() {
+                    #if os(iOS)
                     let alert = UIAlertController(title: "Datafile Changed", message: nil, preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default))
                     controller.present(alert, animated: true)
+                    #else
+                    print("Datafile changed")
+                    #endif
                 }
-                #else
-                print("Datafile changed")
-                #endif
                 
-                if let controller = self.window?.rootViewController as? VariationViewController {
+                if let controller = self.rootViewController() as? VariationViewController {
                     let decision = self.user.decide(key: "show_coupon")
                     controller.showCoupon = decision.enabled
                 }
@@ -223,12 +222,29 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             variationViewController.variationKey = variationKey
             variationViewController.eventKey = eventKey
             
-            window?.rootViewController = variationViewController
+            rootViewController(replaceWith: variationViewController)
         }
     }
     
     func openFailureView() {
-        window?.rootViewController = storyboard.instantiateViewController(withIdentifier: "FailureViewController")
+        rootViewController(replaceWith: storyboard.instantiateViewController(withIdentifier: "FailureViewController"))
+    }
+    
+    // The window is owned by SceneDelegate; these helpers keep the demo's
+    // root-view-controller swaps working under the UIScene life cycle.
+    
+    func rootViewController() -> UIViewController? {
+        (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.window?.rootViewController
+    }
+    
+    func rootViewController(replaceWith controller: UIViewController) {
+        (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.window?.rootViewController = controller
+    }
+    
+    // Called by SceneDelegate before the SDK has produced a decision so the
+    // scene connects with a non-empty window.
+    func initialViewController() -> UIViewController {
+        storyboard.instantiateViewController(withIdentifier: "SplashScreenViewController")
     }
     
     // MARK: - AppDelegate

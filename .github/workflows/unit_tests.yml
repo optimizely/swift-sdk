@@ -11,7 +11,7 @@ env:
 jobs:
   unittests:
     runs-on: xcode-27
-    timeout-minutes: 60
+    timeout-minutes: 90 # up to 3 attempts of ~20-25 min each
     strategy:
       fail-fast: false
       matrix:

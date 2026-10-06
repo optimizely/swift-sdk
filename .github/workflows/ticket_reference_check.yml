@@ -11,6 +11,6 @@ jobs:
 
     steps:
       - name: Check for Jira ticket reference
-        uses: optimizely/github-action-ticket-reference-checker-public@master
+        uses: optimizely/github-action-ticket-reference-checker-public@06871091b2c0e23c0354109a29406bc0e47f6af1 # master
         with:
           bodyRegex: 'FSSDK-(?<ticketNumber>\d+)' 

@@ -10,28 +10,77 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
 
   lint_markdown_files:
-    uses: optimizely/swift-sdk/.github/workflows/lint_markdown.yml@master
+    uses: ./.github/workflows/lint_markdown.yml
 
   integration_tests:
     # ci-helper-tools' trigger script only understands push and pull_request events
     if: github.event_name != 'workflow_dispatch'
-    uses: optimizely/swift-sdk/.github/workflows/integration_tests.yml@master
+    uses: ./.github/workflows/integration_tests.yml
     secrets:
       CI_USER_TOKEN: ${{ secrets.CI_USER_TOKEN }}
 
   package_validation:
     runs-on: xcode-27
+    timeout-minutes: 20
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        persist-credentials: false
     - env:
         SRCCLR_API_TOKEN: ${{ secrets.SRCCLR_API_TOKEN }}
       run: |
         swift package resolve
         swift build
         curl -sSL https://download.sourceclear.com/ci.sh | bash
+
+  # Compile the package for every platform in Package.swift, on the newest and oldest supported Xcode
+  build:
+    name: build (${{ matrix.xcode }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - xcode: Xcode_27.0
+            runner: xcode-27
+          - xcode: Xcode_16.0
+            runner: macos-15
+    env:
+      DEVELOPER_DIR: /Applications/${{ matrix.xcode }}.app/Contents/Developer
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        persist-credentials: false
+    - run: |
+        swift build
+        for target in iphoneos:arm64-apple-ios15.0 appletvos:arm64-apple-tvos15.0 watchos:arm64_32-apple-watchos9.0; do
+          sdk=${target%%:*}
+          echo "::group::$sdk"
+          swift build --scratch-path ".build-$sdk" --triple "${target#*:}" --sdk "$(xcrun --sdk "$sdk" --show-sdk-path)"
+          echo "::endgroup::"
+        done
+
+  # Fails when the PR breaks public API compared to its base branch (expected only for major releases)
+  api_breaking_changes:
+    if: github.event_name == 'pull_request'
+    runs-on: xcode-27
+    timeout-minutes: 20
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        fetch-depth: 0
+        persist-credentials: false
+    - env:
+        BASE_REF: ${{ github.base_ref }}
+      run: swift package diagnose-api-breaking-changes "origin/$BASE_REF"
 
   unittests:
     uses: ./.github/workflows/unit_tests.yml

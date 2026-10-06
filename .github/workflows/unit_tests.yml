@@ -11,6 +11,7 @@ env:
 jobs:
   unittests:
     runs-on: xcode-27
+    timeout-minutes: 60
     strategy:
       fail-fast: false
       matrix:
@@ -40,7 +41,9 @@ jobs:
             platform: "tvOS Simulator"
             os_type: "tvOS"
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - name: set SDK Branch if PR
         env:
           BASE_REF: ${{ github.base_ref }}
@@ -77,7 +80,7 @@ jobs:
 
           exit 1
       - name: Check on failures (Archive Test Results)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: steps.unit_tests.outcome != 'success'
         with:
           name: build-logs-${{ matrix.device }}-${{ matrix.os }}
@@ -97,7 +100,7 @@ jobs:
       - name: Upload coveralls report
         if: steps.coveralls.outcome == 'success'
         continue-on-error: true
-        uses: coverallsapp/github-action@v2
+        uses: coverallsapp/github-action@8d6379e14d29928660c4ba802d8e85393440b329 # v2.3.8
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path-to-lcov: ./xccov2lcov/lcov.info

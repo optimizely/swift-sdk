@@ -10,9 +10,10 @@ on:
 permissions:
   contents: read
 
+# Cancel superseded runs of the same PR; push/manual runs get a unique group so none are queued or dropped
 concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.head_ref || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
 

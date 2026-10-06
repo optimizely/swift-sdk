@@ -2,25 +2,13 @@ name: Swift
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, 'release/**' ]
   pull_request:
-    branches: [ master ]
+    branches: [ master, 'release/**' ]
   workflow_dispatch:
-    inputs:
-      PREP:
-        required: false
-        type: boolean
-        description: prepare to release
-      RELEASE:
-        required: false
-        type: boolean
-        description: release
 
 permissions:
   contents: read
-
-env:
-  VERSION: 5.5.0
 
 jobs:
 
@@ -28,14 +16,12 @@ jobs:
     uses: optimizely/swift-sdk/.github/workflows/lint_markdown.yml@master
 
   integration_tests:
-    if: "${{ github.event.inputs.PREP == '' && github.event.inputs.RELEASE == '' }}"
     uses: optimizely/swift-sdk/.github/workflows/integration_tests.yml@master
     secrets:
       CI_USER_TOKEN: ${{ secrets.CI_USER_TOKEN }}
 
   package_validation:
     runs-on: xcode-27
-    if: "${{ github.event.inputs.PREP == '' && github.event.inputs.RELEASE == '' }}"
     steps:
     - uses: actions/checkout@v3
     - env:
@@ -45,46 +31,5 @@ jobs:
         swift build
         curl -sSL https://download.sourceclear.com/ci.sh | bash
 
-  unittests: 
-    if: "${{ github.event.inputs.PREP == '' && github.event.inputs.RELEASE == '' }}" 
+  unittests:
     uses: ./.github/workflows/unit_tests.yml
-  prepare_for_release:
-    runs-on: xcode-27
-    if: "${{ github.event.inputs.PREP == 'true' && github.event_name == 'workflow_dispatch' }}"
-    steps:
-    - uses: actions/checkout@v3
-    - name: Install Hub by Homebrew
-      run: |
-        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-        brew install hub
-    - id: prepare_for_release
-      name: Prepare for release
-      env:
-        HOME: 'home/runner'
-        REPO_SLUG: ${{ github.repository }}
-        BRANCH: ${{ github.ref_name }}
-        GITHUB_USER: optibot
-        GITHUB_TOKEN: ${{ secrets.CI_USER_TOKEN }}
-      run: |
-        Scripts/run_prep.sh
-    - name: Check prepare for release failure
-      if: steps.prepare_for_release.conclusion == 'failure'
-      run: cat /tmp/build.out
-
-  release:
-    if: "${{github.event.inputs.RELEASE == 'true' && github.event_name == 'workflow_dispatch' }}"
-    runs-on: xcode-27
-    steps:
-    - uses: actions/checkout@v3
-    - name: Install Hub by Homebrew
-      run: |
-        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-        brew install hub
-    - name: Publish GitHub release
-      env:
-        HOME: 'home/runner'
-        REPO_SLUG: ${{ github.repository }}
-        BRANCH: ${{ github.ref_name }}
-        GITHUB_TOKEN: ${{ secrets.CI_USER_TOKEN }}
-      run: |
-        Scripts/run_release.sh

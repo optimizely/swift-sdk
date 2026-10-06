@@ -94,7 +94,7 @@ Customers upgrade by version constraint (`~> 5.x`); upgrades MUST be safe.
   with `origin/master`.
 - PR descriptions MUST follow `pull_request_template.md`: Summary (what and why),
   Test plan, and Issues (ticket reference, e.g., FSSDK-XXXXX, or justification).
-- Contributors MUST NOT bump the SDK version; version files (`.github/workflows/swift.yml`,
+- Contributors MUST NOT bump the SDK version; version files (`Sources/Utils/SDKVersion.swift`,
   `CHANGELOG.md`, `README.md`) are updated by maintainers in release PRs only.
 - Changes require review from a code owner.
 

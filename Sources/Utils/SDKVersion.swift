@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-/// Do not edit this field.
-/// - It is auto updated (Scripts/updated_version.sh) to reflect the current version
+/// Do not edit this field outside a release PR.
+/// - Merging a change to this value into master (or release/**) publishes a GitHub release (.github/workflows/release.yml)
 /// - Do not put underscores in the name (Swiftlint can modify unexpectedly)
 let OPTIMIZELYSDKVERSION = "5.5.0"

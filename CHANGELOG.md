@@ -1,5 +1,16 @@
 # Optimizely Swift SDK Changelog
 
+## 6.0.0
+October 7, 2026
+
+### Breaking Changes
+
+**Swift Package Manager only**: The SDK is now distributed exclusively through Swift Package Manager. CocoaPods support has been removed, and the `OptimizelySwiftSDK` podspec will no longer be published.
+
+**Raised minimum platform versions**: To build with Xcode 27, the minimum deployment targets are now iOS 15.0, tvOS 15.0, macOS 12.0, and watchOS 9.0.
+
+- Migrate Swift SDK distribution, CI, and releases to SPM on Xcode 27 ([#658](https://github.com/optimizely/swift-sdk/pull/658))
+
 ## 5.5.0
 September 2, 2026
 

@@ -9,13 +9,14 @@ jobs:
   integration_tests:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v7
       with:
         # You should create a personal access token and store it in your repository
         token: ${{ secrets.CI_USER_TOKEN }}
         repository: 'optimizely/ci-helper-tools'
         path: 'home/runner/ci-helper-tools'
         ref: 'master'
+        persist-credentials: false
     - name: set SDK Branch if PR
       env: 
         HEAD_REF: ${{ github.head_ref }}

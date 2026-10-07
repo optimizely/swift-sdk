@@ -6,12 +6,13 @@ jobs:
   lint_markdown:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v7
+      with:
+        persist-credentials: false
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: '2.6'
-        bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+        ruby-version: '3.3'
     - name: Install gem and Run tests
       run: |
         cd ../../

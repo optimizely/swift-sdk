@@ -2,8 +2,14 @@ name: Release
 
 # Merging a change to OPTIMIZELYSDKVERSION into master (or release/**) tags v<version>
 # and publishes a GitHub release with that version's CHANGELOG.md section as notes.
+# On a release PR it only validates, so a missing CHANGELOG section fails before merge.
+# Run manually (workflow_dispatch) to retry a failed release from the branch's latest commit.
 on:
+  workflow_dispatch:
   push:
+    branches: [ master, 'release/**' ]
+    paths: [ Sources/Utils/SDKVersion.swift ]
+  pull_request:
     branches: [ master, 'release/**' ]
     paths: [ Sources/Utils/SDKVersion.swift ]
 
@@ -12,6 +18,7 @@ permissions:
 
 jobs:
   publish:
+    if: github.event_name == 'pull_request' || github.ref_name == 'master' || startsWith(github.ref_name, 'release/')
     runs-on: ubuntu-latest
     env:
       GH_TOKEN: ${{ github.token }}
@@ -29,6 +36,9 @@ jobs:
         fi
         awk -v h="## $VERSION" '$0==h{f=1;next} /^## [0-9]/{if(f)exit} f' CHANGELOG.md > notes.md
         [ -s notes.md ] || { echo "CHANGELOG.md has no '## $VERSION' section"; exit 1; }
+        if [[ "$GITHUB_EVENT_NAME" == pull_request ]]; then
+          echo "v$VERSION is ready to release"; exit 0
+        fi
         FLAGS=()
         [[ "$VERSION" == *-* ]] && FLAGS+=(--prerelease)
         [[ "$GITHUB_REF_NAME" != master ]] && FLAGS+=(--latest=false)

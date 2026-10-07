@@ -1,0 +1,36 @@
+name: Release
+
+# Merging a change to OPTIMIZELYSDKVERSION into master (or release/**) tags v<version>
+# and publishes a GitHub release with that version's CHANGELOG.md section as notes.
+on:
+  push:
+    branches: [ master, 'release/**' ]
+    paths: [ Sources/Utils/SDKVersion.swift ]
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+    - uses: actions/checkout@v7
+      with:
+        fetch-depth: 0
+        persist-credentials: false
+    - name: Tag and publish GitHub release
+      run: |
+        VERSION=$(sed -nE 's/.*OPTIMIZELYSDKVERSION = "([^"]+)".*/\1/p' Sources/Utils/SDKVersion.swift)
+        [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?$ ]] || { echo "Invalid version: $VERSION"; exit 1; }
+        if git rev-parse -q --verify "refs/tags/v$VERSION" >/dev/null; then
+          echo "v$VERSION already released"; exit 0
+        fi
+        awk -v h="## $VERSION" '$0==h{f=1;next} /^## [0-9]/{if(f)exit} f' CHANGELOG.md > notes.md
+        [ -s notes.md ] || { echo "CHANGELOG.md has no '## $VERSION' section"; exit 1; }
+        FLAGS=()
+        [[ "$VERSION" == *-* ]] && FLAGS+=(--prerelease)
+        [[ "$GITHUB_REF_NAME" != master ]] && FLAGS+=(--latest=false)
+        gh release create "v$VERSION" --target "$GITHUB_SHA" --title "Release $VERSION" \
+          --notes-file notes.md "${FLAGS[@]}"

@@ -277,15 +277,19 @@ git pull origin master
 git checkout -b prepare-release-X.Y.Z
 ```
 
+To patch an older version line, branch from its last tag into `release/X.Y.x`, apply the fix there, and target the release PR at that branch:
+```bash
+git checkout -b release/5.4.x v5.4.2
+```
+
 #### 3. Update Version Files
 
-Update exactly **3 files**:
+Update exactly **2 files**:
 
-**File 1: `.github/workflows/swift.yml`** (Line ~20)
+**File 1: `Sources/Utils/SDKVersion.swift`**
 ```diff
- env:
--  VERSION: 5.2.0
-+  VERSION: 5.2.1
+-let OPTIMIZELYSDKVERSION = "5.2.0"
++let OPTIMIZELYSDKVERSION = "5.2.1"
 ```
 
 **File 2: `CHANGELOG.md`** (Add new section at top)
@@ -310,7 +314,7 @@ Month Day, Year
 #### 4. Create Release Commit
 ```bash
 # Stage all changes
-git add .github/workflows/swift.yml CHANGELOG.md
+git add Sources/Utils/SDKVersion.swift CHANGELOG.md
 
 # Create release commit
 git commit -m "chore: prepare release X.Y.Z
@@ -336,10 +340,12 @@ Prepare for Release X.Y.Z: [Brief description of changes]
 ```
 
 #### 6. After PR Merge
-After the release PR is merged to master:
-1. Maintainers will tag the release
-2. GitHub Actions will publish the GitHub release
-3. Release notes will be published automatically
+Merging a change to `SDKVersion.swift` into `master` or `release/**` runs `.github/workflows/release.yml`, which:
+1. Tags `vX.Y.Z` on the merged commit (skipped if the tag already exists, so re-running is safe)
+2. Publishes the GitHub release using the `## X.Y.Z` section of `CHANGELOG.md` as notes (fails if the section is missing)
+3. Marks `-suffix` versions (e.g. `5.6.0-beta`) as pre-releases, and releases from `release/**` as not "Latest"
+
+For a `release/**` release, copy its CHANGELOG entry to `master` afterwards.
 
 ### Example Release PRs
 - **5.2.0 Release**: [PR #613](https://github.com/optimizely/swift-sdk/pull/613) (minor release with new features)
@@ -347,12 +353,13 @@ After the release PR is merged to master:
 
 ### Release Checklist
 - [ ] Created release branch: `prepare-release-X.Y.Z`
-- [ ] Updated VERSION in `.github/workflows/swift.yml`
+- [ ] Updated `OPTIMIZELYSDKVERSION` in `Sources/Utils/SDKVersion.swift`
 - [ ] Added release notes to `CHANGELOG.md` (user-facing changes only)
 - [ ] Created commit with message: `chore: prepare release X.Y.Z`
 - [ ] Created PR with proper title and description
 - [ ] All CI tests passing
 - [ ] PR approved and merged
+- [ ] Release workflow published `vX.Y.Z`
 
 ## Key APIs & Usage
 

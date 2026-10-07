@@ -11,7 +11,7 @@ env:
 jobs:
   unittests:
     runs-on: xcode-27
-    timeout-minutes: 90 # up to 3 attempts of ~20-25 min each
+    timeout-minutes: 45
     strategy:
       fail-fast: false
       matrix:
@@ -58,7 +58,6 @@ jobs:
           echo "BRANCH=$REF_NAME" >> $GITHUB_ENV
       - id: unit_tests
         name: Run unit tests
-        # ponytail: retry masks flaky async-ordering tests; remove when they're deracinated
         env:
           SCHEME: ${{ matrix.scheme }}
           TEST_SDK: ${{ matrix.test_sdk }}
@@ -66,25 +65,13 @@ jobs:
           OS: ${{ matrix.os }}
           OS_TYPE: ${{ matrix.os_type }}
           NAME: ${{ matrix.device }}
-        run: |
-          for attempt in 1 2 3; do
-            if Scripts/run_unit_tests.sh; then
-              exit 0
-            fi
-
-            if [ "$attempt" -lt 3 ]; then
-              echo "Unit tests failed on attempt $attempt; retrying..."
-              rm -rf build "$COVERAGE_DIR"
-            fi
-          done
-
-          exit 1
+        run: Scripts/run_unit_tests.sh
       - name: Check on failures (Archive Test Results)
         uses: actions/upload-artifact@v7
-        if: steps.unit_tests.outcome != 'success'
+        if: failure() && steps.unit_tests.outcome == 'failure'
         with:
           name: build-logs-${{ matrix.device }}-${{ matrix.os }}
-          path: build/Logs
+          path: COVERAGE/Logs/Test
       # - report coverage for the main iPhone simulator job only (avoid redundant ones)
       - name: Check on success
         id: coveralls

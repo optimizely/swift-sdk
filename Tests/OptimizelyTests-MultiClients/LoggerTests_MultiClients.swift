@@ -28,7 +28,8 @@ class LoggerTests_MultiClients: XCTestCase {
         let numThreads = 10
         let numEventsPerThread = 100
         
-        let result = OTUtils.runConcurrent(count: numThreads) { item in
+        // checks for crashes, not speed; 8000 os_log calls can take over the default 10s on a busy CI runner
+        let result = OTUtils.runConcurrent(count: numThreads, timeoutInSecs: 60) { item in
             for i in 0..<numEventsPerThread {
                 logger.e("error-level: \(item)-\(i)")
                 logger.w("warning-level: \(item)-\(i)")
@@ -50,7 +51,8 @@ class LoggerTests_MultiClients: XCTestCase {
         let numThreads = 10
         let numEventsPerThread = 100
 
-        let result = OTUtils.runConcurrent(count: numThreads) { item in
+        // checks for crashes, not speed; 8000 os_log calls can take over the default 10s on a busy CI runner
+        let result = OTUtils.runConcurrent(count: numThreads, timeoutInSecs: 60) { item in
             let logger = DefaultLogger()
 
             for i in 0..<numEventsPerThread {

@@ -340,7 +340,7 @@ extension OptimizelyUserContext {
     @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
     public func fetchQualifiedSegments(options: [OptimizelySegmentOption] = []) async throws {
         return try await withCheckedThrowingContinuation { continuation in
-            fetchQualifiedSegments { error in
+            fetchQualifiedSegments(options: options) { error in
                 if let error = error {
                     continuation.resume(throwing: error)
                 } else {

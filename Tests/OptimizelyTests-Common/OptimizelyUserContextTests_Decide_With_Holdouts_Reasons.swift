@@ -91,11 +91,13 @@ class OptimizelyUserContextTests_Decide_With_Holdouts_Reasons: XCTestCase {
         let decision = user.decide(key: featureKey, options: [.includeReasons])
         // Assertions
         XCTAssertEqual(decision.flagKey, "feature_1", "Expected flagKey to be 'feature_1'")
-        XCTAssertEqual(decision.variationKey, "key_holdout_variation", "Expected variationKey to be 'key_holdout_variation'")
+        XCTAssertNil(decision.variationKey, "Every rule is held out, so no rule serves")
+        XCTAssertNil(decision.ruleKey)
         XCTAssertFalse(decision.enabled, "Feature should be disabled in holdout")
         XCTAssert(decision.reasons.contains(LogMessage.userBucketedIntoVariationInHoldout(kUserId, "key_holdout", "key_holdout_variation").reason))
+        XCTAssert(decision.reasons.contains(LogMessage.userNotBucketedIntoRollout(kUserId, featureKey).reason))
     }
-    
+
     /// Test when user is not bucketed into any holdout for feature_2 (excluded)
     func testDecideReasons_userNotBucketedIntoExcludedHoldout() {
         // Global holdout with 5% traffice

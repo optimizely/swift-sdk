@@ -69,10 +69,9 @@ class DecisionServiceTests_ExcludeTargetedDeliveries: XCTestCase {
         optimizely.decisionService = mockDecisionService
 
         let user = optimizely.createUserContext(userId: userId)
-        let decision = user.decide(key: flagKey)
+        let decision = user.decide(key: flagKey, options: [.includeReasons])
 
-        XCTAssertEqual(decision.variationKey, "holdout_variation_key")
-        XCTAssertFalse(decision.enabled)
+        assertHeldOutThenServedByEveryoneElse(decision)
     }
 
     // MARK: - excludeTargetedDeliveries = true with TD rule
@@ -92,10 +91,9 @@ class DecisionServiceTests_ExcludeTargetedDeliveries: XCTestCase {
         optimizely.decisionService = mockDecisionService
 
         let user = optimizely.createUserContext(userId: userId)
-        let decision = user.decide(key: flagKey)
+        let decision = user.decide(key: flagKey, options: [.includeReasons])
 
-        XCTAssertEqual(decision.variationKey, "holdout_variation_key")
-        XCTAssertFalse(decision.enabled)
+        assertHeldOutThenServedByEveryoneElse(decision)
     }
 
     // MARK: - excludeTargetedDeliveries = true with AB rule
@@ -115,10 +113,9 @@ class DecisionServiceTests_ExcludeTargetedDeliveries: XCTestCase {
         optimizely.decisionService = mockDecisionService
 
         let user = optimizely.createUserContext(userId: userId)
-        let decision = user.decide(key: flagKey)
+        let decision = user.decide(key: flagKey, options: [.includeReasons])
 
-        XCTAssertEqual(decision.variationKey, "holdout_variation_key")
-        XCTAssertFalse(decision.enabled)
+        assertHeldOutThenServedByEveryoneElse(decision)
     }
 
     // MARK: - Backward compatibility (field missing from JSON)
@@ -148,10 +145,9 @@ class DecisionServiceTests_ExcludeTargetedDeliveries: XCTestCase {
         optimizely.decisionService = mockDecisionService
 
         let user = optimizely.createUserContext(userId: userId)
-        let decision = user.decide(key: flagKey)
+        let decision = user.decide(key: flagKey, options: [.includeReasons])
 
-        XCTAssertEqual(decision.variationKey, "holdout_variation_key")
-        XCTAssertFalse(decision.enabled)
+        assertHeldOutThenServedByEveryoneElse(decision)
     }
 
     // MARK: - Global holdout with excludeTargetedDeliveries true and TD rule
@@ -196,10 +192,9 @@ class DecisionServiceTests_ExcludeTargetedDeliveries: XCTestCase {
         optimizely.decisionService = mockDecisionService
 
         let user = optimizely.createUserContext(userId: userId)
-        let decision = user.decide(key: flagKey)
+        let decision = user.decide(key: flagKey, options: [.includeReasons])
 
-        XCTAssertEqual(decision.variationKey, "holdout_variation_key")
-        XCTAssertFalse(decision.enabled)
+        assertHeldOutThenServedByEveryoneElse(decision)
     }
 
     // MARK: - Forced decision beats 100% traffic local holdout
@@ -278,10 +273,10 @@ class DecisionServiceTests_ExcludeTargetedDeliveries: XCTestCase {
         // Delivery (rollout) rules are evaluated — Everyone Else matches
         XCTAssertNotNil(response.result?.variation)
         XCTAssertEqual(response.result?.source, Constants.DecisionSource.rollout.rawValue)
-        // Holdout is queued so its impression fires via holdoutDecision
-        XCTAssertNotNil(response.result?.holdoutDecision)
-        XCTAssertEqual(response.result?.holdoutDecision?.experiment.key, "holdout_test_key")
-        XCTAssertEqual(response.result?.holdoutDecision?.variation.key, "holdout_variation_key")
+        // Holdout is queued so its impression fires via holdoutDecisions
+        XCTAssertEqual(response.result?.holdoutDecisions.count, 1)
+        XCTAssertEqual(response.result?.holdoutDecisions.first?.experiment.key, "holdout_test_key")
+        XCTAssertEqual(response.result?.holdoutDecisions.first?.variation.key, "holdout_variation_key")
     }
 
     // MARK: - Local holdout with excludeTrue still applies
@@ -301,10 +296,9 @@ class DecisionServiceTests_ExcludeTargetedDeliveries: XCTestCase {
         optimizely.decisionService = mockDecisionService
 
         let user = optimizely.createUserContext(userId: userId)
-        let decision = user.decide(key: flagKey)
+        let decision = user.decide(key: flagKey, options: [.includeReasons])
 
-        XCTAssertEqual(decision.variationKey, "holdout_variation_key")
-        XCTAssertFalse(decision.enabled)
+        assertHeldOutThenServedByEveryoneElse(decision)
     }
 
     // MARK: - Decision reason for excludeTargetedDeliveries bypass
@@ -363,11 +357,11 @@ class DecisionServiceTests_ExcludeTargetedDeliveries: XCTestCase {
         wait(for: [exp], timeout: 1)
     }
 
-    // MARK: - Global holdout excludeTrue, TD matches => holdoutDecision populated
+    // MARK: - Global holdout excludeTrue, TD matches => holdoutDecisions populated
 
     // When excludeTargetedDeliveries=true, experiment rules are skipped and the
     // decision comes from the delivery (rollout) path. The holdout is queued via
-    // holdoutDecision so its impression fires alongside the rollout impression.
+    // holdoutDecisions so its impression fires alongside the rollout impression.
     func testGlobalHoldout_ExcludeTrue_HoldoutEventSent() {
         var experiment = config.getExperiment(id: experimentRuleId)!
         experiment.type = .targetedDelivery
@@ -393,8 +387,15 @@ class DecisionServiceTests_ExcludeTargetedDeliveries: XCTestCase {
         XCTAssertNotNil(response.result)
         // Experiments are skipped; decision comes from delivery (rollout) rules
         XCTAssertEqual(response.result?.source, Constants.DecisionSource.rollout.rawValue)
-        XCTAssertNotNil(response.result?.holdoutDecision)
-        XCTAssertEqual(response.result?.holdoutDecision?.experiment.key, "holdout_test_key")
-        XCTAssertEqual(response.result?.holdoutDecision?.variation.key, "holdout_variation_key")
+        XCTAssertEqual(response.result?.holdoutDecisions.count, 1)
+        XCTAssertEqual(response.result?.holdoutDecisions.first?.experiment.key, "holdout_test_key")
+        XCTAssertEqual(response.result?.holdoutDecisions.first?.variation.key, "holdout_variation_key")
+    }
+
+    private func assertHeldOutThenServedByEveryoneElse(_ decision: OptimizelyDecision, file: StaticString = #filePath, line: UInt = #line) {
+        XCTAssert(decision.reasons.contains(LogMessage.userBucketedIntoVariationInHoldout(userId, "holdout_test_key", "holdout_variation_key").reason), file: file, line: line)
+        XCTAssertEqual(decision.ruleKey, "18322080788", file: file, line: line)
+        XCTAssertEqual(decision.variationKey, "18257766532", file: file, line: line)
+        XCTAssertTrue(decision.enabled, file: file, line: line)
     }
 }

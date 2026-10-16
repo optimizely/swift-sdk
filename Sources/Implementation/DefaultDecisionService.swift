@@ -20,6 +20,11 @@ struct HoldoutDecision {
     let experiment: ExperimentCore
     let variation: Variation
 
+    init(experiment: ExperimentCore, variation: Variation) {
+        self.experiment = experiment
+        self.variation = variation
+    }
+
     init?(from featureDecision: FeatureDecision?) {
         guard let experiment = featureDecision?.experiment,
               let variation = featureDecision?.variation else { return nil }
@@ -34,7 +39,7 @@ struct FeatureDecision {
     let source: String
     var cmabUUID: String?
     var error = false
-    var holdoutDecision: HoldoutDecision? = nil
+    var holdoutDecisions: [HoldoutDecision] = []
 }
 
 struct VariationDecision {
@@ -436,21 +441,27 @@ class DefaultDecisionService: OPTDecisionService {
             }
         }
         
+        var holdoutDecisions = [HoldoutDecision(from: storedHoldoutDecision)].compactMap { $0 }
+
         if storedHoldoutDecision == nil {
             let flagExpDecision = getVariationForFeatureExperiments(config: config, featureFlag: featureFlag, user: user, userProfileTracker: userProfileTracker, isAsync: isAsync, options: options)
 
             reasons.merge(flagExpDecision.reasons)
 
             if let decision = flagExpDecision.result {
-                return DecisionResponse(result: decision, reasons: reasons)
+                if decision.variation != nil || decision.error {
+                    return DecisionResponse(result: decision, reasons: reasons)
+                }
+                holdoutDecisions += decision.holdoutDecisions
             }
         }
         
         let rolloutDecision = getVariationForFeatureRollout(config: config, featureFlag: featureFlag, user: user, options: options)
         reasons.merge(rolloutDecision.reasons)
+        holdoutDecisions += rolloutDecision.result?.holdoutDecisions ?? []
 
-        if var decision: FeatureDecision = rolloutDecision.result {
-            decision.holdoutDecision = HoldoutDecision(from: storedHoldoutDecision)
+        if var decision: FeatureDecision = rolloutDecision.result, decision.variation != nil {
+            decision.holdoutDecisions = holdoutDecisions
             let info = LogMessage.userBucketedIntoRollout(user.userId, featureFlag.key)
             logger.i(info)
             reasons.addInfo(info)
@@ -459,9 +470,9 @@ class DefaultDecisionService: OPTDecisionService {
             let info = LogMessage.userNotBucketedIntoRollout(user.userId, featureFlag.key)
             logger.i(info)
             reasons.addInfo(info)
-            if let holdout = HoldoutDecision(from: storedHoldoutDecision) {
+            if !holdoutDecisions.isEmpty {
                 var emptyDecision = FeatureDecision(experiment: nil, variation: nil, source: Constants.DecisionSource.rollout.rawValue)
-                emptyDecision.holdoutDecision = holdout
+                emptyDecision.holdoutDecisions = holdoutDecisions
                 return DecisionResponse(result: emptyDecision, reasons: reasons)
             }
             return DecisionResponse(result: nil, reasons: reasons)
@@ -492,6 +503,8 @@ class DefaultDecisionService: OPTDecisionService {
             reasons.addInfo(info)
         }
         
+        var holdoutDecisions = [HoldoutDecision]()
+
         // Check if there are any experiment IDs inside feature flag
         // Evaluate each experiment ID and return the first bucketed experiment variation
         for experimentId in experimentIds {
@@ -508,15 +521,13 @@ class DefaultDecisionService: OPTDecisionService {
                     if result.cmabError {
                         // For CMAB - we're supposed to get decision from the server.
                         // If failed, return decision with nil variation, so the client can take care of them.
-                        let featureDecision = FeatureDecision(experiment: experiment, variation: nil, source: Constants.DecisionSource.featureTest.rawValue, error: true)
+                        let featureDecision = FeatureDecision(experiment: experiment, variation: nil, source: Constants.DecisionSource.featureTest.rawValue, error: true, holdoutDecisions: holdoutDecisions)
                         return DecisionResponse(result: featureDecision, reasons: reasons)
                     } else if let variation = result.variation {
-                        // Check if this variation came from a holdout
                         if let holdout = result.holdout {
-                            let featureDecision = FeatureDecision(experiment: holdout, variation: variation, source: Constants.DecisionSource.holdout.rawValue, cmabUUID: result.cmabUUID)
-                            return DecisionResponse(result: featureDecision, reasons: reasons)
+                            holdoutDecisions.append(HoldoutDecision(experiment: holdout, variation: variation))
                         } else {
-                            let featureDecision = FeatureDecision(experiment: experiment, variation: variation, source: Constants.DecisionSource.featureTest.rawValue, cmabUUID: result.cmabUUID)
+                            let featureDecision = FeatureDecision(experiment: experiment, variation: variation, source: Constants.DecisionSource.featureTest.rawValue, cmabUUID: result.cmabUUID, holdoutDecisions: holdoutDecisions)
                             return DecisionResponse(result: featureDecision, reasons: reasons)
                         }
                     }
@@ -524,6 +535,10 @@ class DefaultDecisionService: OPTDecisionService {
             }
         }
         
+        if !holdoutDecisions.isEmpty {
+            let featureDecision = FeatureDecision(experiment: nil, variation: nil, source: Constants.DecisionSource.featureTest.rawValue, holdoutDecisions: holdoutDecisions)
+            return DecisionResponse(result: featureDecision, reasons: reasons)
+        }
         return DecisionResponse(result: nil, reasons: reasons)
     }
     
@@ -564,6 +579,7 @@ class DefaultDecisionService: OPTDecisionService {
             return DecisionResponse(result: nil, reasons: reasons)
         }
         
+        var holdoutDecisions = [HoldoutDecision]()
         var index = 0
         while index < rolloutRules.count {
             let decisionResponse = getVariationFromDeliveryRule(config: config,
@@ -576,21 +592,23 @@ class DefaultDecisionService: OPTDecisionService {
             let result = decisionResponse.result!
 
             if let variation = result.variation {
-                let rule = rolloutRules[index]
-                // Check if this variation came from a holdout
                 if let holdout = result.holdout {
-                    let featureDecision = FeatureDecision(experiment: holdout, variation: variation, source: Constants.DecisionSource.holdout.rawValue)
-                    return DecisionResponse(result: featureDecision, reasons: reasons)
-                } else {
-                    let featureDecision = FeatureDecision(experiment: rule, variation: variation, source: Constants.DecisionSource.rollout.rawValue)
-                    return DecisionResponse(result: featureDecision, reasons: reasons)
+                    holdoutDecisions.append(HoldoutDecision(experiment: holdout, variation: variation))
+                    index += 1
+                    continue
                 }
+                let featureDecision = FeatureDecision(experiment: rolloutRules[index], variation: variation, source: Constants.DecisionSource.rollout.rawValue, holdoutDecisions: holdoutDecisions)
+                return DecisionResponse(result: featureDecision, reasons: reasons)
             }
 
             // the last rule is special for "Everyone Else"
             index = result.skipToEveryoneElse ? (rolloutRules.count - 1) : (index + 1)
         }
         
+        if !holdoutDecisions.isEmpty {
+            let featureDecision = FeatureDecision(experiment: nil, variation: nil, source: Constants.DecisionSource.rollout.rawValue, holdoutDecisions: holdoutDecisions)
+            return DecisionResponse(result: featureDecision, reasons: reasons)
+        }
         return DecisionResponse(result: nil, reasons: reasons)
     }
     

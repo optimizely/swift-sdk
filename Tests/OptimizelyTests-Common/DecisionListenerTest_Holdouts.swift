@@ -132,8 +132,9 @@ class DecisionListenerTests_Holdouts: XCTestCase {
             XCTAssertEqual(type, Constants.DecisionType.flag.rawValue)
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.flagKey] as! String, self.kFeatureKey)
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.enabled] as! Bool, false)
-            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.variationKey] as! String, "key_holdout_variation")
-            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.ruleKey] as! String, "key_holdout")
+            XCTAssertTrue(decisionInfo[Constants.DecisionInfoKeys.variationKey] is NSNull)
+            XCTAssertTrue(decisionInfo[Constants.DecisionInfoKeys.ruleKey] is NSNull)
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.decisionEventDispatched] as! Bool, true)
             exp.fulfill()
         }
         
@@ -183,8 +184,9 @@ class DecisionListenerTests_Holdouts: XCTestCase {
             XCTAssertEqual(type, Constants.DecisionType.flag.rawValue)
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.flagKey] as! String, self.kFeatureKey)
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.enabled] as! Bool, false)
-            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.variationKey] as! String, "key_holdout_variation")
-            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.ruleKey] as! String, "holdout_key_2")
+            XCTAssertTrue(decisionInfo[Constants.DecisionInfoKeys.variationKey] is NSNull)
+            XCTAssertTrue(decisionInfo[Constants.DecisionInfoKeys.ruleKey] is NSNull)
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.decisionEventDispatched] as! Bool, true)
             exp.fulfill()
         }
         

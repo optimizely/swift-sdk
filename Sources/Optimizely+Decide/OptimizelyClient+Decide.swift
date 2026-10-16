@@ -324,7 +324,7 @@ extension OptimizelyClient {
                                     cmabUUID: flagDecision?.cmabUUID)
                 decisionEventDispatched = true
             }
-            if let holdoutInfo = flagDecision?.holdoutDecision {
+            for holdoutInfo in flagDecision?.holdoutDecisions ?? [] {
                 sendImpressionEvent(experiment: holdoutInfo.experiment,
                                     variation: holdoutInfo.variation,
                                     userId: userId,

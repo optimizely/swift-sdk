@@ -531,7 +531,7 @@ extension BatchEventBuilderTests_Events {
 
     func testImpressionEvent_UserInHoldout_IncludedFlags() {
         let eventDispatcher2 = MockEventDispatcher()
-        var optimizely: OptimizelyClient! = OptimizelyClient(sdkKey: "12345", eventDispatcher: eventDispatcher2)
+        var optimizely: OptimizelyClient! = OptimizelyClient(sdkKey: OTUtils.randomSdkKey, eventDispatcher: eventDispatcher2)
         
         try! optimizely.start(datafile: datafile)
         
@@ -552,11 +552,14 @@ extension BatchEventBuilderTests_Events {
         
         let result = XCTWaiter.wait(for: [exp], timeout: 0.2)
         if result == XCTWaiter.Result.completed {
-            let event = getFirstEventJSON(client: optimizely)!
+            optimizely.eventLock.sync {}
+            // No rule serves and sendFlagDecisions is off, so only the holdout event is sent.
+            XCTAssertEqual(eventDispatcher2.events.count, 1)
+            let event = getFirstEventJSON(dispatcher: eventDispatcher2)!
             let visitor = (event["visitors"] as! Array<Dictionary<String, Any>>)[0]
             let snapshot = (visitor["snapshots"] as! Array<Dictionary<String, Any>>)[0]
             let decision = (snapshot["decisions"]  as! Array<Dictionary<String, Any>>)[0]
-            
+
             let metaData = decision["metadata"] as! Dictionary<String, Any>
             XCTAssertEqual(metaData["rule_type"] as! String, Constants.DecisionSource.holdout.rawValue)
             XCTAssertEqual(metaData["rule_key"] as! String, "holdout_key")

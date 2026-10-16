@@ -153,15 +153,19 @@ class LruCacheTests: XCTestCase {
         let numThreads = 100
         let numIterationPerThread = 1000
         
-        let cache = LruCache<Int, Int>(size: 3, timeoutInSecs: 1)
+        let cache = LruCache<Int, Int>(size: 3, timeoutInSecs: 60)
         let result = OTUtils.runConcurrent(count: numThreads, timeoutInSecs: 10) { idx in
             for i in 0..<numIterationPerThread {
                 let v = i * 10
                 cache.save(key: i, value: v)
-                XCTAssertEqual(cache.lookup(key: i), v)
+                // other threads may evict key i before this lookup; a hit must still hold the right value
+                if let found = cache.lookup(key: i) {
+                    XCTAssertEqual(found, v)
+                }
             }
         }
         XCTAssertTrue(result, "Concurrent tasks timed out")
+        XCTAssertLessThanOrEqual(cache.queue.sync { cache.map.count }, 3)
     }
     
     func testRemoveIsThreadSafe() {

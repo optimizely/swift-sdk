@@ -1,5 +1,5 @@
 //
-// Copyright 2022, Optimizely, Inc. and contributors 
+// Copyright 2022, 2026, Optimizely, Inc. and contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");  
 // you may not use this file except in compliance with the License.
@@ -32,9 +32,10 @@ struct Holdout: Codable, ExperimentCore {
     var audienceIds: [String]
     var audienceConditions: ConditionHolder?
     var includedRules: [String]?
+    var excludeTargetedDeliveries: Bool
 
     enum CodingKeys: String, CodingKey {
-        case id, key, status, variations, trafficAllocation, audienceIds, audienceConditions, includedRules
+        case id, key, status, variations, trafficAllocation, audienceIds, audienceConditions, includedRules, excludeTargetedDeliveries
     }
     
     var variationsMap: [String: OptimizelyVariation] = [:]
@@ -55,6 +56,7 @@ struct Holdout: Codable, ExperimentCore {
         audienceConditions = try container.decodeIfPresent(ConditionHolder.self, forKey: .audienceConditions)
 
         includedRules = try container.decodeIfPresent([String].self, forKey: .includedRules)
+        excludeTargetedDeliveries = try container.decodeIfPresent(Bool.self, forKey: .excludeTargetedDeliveries) ?? false
     }
 }
 
@@ -67,7 +69,8 @@ extension Holdout: Equatable {
         lhs.trafficAllocation == rhs.trafficAllocation &&
         lhs.audienceIds == rhs.audienceIds &&
         lhs.audienceConditions == rhs.audienceConditions &&
-        lhs.includedRules == rhs.includedRules
+        lhs.includedRules == rhs.includedRules &&
+        lhs.excludeTargetedDeliveries == rhs.excludeTargetedDeliveries
     }
 }
 

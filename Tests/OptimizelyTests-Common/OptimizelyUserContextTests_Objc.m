@@ -15,8 +15,19 @@
 //
 
 #import <XCTest/XCTest.h>
-#import <OCMock/OCMock.h>
 @import Optimizely;
+
+@interface SpyEventDispatcher : NSObject <OPTEventDispatcher>
+@property(nonatomic) XCTestExpectation *dispatchExpectation;
+@end
+
+@implementation SpyEventDispatcher
+- (void)dispatchEventWithEvent:(EventForDispatch *)event completionHandler:(void (^)(enum OptimizelyResult))completionHandler {
+    [self.dispatchExpectation fulfill];
+}
+- (void)flushEvents {}
+- (void)close {}
+@end
 
 static NSString * const kUserId = @"tester";
 static NSString * const kSdkKey = @"12345";
@@ -194,9 +205,17 @@ static NSString * datafile;
 // MARK: - legacy APIs with UserContext
 
 - (void)testTrackWithUserContext {
-    id<OPTEventDispatcher> mockEventDispatcher = [self injectMockEventDispatcher];
-    OCMExpect([mockEventDispatcher dispatchEventWithEvent:[OCMArg isNotNil]
-                                        completionHandler:nil]);
+    XCTestExpectation *expectation = [self expectationWithDescription:@"event dispatched"];
+    SpyEventDispatcher *spy = [[SpyEventDispatcher alloc] init];
+    spy.dispatchExpectation = expectation;
+
+    self.optimizely = [[OptimizelyClient alloc] initWithSdkKey:[NSString stringWithFormat:@"%d", arc4random()]
+                                                        logger:nil
+                                               eventDispatcher:spy
+                                            userProfileService:nil
+                                      periodicDownloadInterval:0
+                                               defaultLogLevel:OptimizelyLogLevelDebug];
+    [self.optimizely startWithDatafile:datafile error:nil];
 
     OptimizelyUserContext *user = [self.optimizely createUserContextWithUserId:kUserId attributes:@{@"gender": @"f"}];
 
@@ -204,21 +223,7 @@ static NSString * datafile;
     BOOL status = [user trackEventWithEventKey:@"event1" eventTags:nil error:&error];
 
     XCTAssertTrue(status);
-    OCMVerifyAllWithDelay(mockEventDispatcher, 1.0);   // event-dispatch non-blocking
-}
-
-// MARK: - Utils
-
-- (id<OPTEventDispatcher>)injectMockEventDispatcher {
-    id<OPTEventDispatcher>  mockEventDispatcher = OCMClassMock([DefaultEventDispatcher class]);
-    self.optimizely = [[OptimizelyClient alloc] initWithSdkKey:[NSString stringWithFormat:@"%d", arc4random()]
-                                                        logger:nil
-                                               eventDispatcher:mockEventDispatcher
-                                            userProfileService:nil
-                                      periodicDownloadInterval:0
-                                               defaultLogLevel:OptimizelyLogLevelDebug];
-    [self.optimizely startWithDatafile:datafile error:nil];
-    return mockEventDispatcher;
+    [self waitForExpectationsWithTimeout:1.0 handler:nil];
 }
 
 @end

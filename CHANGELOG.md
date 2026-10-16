@@ -1,7 +1,27 @@
 # Optimizely Swift SDK Changelog
 
+## 6.0.0
+October 7, 2026
+
+### Breaking Changes
+
+**Swift Package Manager only**: The SDK is now distributed exclusively through Swift Package Manager. CocoaPods support has been removed; migrate by adding `https://github.com/optimizely/swift-sdk` as a package dependency in Xcode or `Package.swift`.
+
+**Raised minimum platforms**: Xcode 27 no longer builds older deployment targets, so the minimum supported versions are now iOS 15.0, tvOS 15.0, watchOS 9.0, and macOS 12.0.
+
+- Migrate SDK distribution, CI, and releases to SPM on Xcode 27 ([#658](https://github.com/optimizely/swift-sdk/pull/658))
+
+## 5.5.0
+September 2, 2026
+
+### New Features
+
+**Holdout Targeted Delivery Exclusion**: Holdouts can now be configured to exclude Targeted Delivery rules, so users held out of experiments still receive their Targeted Delivery experiences. This gives you a cleaner measure of experiment impact without holding users back from ongoing rollouts.
+
+- Add holdout exclusion logic for Targeted Delivery rules ([#654](https://github.com/optimizely/swift-sdk/pull/654))
+
 ## 5.4.2
-July 9, 2026
+July 9th, 2026
 
 ### Fixes
 
@@ -15,7 +35,7 @@ June 24, 2026
 
 ### Fixes
 
-- normalize campaign_id, variation_id, and entity_id on decision events ([#642](https://github.com/optimizely/swift-sdk/pull/642))
+- Normalize campaign_id, variation_id, and entity_id on decision events ([#642](https://github.com/optimizely/swift-sdk/pull/642))
 
 ## 5.4.0
 June 22, 2026

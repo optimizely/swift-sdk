@@ -35,7 +35,14 @@ class EventDispatcherTests: XCTestCase {
     }
 
     func testDefaultDispatcher() {
-        eventDispatcher = DefaultEventDispatcher(timerInterval: 10)
+        // mock the network so the flush doesn't depend on reaching the live event endpoint
+        class MockSessionEventDispatcher: DefaultEventDispatcher {
+            override func getSession() -> URLSession {
+                return MockUrlSession()
+            }
+        }
+
+        eventDispatcher = MockSessionEventDispatcher(timerInterval: 10)
         let pEventD: OPTEventDispatcher = eventDispatcher!
 
         pEventD.flushEvents()
@@ -162,7 +169,9 @@ class EventDispatcherTests: XCTestCase {
         let originalUrl = "https://logx.optimizely.com/v1/events"
         let customUrl = "https://google.com"
         let overrideUrl = "https://apple.com"
-        
+        // eventEndpoint is static; restore it so later tests (and xcodebuild retries) see the default
+        defer { EventForDispatch.eventEndpoint = originalUrl }
+
         // default end-point
         
         dispatcher.dispatchEvent(event: EventForDispatch(body: Data()), completionHandler: nil)

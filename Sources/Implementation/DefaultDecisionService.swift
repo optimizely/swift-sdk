@@ -1,5 +1,5 @@
 //
-// Copyright 2019-2022, Optimizely, Inc. and contributors
+// Copyright 2019-2022, 2026, Optimizely, Inc. and contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,12 +16,25 @@
 
 import Foundation
 
+struct HoldoutDecision {
+    let experiment: ExperimentCore
+    let variation: Variation
+
+    init?(from featureDecision: FeatureDecision?) {
+        guard let experiment = featureDecision?.experiment,
+              let variation = featureDecision?.variation else { return nil }
+        self.experiment = experiment
+        self.variation = variation
+    }
+}
+
 struct FeatureDecision {
     var experiment: ExperimentCore?
     let variation: Variation?
     let source: String
     var cmabUUID: String?
     var error = false
+    var holdoutDecision: HoldoutDecision? = nil
 }
 
 struct VariationDecision {
@@ -400,6 +413,8 @@ class DefaultDecisionService: OPTDecisionService {
                             options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<FeatureDecision> {
         let reasons = DecisionReasons(options: options)
 
+        var storedHoldoutDecision: FeatureDecision?
+
         let holdouts = config.getGlobalHoldouts()
         for holdout in holdouts {
             let holdoutDecision = getVariationForHoldout(config: config,
@@ -410,24 +425,45 @@ class DefaultDecisionService: OPTDecisionService {
             reasons.merge(holdoutDecision.reasons)
             if let variation = holdoutDecision.result {
                 let featureDecision = FeatureDecision(experiment: holdout, variation: variation, source: Constants.DecisionSource.holdout.rawValue)
-                return DecisionResponse(result: featureDecision, reasons: reasons)
+                if holdout.excludeTargetedDeliveries {
+                    storedHoldoutDecision = featureDecision
+                    let info = LogMessage.holdoutExcludeTargetedDeliveriesEnabled(holdout.key)
+                    reasons.addInfo(info)
+                } else {
+                    return DecisionResponse(result: featureDecision, reasons: reasons)
+                }
+                break
             }
         }
         
-        let flagExpDecision = getVariationForFeatureExperiments(config: config, featureFlag: featureFlag, user: user, userProfileTracker: userProfileTracker, isAsync: isAsync, options: options)
-        
-        reasons.merge(flagExpDecision.reasons)
-        
-        if let decision = flagExpDecision.result {
-            return DecisionResponse(result: decision, reasons: reasons)
+        if storedHoldoutDecision == nil {
+            let flagExpDecision = getVariationForFeatureExperiments(config: config, featureFlag: featureFlag, user: user, userProfileTracker: userProfileTracker, isAsync: isAsync, options: options)
+
+            reasons.merge(flagExpDecision.reasons)
+
+            if let decision = flagExpDecision.result {
+                return DecisionResponse(result: decision, reasons: reasons)
+            }
         }
         
         let rolloutDecision = getVariationForFeatureRollout(config: config, featureFlag: featureFlag, user: user, options: options)
         reasons.merge(rolloutDecision.reasons)
-        
-        if let decision = rolloutDecision.result {
+
+        if var decision: FeatureDecision = rolloutDecision.result {
+            decision.holdoutDecision = HoldoutDecision(from: storedHoldoutDecision)
+            let info = LogMessage.userBucketedIntoRollout(user.userId, featureFlag.key)
+            logger.i(info)
+            reasons.addInfo(info)
             return DecisionResponse(result: decision, reasons: reasons)
         } else {
+            let info = LogMessage.userNotBucketedIntoRollout(user.userId, featureFlag.key)
+            logger.i(info)
+            reasons.addInfo(info)
+            if let holdout = HoldoutDecision(from: storedHoldoutDecision) {
+                var emptyDecision = FeatureDecision(experiment: nil, variation: nil, source: Constants.DecisionSource.rollout.rawValue)
+                emptyDecision.holdoutDecision = holdout
+                return DecisionResponse(result: emptyDecision, reasons: reasons)
+            }
             return DecisionResponse(result: nil, reasons: reasons)
         }
     }
@@ -667,7 +703,6 @@ class DefaultDecisionService: OPTDecisionService {
                                                          options: options)
             reasons.merge(holdoutDecision.reasons)
             if let variation = holdoutDecision.result {
-                // User is in holdout — return holdout variation immediately, skip this rule
                 let variationDecision = VariationDecision(variation: variation, holdout: holdout)
                 return DecisionResponse(result: variationDecision, reasons: reasons)
             }
@@ -725,7 +760,6 @@ class DefaultDecisionService: OPTDecisionService {
                                                          options: options)
             reasons.merge(holdoutDecision.reasons)
             if let variation = holdoutDecision.result {
-                // User is in holdout — return holdout variation with holdout info
                 let decision = DeliveryRuleDecision(variation: variation, skipToEveryoneElse: skipToEveryoneElse, holdout: holdout)
                 return DecisionResponse(result: decision, reasons: reasons)
             }
@@ -848,7 +882,7 @@ class DefaultDecisionService: OPTDecisionService {
     }
     
     // MARK: - Utilities
-    
+
     /// Retrieves the bucketing ID for a user, defaulting to user ID unless overridden in attributes.
     /// - Parameters:
     ///   - userId: The user's ID.

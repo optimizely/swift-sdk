@@ -8,10 +8,10 @@ import PackageDescription
 let package = Package(
     name: "Optimizely",
     platforms: [
-        .iOS(.v10),
-        .tvOS(.v10),
-        .macOS(.v10_14),
-        .watchOS(.v3)
+        .iOS("15.0"),
+        .tvOS("15.0"),
+        .macOS("12.0"),
+        .watchOS("9.0")
     ],
     products: [
         .library(name: "Optimizely",
@@ -21,7 +21,7 @@ let package = Package(
         .target(
             name: "Optimizely",
             path: "Sources",
-            exclude: ["CLAUDE.md"],
+            exclude: ["Supporting Files/Info.plist"],
             resources: [.copy("Supporting Files/PrivacyInfo.xcprivacy")]
         )
     ],

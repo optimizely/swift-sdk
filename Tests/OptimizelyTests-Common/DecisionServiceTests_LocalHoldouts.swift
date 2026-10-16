@@ -567,6 +567,39 @@ class DecisionServiceTests_LocalHoldouts: XCTestCase {
         XCTAssertTrue(dispatchedDecisions().isEmpty)
     }
 
+    func testLocalHoldout_HitThenCmabErrorOnLaterRule_ErrorDecisionAndNoEventsSent() {
+        let cmabRuleId = "10420810910"
+        var flag = config.getFeatureFlag(key: flagKey)!
+        flag.experimentIds = [experimentRuleId, cmabRuleId]
+        config.project.featureFlags = config.project.featureFlags.map { $0.key == flagKey ? flag : $0 }
+        let cmab: Cmab = try! OTUtils.model(from: ["trafficAllocation": 10000, "attributeIds": []])
+        config.project.experiments = config.project.experiments.map {
+            var exp = $0
+            if exp.id == cmabRuleId { exp.cmab = cmab }
+            return exp
+        }
+        config.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [localHoldout(rules: [experimentRuleId])])
+        optimizely.decisionService = DefaultDecisionService(userProfileService: OTUtils.createClearUserProfileService(),
+                                                            bucketer: MockBucketer(mockBucketValue: 2500),
+                                                            cmabService: FailingCmabService())
+
+        let user = optimizely.createUserContext(userId: userId, attributes: ["gender": "f"])
+        let exp = expectation(description: "decideAsync")
+        var decision: OptimizelyDecision!
+        user.decideAsync(key: flagKey, options: [.includeReasons]) {
+            decision = $0
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: 5)
+
+        XCTAssertNil(decision.variationKey)
+        XCTAssertNil(decision.ruleKey)
+        XCTAssertFalse(decision.enabled)
+        XCTAssertTrue(decision.reasons.contains(LogMessage.userBucketedIntoVariationInHoldout(userId, "holdout_test_key", "holdout_variation_key").reason))
+        XCTAssertTrue(decision.reasons.contains(LogMessage.cmabFetchFailed("exp_no_audience").reason))
+        XCTAssertTrue(dispatchedDecisions().isEmpty)
+    }
+
     func testRuleForcedDecision_ExperimentRule_BeatsFullTrafficLocalHoldout() {
         var holdout = localHoldout(rules: [experimentRuleId])
         holdout.trafficAllocation[0].endOfRange = 10000
@@ -702,5 +735,17 @@ class DecisionServiceTests_LocalHoldouts: XCTestCase {
         XCTAssertEqual(decision.ruleKey, everyoneElseRuleKey, file: file, line: line)
         XCTAssertEqual(decision.variationKey, everyoneElseVariationKey, file: file, line: line)
         XCTAssertTrue(decision.enabled, file: file, line: line)
+    }
+}
+
+private struct FailingCmabService: CmabService {
+    func getDecision(config: ProjectConfig, userContext: OptimizelyUserContext, ruleId: String,
+                     options: [OptimizelyDecideOption]) -> Result<CmabDecision, Error> {
+        return .failure(CmabClientError.fetchFailed("test"))
+    }
+
+    func getDecision(config: ProjectConfig, userContext: OptimizelyUserContext, ruleId: String,
+                     options: [OptimizelyDecideOption], completion: @escaping CmabDecisionCompletionHandler) {
+        completion(.failure(CmabClientError.fetchFailed("test")))
     }
 }

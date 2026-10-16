@@ -17,7 +17,7 @@
 import Foundation
 
 public enum DataStoreType {
-    case file, memory, userDefaults
+    case file(directory: FileManager.SearchPathDirectory? = nil), memory, userDefaults
 }
 
 open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
@@ -59,7 +59,7 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     private var isFlushing = false
 
     public init(batchSize: Int = DefaultValues.batchSize,
-                backingStore: DataStoreType = .file,
+                backingStore: DataStoreType = .file(directory: nil),
                 dataStoreName: String = "OPTEventQueue",
                 timerInterval: TimeInterval = DefaultValues.timeInterval,
                 maxQueueSize: Int = DefaultValues.maxQueueSize) {
@@ -68,9 +68,14 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
         self.maxQueueSize = maxQueueSize >= 100 ? maxQueueSize : DefaultValues.maxQueueSize
         
         switch backingStore {
-        case .file:
-            self.eventQueue = DataStoreQueueStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue",
-                                                                        dataStore: DataStoreFile<[Data]>(storeName: dataStoreName))
+        case .file(let directory):
+            if let directory {
+                self.eventQueue = DataStoreQueueStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue",
+                                                                            dataStore: DataStoreFile<[Data]>(storeName: dataStoreName, directory: directory))
+            } else {
+                self.eventQueue = DataStoreQueueStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue",
+                                                                            dataStore: DataStoreFile<[Data]>(storeName: dataStoreName))
+            }
         case .memory:
             self.eventQueue = DataStoreQueueStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue",
                                                                         dataStore: DataStoreMemory<[Data]>(storeName: dataStoreName))

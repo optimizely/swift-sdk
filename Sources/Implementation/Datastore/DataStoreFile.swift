@@ -22,7 +22,7 @@ open class DataStoreFile<T>: OPTDataStore where T: Codable {
     let dataStoreName: String
     let lock: DispatchQueue
     let async: Bool
-    public let url: URL
+    public private(set) var url: URL
 
     // thread-safe lazy logger load (after HandlerRegisterService ready)
     private let threadSafeLogger = ThreadSafeLogger()
@@ -30,26 +30,28 @@ open class DataStoreFile<T>: OPTDataStore where T: Codable {
         return threadSafeLogger.logger
     }
 
-    public convenience init(storeName: String, async: Bool = true) {
+    public init(storeName: String, async: Bool = true) {
+        self.async = async
+        dataStoreName = storeName
+        lock = DispatchQueue(label: storeName)
         #if os(tvOS) || os(macOS)
         let directory = FileManager.SearchPathDirectory.cachesDirectory
         #else
         let directory = FileManager.SearchPathDirectory.documentDirectory
         #endif
-        
-        self.init(storeName: storeName, directory: directory, async: async)
-    }
-    
-    public init(storeName: String, directory: FileManager.SearchPathDirectory, async: Bool = true) {
-        self.async = async
-        
-        dataStoreName = storeName
-        lock = DispatchQueue(label: storeName)
-        
         if let url = FileManager.default.urls(for: directory, in: .userDomainMask).first {
             self.url = url.appendingPathComponent(storeName, isDirectory: false)
         } else {
             self.url = URL(fileURLWithPath: storeName)
+        }
+        
+    }
+
+    // convenience on purpose: any new designated init on an open class is an API break
+    public convenience init(storeName: String, directory: FileManager.SearchPathDirectory, async: Bool = true) {
+        self.init(storeName: storeName, async: async)
+        if let url = FileManager.default.urls(for: directory, in: .userDomainMask).first {
+            self.url = url.appendingPathComponent(storeName, isDirectory: false)
         }
     }
     

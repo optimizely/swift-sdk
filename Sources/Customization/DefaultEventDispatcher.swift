@@ -46,7 +46,7 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     // for dispatching events
     let queueLock = DispatchQueue(label: "DefaultEventDispatcherQueue")
     // using a datastore queue with a backing file
-    let eventQueue: DataStoreQueueStackImpl<EventForDispatch>
+    private(set) var eventQueue: DataStoreQueueStackImpl<EventForDispatch>
     // timer as a atomic property.
     var timer = AtomicProperty<Timer>()
     
@@ -85,6 +85,23 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
         }
                 
         subscribe()
+    }
+
+    /// Creates a dispatcher whose event queue is a file stored in `dataStoreDirectory`
+    /// (e.g. `.applicationSupportDirectory` to keep it out of the Files app).
+    // convenience on purpose: any new designated init on an open class is an API break
+    public convenience init(batchSize: Int = DefaultValues.batchSize,
+                            dataStoreName: String = "OPTEventQueue",
+                            dataStoreDirectory: FileManager.SearchPathDirectory,
+                            timerInterval: TimeInterval = DefaultValues.timeInterval,
+                            maxQueueSize: Int = DefaultValues.maxQueueSize) {
+        self.init(batchSize: batchSize,
+                  backingStore: .file,
+                  dataStoreName: dataStoreName,
+                  timerInterval: timerInterval,
+                  maxQueueSize: maxQueueSize)
+        self.eventQueue = DataStoreQueueStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue",
+                                                                    dataStore: DataStoreFile<[Data]>(storeName: dataStoreName, directory: dataStoreDirectory))
     }
     
     deinit {

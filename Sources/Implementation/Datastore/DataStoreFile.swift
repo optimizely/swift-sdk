@@ -50,7 +50,8 @@ open class DataStoreFile<T>: OPTDataStore where T: Codable {
     // convenience on purpose: any new designated init on an open class is an API break
     public convenience init(storeName: String, directory: FileManager.SearchPathDirectory, async: Bool = true) {
         self.init(storeName: storeName, async: async)
-        if let url = FileManager.default.urls(for: directory, in: .userDomainMask).first {
+        // create: true — unlike Documents, Application Support isn't guaranteed to exist on iOS
+        if let url = try? FileManager.default.url(for: directory, in: .userDomainMask, appropriateFor: nil, create: true) {
             self.url = url.appendingPathComponent(storeName, isDirectory: false)
         }
     }

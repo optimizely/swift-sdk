@@ -115,7 +115,6 @@ class EventDispatcherTests: XCTestCase {
 
     func testEventDispatcherFileCustomDirectory() throws {
         let dirUrl = try XCTUnwrap(FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first)
-        try FileManager.default.createDirectory(at: dirUrl, withIntermediateDirectories: true)
         let storeName = "OPTEventQueueCustomDirectory"
         let fileUrl = dirUrl.appendingPathComponent(storeName, isDirectory: false)
         try? FileManager.default.removeItem(at: fileUrl)

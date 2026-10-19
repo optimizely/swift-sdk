@@ -172,8 +172,6 @@ class DataStoreTests: XCTestCase {
      }
 
     func testFileStoreCustomDirectory() throws {
-        createDirectoryIfNeeded(directory: .applicationSupportDirectory)
-        
         let datastore = DataStoreFile<[String]>(storeName: "testFileStore", directory: .applicationSupportDirectory)
         
         datastore.saveItem(forKey: "testString", value: ["value"])
@@ -183,6 +181,19 @@ class DataStoreTests: XCTestCase {
         var url = try XCTUnwrap(FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first)
             .appendingPathComponent("testFileStore", isDirectory: false)
         XCTAssertTrue(FileManager.default.fileExists(atPath: url.path))
+    }
+
+    func testFileStoreCreatesMissingDirectory() throws {
+        // like Application Support on a fresh iOS install, this directory doesn't exist yet
+        let dirUrl = try XCTUnwrap(FileManager.default.urls(for: .autosavedInformationDirectory, in: .userDomainMask).first)
+        try XCTSkipIf(FileManager.default.fileExists(atPath: dirUrl.path), "directory already exists")
+        defer { try? FileManager.default.removeItem(at: dirUrl) }
+
+        let datastore = DataStoreFile<[String]>(storeName: "testFileStore", directory: .autosavedInformationDirectory)
+        datastore.saveItem(forKey: "testString", value: ["value"])
+        datastore.lock.sync {}
+
+        XCTAssertTrue(FileManager.default.fileExists(atPath: dirUrl.appendingPathComponent("testFileStore").path))
     }
 
     

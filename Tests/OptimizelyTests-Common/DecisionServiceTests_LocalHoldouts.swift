@@ -24,11 +24,14 @@ class DecisionServiceTests_LocalHoldouts: XCTestCase {
     var optimizely: OptimizelyClient!
     var config: ProjectConfig!
     var decisionService: DefaultDecisionService!
+    var eventDispatcher: MockEventDispatcher!
 
     let userId = "test_user"
     let flagKey = "feature_1"
     let experimentRuleId = "10390977673"  // From decide_datafile
     let deliveryRuleId = "3332020515"     // From decide_datafile rollout
+    let everyoneElseRuleKey = "18322080788"
+    let everyoneElseVariationKey = "18257766532"
 
     // variation id and trafficAllocation entityId must be numeric strings.
     // Holdout id uses numeric too for fixture uniformity. Keys are arbitrary.
@@ -56,8 +59,10 @@ class DecisionServiceTests_LocalHoldouts: XCTestCase {
         super.setUp()
 
         // Load a real datafile for testing
+        eventDispatcher = MockEventDispatcher()
         optimizely = OTUtils.createOptimizely(datafileName: "decide_datafile",
-                                             clearUserProfileService: true)
+                                             clearUserProfileService: true,
+                                             eventDispatcher: eventDispatcher)
         config = optimizely.config!
         decisionService = optimizely.decisionService as? DefaultDecisionService
     }
@@ -124,11 +129,9 @@ class DecisionServiceTests_LocalHoldouts: XCTestCase {
         optimizely.decisionService = mockDecisionService
 
         let user = optimizely.createUserContext(userId: userId)
-        let decision = user.decide(key: flagKey)
+        let decision = user.decide(key: flagKey, options: [.includeReasons])
 
-        // Assert user got the holdout variation
-        XCTAssertEqual(decision.variationKey, "holdout_variation_key", "User should be bucketed into local holdout")
-        XCTAssertFalse(decision.enabled, "Holdout variation should have featureEnabled: false")
+        assertHeldOutThenServedByEveryoneElse(decision)
     }
 
     func testLocalHoldout_ExperimentRule_UserNotBucketed() {
@@ -192,11 +195,9 @@ class DecisionServiceTests_LocalHoldouts: XCTestCase {
         optimizely.decisionService = mockDecisionService
 
         let user = optimizely.createUserContext(userId: userId)
-        let decision = user.decide(key: flagKey)
+        let decision = user.decide(key: flagKey, options: [.includeReasons])
 
-        // Assert user got the holdout variation
-        XCTAssertEqual(decision.variationKey, "holdout_variation_key", "User should be bucketed into local holdout for delivery rule")
-        XCTAssertFalse(decision.enabled, "Holdout variation should have featureEnabled: false")
+        assertHeldOutThenServedByEveryoneElse(decision)
     }
 
     func testLocalHoldout_DeliveryRule_UserNotBucketed() {
@@ -239,19 +240,21 @@ class DecisionServiceTests_LocalHoldouts: XCTestCase {
         holdout2.includedRules = [experimentRuleId]
         holdout2.variations[0].id = "holdout_2_var_id"
         holdout2.variations[0].key = "holdout_2_variation"
+        holdout2.trafficAllocation[0].entityId = "holdout_2_var_id"
 
         config.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [holdout1, holdout2])
 
         // Mock bucketer to ensure user buckets into both
         let mockBucketer = MockBucketer(mockBucketValue: 2500)
         let mockDecisionService = DefaultDecisionService(userProfileService: OTUtils.createClearUserProfileService(), bucketer: mockBucketer)
-        optimizely.decisionService = mockDecisionService
 
-        let user = optimizely.createUserContext(userId: userId)
-        let decision = user.decide(key: flagKey)
+        let decision = mockDecisionService.getVariationForFeature(config: config,
+                                                                  featureFlag: config.getFeatureFlag(key: flagKey)!,
+                                                                  user: optimizely.createUserContext(userId: userId)).result
 
-        // Assert user got the FIRST holdout variation
-        XCTAssertEqual(decision.variationKey, "holdout_1_variation", "User should be in first matching holdout only")
+        XCTAssertEqual(decision?.holdoutDecisions.map { $0.experiment.key }, ["holdout_1"], "Only the first matching holdout is recorded for the rule")
+        XCTAssertEqual(decision?.holdoutDecisions.first?.variation.key, "holdout_1_variation")
+        XCTAssertEqual(decision?.experiment?.key, everyoneElseRuleKey)
     }
 
     func testMultipleLocalHoldouts_DifferentRules_EachEvaluated() {
@@ -264,21 +267,25 @@ class DecisionServiceTests_LocalHoldouts: XCTestCase {
 
         var holdout2 = try! OTUtils.model(from: sampleHoldout) as Holdout
         holdout2.id = "holdout_2"
+        holdout2.key = "holdout_2"
         holdout2.includedRules = [deliveryRuleId]
         holdout2.variations[0].id = "holdout_2_var_id"
+        holdout2.trafficAllocation[0].entityId = "holdout_2_var_id"
 
         config.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [holdout1, holdout2])
 
         // Mock bucketer
         let mockBucketer = MockBucketer(mockBucketValue: 2500)
         let mockDecisionService = DefaultDecisionService(userProfileService: OTUtils.createClearUserProfileService(), bucketer: mockBucketer)
-        optimizely.decisionService = mockDecisionService
 
-        let user = optimizely.createUserContext(userId: userId)
-        let decision = user.decide(key: flagKey)
+        let decision = mockDecisionService.getVariationForFeature(config: config,
+                                                                  featureFlag: config.getFeatureFlag(key: flagKey)!,
+                                                                  user: optimizely.createUserContext(userId: userId)).result
 
-        // Assert that one of the holdouts was evaluated (which one depends on rule evaluation order)
-        XCTAssertEqual(decision.variationKey, "holdout_variation_key", "User should be in one of the holdouts")
+        XCTAssertEqual(decision?.holdoutDecisions.map { $0.experiment.id }, [holdout1.id, "holdout_2"], "Each rule records its own holdout hit, in rule order")
+        XCTAssertEqual(decision?.experiment?.key, everyoneElseRuleKey)
+        XCTAssertEqual(decision?.variation?.key, everyoneElseVariationKey)
+        XCTAssertEqual(decision?.source, Constants.DecisionSource.rollout.rawValue)
     }
 
     // MARK: - Cross-Flag Local Holdouts
@@ -300,8 +307,8 @@ class DecisionServiceTests_LocalHoldouts: XCTestCase {
         let user = optimizely.createUserContext(userId: userId)
 
         // Test feature_1 (should be affected)
-        let decision1 = user.decide(key: "feature_1")
-        XCTAssertEqual(decision1.variationKey, "holdout_variation_key", "feature_1 should be in holdout")
+        let decision1 = user.decide(key: "feature_1", options: [.includeReasons])
+        assertHeldOutThenServedByEveryoneElse(decision1)
 
         // Test feature_2 (should NOT be affected - no rules targeted)
         let decision2 = user.decide(key: "feature_2")
@@ -417,5 +424,328 @@ class DecisionServiceTests_LocalHoldouts: XCTestCase {
         // Set to nil
         holdout.includedRules = nil
         XCTAssertTrue(holdout.isGlobal, "Nil includedRules should be global")
+    }
+
+    // MARK: - Held-out rule continues to later rules
+
+    func testLocalHoldout_HitOnExperimentRule_NextRuleServesAndHoldoutEventSent() {
+        config.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [localHoldout(rules: [experimentRuleId])])
+        useMockBucketer(2500)
+
+        let user = optimizely.createUserContext(userId: userId, attributes: ["gender": "f", "country": "US"])
+        let decision = user.decide(key: flagKey)
+
+        XCTAssertEqual(decision.ruleKey, deliveryRuleId)
+        XCTAssertEqual(decision.variationKey, "3324490633")
+        XCTAssertTrue(decision.enabled)
+
+        let events = dispatchedDecisions()
+        XCTAssertEqual(events.count, 2)
+        XCTAssertEqual(events.first?.metaData.ruleType, Constants.DecisionSource.rollout.rawValue)
+        XCTAssertEqual(events.first?.metaData.ruleKey, deliveryRuleId)
+        assertHoldoutEvent(events.last)
+    }
+
+    func testLocalHoldout_TwoExperimentRules_HeldOutOfFirstServedBySecond() {
+        var flag = config.getFeatureFlag(key: flagKey)!
+        flag.experimentIds = [experimentRuleId, "10420810910"]
+        config.project.featureFlags = config.project.featureFlags.map { $0.key == flagKey ? flag : $0 }
+        config.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [localHoldout(rules: [experimentRuleId])])
+        useMockBucketer(2500)
+
+        let user = optimizely.createUserContext(userId: userId, attributes: ["gender": "f"])
+        let decision = user.decide(key: flagKey)
+
+        XCTAssertEqual(decision.ruleKey, "exp_no_audience")
+        XCTAssertEqual(decision.variationKey, "variation_with_traffic")
+        XCTAssertTrue(decision.enabled)
+
+        let events = dispatchedDecisions()
+        XCTAssertEqual(events.count, 2)
+        XCTAssertEqual(events.first?.metaData.ruleType, Constants.DecisionSource.featureTest.rawValue)
+        XCTAssertEqual(events.first?.metaData.ruleKey, "exp_no_audience")
+        assertHoldoutEvent(events.last)
+    }
+
+    func testLocalHoldout_HitOnDeliveryRule_ContinuesToNextDeliveryRuleNotEveryoneElse() {
+        var rollout = config.getRollout(id: config.getFeatureFlag(key: flagKey)!.rolloutId)!
+        rollout.experiments[1].trafficAllocation[0].endOfRange = 10000
+        config.project.rollouts = [rollout]
+        config.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [localHoldout(rules: [deliveryRuleId])])
+        useMockBucketer(2500)
+
+        let user = optimizely.createUserContext(userId: userId, attributes: ["country": "US", "browser": "safari"])
+        let decision = user.decide(key: flagKey)
+
+        XCTAssertEqual(decision.ruleKey, "3332020494")
+        XCTAssertEqual(decision.variationKey, "3324490562")
+        XCTAssertTrue(decision.enabled)
+
+        let events = dispatchedDecisions()
+        XCTAssertEqual(events.count, 2)
+        XCTAssertEqual(events.first?.metaData.ruleKey, "3332020494")
+        assertHoldoutEvent(events.last)
+    }
+
+    func testLocalHoldout_OneHoldoutTargetingTwoRules_SendsTwoHoldoutEvents() {
+        config.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [localHoldout(rules: [experimentRuleId, deliveryRuleId])])
+        useMockBucketer(2500)
+
+        let user = optimizely.createUserContext(userId: userId, attributes: ["gender": "f", "country": "US"])
+        let decision = user.decide(key: flagKey)
+
+        XCTAssertEqual(decision.ruleKey, everyoneElseRuleKey)
+        XCTAssertEqual(decision.variationKey, everyoneElseVariationKey)
+
+        let events = dispatchedDecisions()
+        XCTAssertEqual(events.count, 3)
+        XCTAssertEqual(events.first?.metaData.ruleKey, everyoneElseRuleKey)
+        let holdoutEvents = Array(events.dropFirst())
+        XCTAssertEqual(holdoutEvents.count, 2)
+        holdoutEvents.forEach { assertHoldoutEvent($0) }
+    }
+
+    func testLocalHoldouts_HitsOnSeveralRules_SendOneHoldoutEventPerHit() {
+        let first = localHoldout(rules: [experimentRuleId])
+        let second = localHoldout(rules: [deliveryRuleId], id: "9999900030", key: "holdout_test_key_2", variationId: "9999900040", variationKey: "holdout_variation_key_2")
+        config.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [first, second])
+        useMockBucketer(2500)
+
+        let user = optimizely.createUserContext(userId: userId, attributes: ["gender": "f", "country": "US"])
+        let decision = user.decide(key: flagKey)
+
+        XCTAssertEqual(decision.ruleKey, everyoneElseRuleKey)
+
+        let events = dispatchedDecisions()
+        XCTAssertEqual(events.count, 3)
+        assertHoldoutEvent(events.dropFirst().first)
+        assertHoldoutEvent(events.last, holdoutId: "9999900030", ruleKey: "holdout_test_key_2", variationId: "9999900040", variationKey: "holdout_variation_key_2")
+    }
+
+    func testLocalHoldout_HitThenNoRuleServes_DecisionUnchangedAndHoldoutEventsSent() {
+        let allRules = [experimentRuleId, deliveryRuleId, "3332020494", everyoneElseRuleKey]
+        config.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [localHoldout(rules: allRules)])
+        useMockBucketer(2500)
+
+        let decision = optimizely.createUserContext(userId: userId).decide(key: flagKey)
+
+        XCTAssertNil(decision.variationKey)
+        XCTAssertNil(decision.ruleKey)
+        XCTAssertFalse(decision.enabled)
+
+        let events = dispatchedDecisions()
+        XCTAssertEqual(events.count, 5)
+        XCTAssertEqual(events.first?.metaData.ruleType, Constants.DecisionSource.rollout.rawValue)
+        XCTAssertEqual(events.first?.metaData.ruleKey, "")
+        XCTAssertEqual(events.first?.metaData.variationKey, "")
+        let holdoutEvents = Array(events.dropFirst())
+        XCTAssertEqual(holdoutEvents.count, 4)
+        holdoutEvents.forEach { assertHoldoutEvent($0) }
+    }
+
+    func testLocalHoldout_HitOnDeliveryRule_SendFlagDecisionsOff_HoldoutEventStillSent() {
+        config.project.sendFlagDecisions = false
+        config.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [localHoldout(rules: [deliveryRuleId])])
+        useMockBucketer(2500)
+
+        let decision = optimizely.createUserContext(userId: userId).decide(key: flagKey)
+
+        XCTAssertEqual(decision.ruleKey, everyoneElseRuleKey)
+
+        let events = dispatchedDecisions()
+        XCTAssertEqual(events.count, 1)
+        assertHoldoutEvent(events.first)
+    }
+
+    func testLocalHoldout_DisableDecisionEvent_SuppressesHoldoutEvents() {
+        config.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [localHoldout(rules: [experimentRuleId, deliveryRuleId])])
+        useMockBucketer(2500)
+
+        let decision = optimizely.createUserContext(userId: userId).decide(key: flagKey, options: [.disableDecisionEvent])
+
+        XCTAssertEqual(decision.ruleKey, everyoneElseRuleKey)
+        XCTAssertTrue(dispatchedDecisions().isEmpty)
+    }
+
+    func testLocalHoldout_HitThenCmabErrorOnLaterRule_ErrorDecisionAndNoEventsSent() {
+        let cmabRuleId = "10420810910"
+        var flag = config.getFeatureFlag(key: flagKey)!
+        flag.experimentIds = [experimentRuleId, cmabRuleId]
+        config.project.featureFlags = config.project.featureFlags.map { $0.key == flagKey ? flag : $0 }
+        let cmab: Cmab = try! OTUtils.model(from: ["trafficAllocation": 10000, "attributeIds": []])
+        config.project.experiments = config.project.experiments.map {
+            var exp = $0
+            if exp.id == cmabRuleId { exp.cmab = cmab }
+            return exp
+        }
+        config.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [localHoldout(rules: [experimentRuleId])])
+        optimizely.decisionService = DefaultDecisionService(userProfileService: OTUtils.createClearUserProfileService(),
+                                                            bucketer: MockBucketer(mockBucketValue: 2500),
+                                                            cmabService: FailingCmabService())
+
+        let user = optimizely.createUserContext(userId: userId, attributes: ["gender": "f"])
+        let exp = expectation(description: "decideAsync")
+        var decision: OptimizelyDecision!
+        user.decideAsync(key: flagKey, options: [.includeReasons]) {
+            decision = $0
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: 5)
+
+        XCTAssertNil(decision.variationKey)
+        XCTAssertNil(decision.ruleKey)
+        XCTAssertFalse(decision.enabled)
+        XCTAssertTrue(decision.reasons.contains(LogMessage.userBucketedIntoVariationInHoldout(userId, "holdout_test_key", "holdout_variation_key").reason))
+        XCTAssertTrue(decision.reasons.contains(LogMessage.cmabFetchFailed("exp_no_audience").reason))
+        XCTAssertTrue(dispatchedDecisions().isEmpty)
+    }
+
+    func testRuleForcedDecision_ExperimentRule_BeatsFullTrafficLocalHoldout() {
+        var holdout = localHoldout(rules: [experimentRuleId])
+        holdout.trafficAllocation[0].endOfRange = 10000
+        config.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [holdout])
+        useMockBucketer(2500)
+
+        let user = optimizely.createUserContext(userId: userId)
+        _ = user.setForcedDecision(context: OptimizelyDecisionContext(flagKey: flagKey, ruleKey: "exp_with_audience"),
+                                   decision: OptimizelyForcedDecision(variationKey: "b"))
+        let decision = user.decide(key: flagKey)
+
+        XCTAssertEqual(decision.ruleKey, "exp_with_audience")
+        XCTAssertEqual(decision.variationKey, "b")
+        let events = dispatchedDecisions()
+        XCTAssertEqual(events.count, 1)
+        XCTAssertEqual(events.first?.metaData.ruleKey, "exp_with_audience")
+        XCTAssertFalse(events.contains { $0.metaData.ruleType == Constants.DecisionSource.holdout.rawValue })
+    }
+
+    func testRuleForcedDecision_DeliveryRule_BeatsFullTrafficLocalHoldout() {
+        var holdout = localHoldout(rules: [deliveryRuleId])
+        holdout.trafficAllocation[0].endOfRange = 10000
+        config.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [holdout])
+        useMockBucketer(2500)
+
+        let user = optimizely.createUserContext(userId: userId)
+        _ = user.setForcedDecision(context: OptimizelyDecisionContext(flagKey: flagKey, ruleKey: deliveryRuleId),
+                                   decision: OptimizelyForcedDecision(variationKey: "3324490633"))
+        let decision = user.decide(key: flagKey)
+
+        XCTAssertEqual(decision.ruleKey, deliveryRuleId)
+        XCTAssertEqual(decision.variationKey, "3324490633")
+        let events = dispatchedDecisions()
+        XCTAssertEqual(events.count, 1)
+        XCTAssertEqual(events.first?.metaData.ruleKey, deliveryRuleId)
+        XCTAssertFalse(events.contains { $0.metaData.ruleType == Constants.DecisionSource.holdout.rawValue })
+    }
+
+    func testStoredGlobalHoldoutPlusLocalHoldoutOnDeliveryRule_LaterRuleServesAndBothHoldoutEventsSent() {
+        var global = localHoldout(rules: [], id: "9999900050", key: "global_holdout_key", variationId: "9999900060", variationKey: "global_variation_key")
+        global.includedRules = nil
+        global.excludeTargetedDeliveries = true
+        config.holdoutConfig = HoldoutConfig(globalHoldouts: [global], localHoldouts: [localHoldout(rules: [deliveryRuleId])])
+        useMockBucketer(2500)
+
+        let user = optimizely.createUserContext(userId: userId, attributes: ["country": "US"])
+        let decision = user.decide(key: flagKey)
+
+        XCTAssertEqual(decision.ruleKey, everyoneElseRuleKey)
+        XCTAssertEqual(decision.variationKey, everyoneElseVariationKey)
+        XCTAssertTrue(decision.enabled)
+
+        let events = dispatchedDecisions()
+        XCTAssertEqual(events.count, 3)
+        XCTAssertEqual(events.first?.metaData.ruleType, Constants.DecisionSource.rollout.rawValue)
+        XCTAssertEqual(events.first?.metaData.ruleKey, everyoneElseRuleKey)
+        assertHoldoutEvent(events.dropFirst().first, holdoutId: "9999900050", ruleKey: "global_holdout_key", variationId: "9999900060", variationKey: "global_variation_key")
+        assertHoldoutEvent(events.last)
+    }
+
+    // MARK: - Legacy APIs
+
+    func testLegacyIsFeatureEnabled_LocalHoldoutHit_SkipsRuleWithoutHoldoutEvent() {
+        config.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [localHoldout(rules: [experimentRuleId])])
+        useMockBucketer(2500)
+
+        let enabled = optimizely.isFeatureEnabled(featureKey: flagKey, userId: userId, attributes: ["gender": "f", "country": "US"])
+
+        XCTAssertTrue(enabled)
+        let events = dispatchedDecisions()
+        XCTAssertEqual(events.count, 1)
+        XCTAssertEqual(events.first?.metaData.ruleType, Constants.DecisionSource.rollout.rawValue)
+        XCTAssertEqual(events.first?.metaData.ruleKey, deliveryRuleId)
+    }
+
+    func testLegacyIsFeatureEnabled_AllRulesHeldOut_NoEventSent() {
+        config.project.sendFlagDecisions = false
+        let allRules = [experimentRuleId, deliveryRuleId, "3332020494", everyoneElseRuleKey]
+        config.holdoutConfig = HoldoutConfig(globalHoldouts: [], localHoldouts: [localHoldout(rules: allRules)])
+        useMockBucketer(2500)
+
+        XCTAssertFalse(optimizely.isFeatureEnabled(featureKey: flagKey, userId: userId))
+        XCTAssertTrue(dispatchedDecisions().isEmpty)
+    }
+
+    // MARK: - Helpers
+
+    private func localHoldout(rules: [String],
+                              id: String = "9999900010",
+                              key: String = "holdout_test_key",
+                              variationId: String = "9999900020",
+                              variationKey: String = "holdout_variation_key") -> Holdout {
+        var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
+        holdout.id = id
+        holdout.key = key
+        holdout.variations[0].id = variationId
+        holdout.variations[0].key = variationKey
+        holdout.trafficAllocation[0].entityId = variationId
+        holdout.includedRules = rules
+        return holdout
+    }
+
+    private func useMockBucketer(_ bucketValue: Int) {
+        optimizely.decisionService = DefaultDecisionService(userProfileService: OTUtils.createClearUserProfileService(),
+                                                            bucketer: MockBucketer(mockBucketValue: bucketValue))
+    }
+
+    private func dispatchedDecisions() -> [Decision] {
+        optimizely.eventLock.sync {}
+        return eventDispatcher.events.map {
+            try! JSONDecoder().decode(BatchEvent.self, from: $0.body).visitors[0].snapshots[0].decisions![0]
+        }
+    }
+
+    private func assertHoldoutEvent(_ decision: Decision?,
+                                    holdoutId: String = "9999900010",
+                                    ruleKey: String = "holdout_test_key",
+                                    variationId: String = "9999900020",
+                                    variationKey: String = "holdout_variation_key",
+                                    file: StaticString = #filePath,
+                                    line: UInt = #line) {
+        XCTAssertEqual(decision?.metaData.ruleType, Constants.DecisionSource.holdout.rawValue, file: file, line: line)
+        XCTAssertEqual(decision?.metaData.ruleKey, ruleKey, file: file, line: line)
+        XCTAssertEqual(decision?.metaData.variationKey, variationKey, file: file, line: line)
+        XCTAssertEqual(decision?.metaData.flagKey, flagKey, file: file, line: line)
+        XCTAssertEqual(decision?.metaData.enabled, false, file: file, line: line)
+        XCTAssertEqual(decision?.experimentID, holdoutId, file: file, line: line)
+        XCTAssertEqual(decision?.variationID, variationId, file: file, line: line)
+    }
+
+    private func assertHeldOutThenServedByEveryoneElse(_ decision: OptimizelyDecision, file: StaticString = #filePath, line: UInt = #line) {
+        XCTAssert(decision.reasons.contains(LogMessage.userBucketedIntoVariationInHoldout(userId, "holdout_test_key", "holdout_variation_key").reason), file: file, line: line)
+        XCTAssertEqual(decision.ruleKey, everyoneElseRuleKey, file: file, line: line)
+        XCTAssertEqual(decision.variationKey, everyoneElseVariationKey, file: file, line: line)
+        XCTAssertTrue(decision.enabled, file: file, line: line)
+    }
+}
+
+private struct FailingCmabService: CmabService {
+    func getDecision(config: ProjectConfig, userContext: OptimizelyUserContext, ruleId: String,
+                     options: [OptimizelyDecideOption]) -> Result<CmabDecision, Error> {
+        return .failure(CmabClientError.fetchFailed("test"))
+    }
+
+    func getDecision(config: ProjectConfig, userContext: OptimizelyUserContext, ruleId: String,
+                     options: [OptimizelyDecideOption], completion: @escaping CmabDecisionCompletionHandler) {
+        completion(.failure(CmabClientError.fetchFailed("test")))
     }
 }

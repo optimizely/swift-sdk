@@ -1,5 +1,5 @@
 //
-// Copyright 2022, Optimizely, Inc. and contributors 
+// Copyright 2022, 2026, Optimizely, Inc. and contributors 
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");  
 // you may not use this file except in compliance with the License.
@@ -355,9 +355,11 @@ extension DecisionServiceTests_Holdouts {
         ).result
         
         XCTAssertNotNil(decision, "Decision should not be nil")
-        XCTAssertEqual(decision?.experiment?.id, holdout.id, "Should return holdout experiment")
-        XCTAssertEqual(decision?.variation?.key, "holdout_a", "Should return holdout variation")
-        XCTAssertEqual(decision?.source, Constants.DecisionSource.holdout.rawValue, "Source should be holdout")
+        XCTAssertNil(decision?.experiment, "Held-out rule should not be served")
+        XCTAssertNil(decision?.variation)
+        XCTAssertEqual(decision?.holdoutDecisions.count, 1)
+        XCTAssertEqual(decision?.holdoutDecisions.first?.experiment.id, holdout.id)
+        XCTAssertEqual(decision?.holdoutDecisions.first?.variation.key, "holdout_a")
     }
     
     func testGetVariationForFeatureExperiment_HoldoutAudienceMismatch() {
@@ -531,11 +533,11 @@ extension DecisionServiceTests_Holdouts {
             user: optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryMatch)
         ).result
         
-        // Global holdout fails bucketing, should select included holdout
         XCTAssertNotNil(decision)
-        XCTAssertEqual(decision?.experiment?.id, includedHoldout.id, "Should select included holdout")
-        XCTAssertEqual(decision?.variation?.key, "included_variation")
-        XCTAssertEqual(decision?.source, Constants.DecisionSource.holdout.rawValue)
+        XCTAssertNil(decision?.experiment, "Held-out rule should not be served")
+        XCTAssertNil(decision?.variation)
+        XCTAssertEqual(decision?.holdoutDecisions.map { $0.experiment.id }, [includedHoldout.id])
+        XCTAssertEqual(decision?.holdoutDecisions.first?.variation.key, "included_variation")
     }
     
     func testGetVariationForFeatureExperiment_AllHoldoutsFailThenExperiment() {
@@ -648,14 +650,13 @@ extension DecisionServiceTests_Holdouts {
             user: optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryMatch)
         ).result
         
-        // Should consistently return global holdout
         XCTAssertNotNil(decision1)
         XCTAssertNotNil(decision2)
-        XCTAssertEqual(decision1?.experiment?.id, includedHoldout.id)
-        XCTAssertEqual(decision2?.experiment?.id, includedHoldout.id)
-        XCTAssertEqual(decision1?.variation?.key, "included_variation")
-        XCTAssertEqual(decision2?.variation?.key, "included_variation")
-        XCTAssertEqual(decision1?.source, Constants.DecisionSource.holdout.rawValue)
-        XCTAssertEqual(decision2?.source, Constants.DecisionSource.holdout.rawValue)
+        XCTAssertNil(decision1?.variation)
+        XCTAssertNil(decision2?.variation)
+        XCTAssertEqual(decision1?.holdoutDecisions.map { $0.experiment.id }, [includedHoldout.id])
+        XCTAssertEqual(decision2?.holdoutDecisions.map { $0.experiment.id }, [includedHoldout.id])
+        XCTAssertEqual(decision1?.holdoutDecisions.first?.variation.key, "included_variation")
+        XCTAssertEqual(decision2?.holdoutDecisions.first?.variation.key, "included_variation")
     }
 }

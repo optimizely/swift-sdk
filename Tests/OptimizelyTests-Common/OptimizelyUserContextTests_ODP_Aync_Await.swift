@@ -53,7 +53,15 @@ final class OptimizelyUserContextTests_ODP_Aync_Await: XCTestCase {
         XCTAssertNil(_error)
         XCTAssertEqual(self.user.qualifiedSegments, ["odp-segment-1"])
     }
-    
+
+    func testFetchQualifiedSegments_optionsForwarded() async throws {
+        try? optimizely.start(datafile: datafile)
+        user = optimizely.createUserContext(userId: kUserId)
+
+        try await user.fetchQualifiedSegments(options: [.ignoreCache, .resetCache])
+        XCTAssertEqual([.ignoreCache, .resetCache], odpManager.options)
+    }
+
     // MARK: - Failure
     
     func testFetchQualifiedSegments_sdkNotReady()  async throws {

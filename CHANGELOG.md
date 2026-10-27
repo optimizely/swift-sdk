@@ -1,5 +1,16 @@
 # Optimizely Swift SDK Changelog
 
+## 6.0.1
+October 27, 2026
+
+### New Features
+
+- **Custom storage directory**: `DataStoreFile` and `DefaultEventDispatcher` can now be configured with a custom directory for their persisted files ([#668](https://github.com/optimizely/swift-sdk/pull/668))
+
+### Bug Fixes
+
+- **ODP**: The async `fetchQualifiedSegments` now forwards its `options`, so `.ignoreCache` and `.resetCache` are honored ([#667](https://github.com/optimizely/swift-sdk/pull/667))
+
 ## 6.0.0
 October 7, 2026
 

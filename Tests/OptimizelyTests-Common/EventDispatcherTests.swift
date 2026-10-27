@@ -113,6 +113,27 @@ class EventDispatcherTests: XCTestCase {
         // Use XCTAssert and related functions to verify your tests produce the correct results.
     }
 
+    func testEventDispatcherFileCustomDirectory() throws {
+        let dirUrl = try XCTUnwrap(FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first)
+        let storeName = "OPTEventQueueCustomDirectory"
+        let fileUrl = dirUrl.appendingPathComponent(storeName, isDirectory: false)
+        try? FileManager.default.removeItem(at: fileUrl)
+        defer { try? FileManager.default.removeItem(at: fileUrl) }
+
+        let dispatcher = DefaultEventDispatcher(dataStoreName: storeName,
+                                                dataStoreDirectory: .applicationSupportDirectory,
+                                                timerInterval: 0)
+        let dataStore = try XCTUnwrap(dispatcher.eventQueue.dataStore as? DataStoreFile<[Data]>)
+        XCTAssertEqual(dataStore.url, fileUrl)
+
+        dispatcher.eventQueue.save(item: EventForDispatch(body: Data()))
+        dispatcher.eventQueue.lock.sync {}
+        dataStore.lock.sync {}
+
+        XCTAssertEqual(dispatcher.eventQueue.count, 1)
+        XCTAssertTrue(FileManager.default.fileExists(atPath: fileUrl.path))
+    }
+
     func testEventDispatcherUserDefaults() {
         eventDispatcher = DefaultEventDispatcher( backingStore: .userDefaults)
         let pEventD: OPTEventDispatcher = eventDispatcher!

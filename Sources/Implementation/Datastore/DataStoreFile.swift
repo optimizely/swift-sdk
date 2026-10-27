@@ -22,7 +22,7 @@ open class DataStoreFile<T>: OPTDataStore where T: Codable {
     let dataStoreName: String
     let lock: DispatchQueue
     let async: Bool
-    public let url: URL
+    public private(set) var url: URL
 
     // thread-safe lazy logger load (after HandlerRegisterService ready)
     private let threadSafeLogger = ThreadSafeLogger()
@@ -45,6 +45,15 @@ open class DataStoreFile<T>: OPTDataStore where T: Codable {
             self.url = URL(fileURLWithPath: storeName)
         }
         
+    }
+
+    // convenience on purpose: any new designated init on an open class is an API break
+    public convenience init(storeName: String, directory: FileManager.SearchPathDirectory, async: Bool = true) {
+        self.init(storeName: storeName, async: async)
+        // create: true — unlike Documents, Application Support isn't guaranteed to exist on iOS
+        if let url = try? FileManager.default.url(for: directory, in: .userDomainMask, appropriateFor: nil, create: true) {
+            self.url = url.appendingPathComponent(storeName, isDirectory: false)
+        }
     }
     
     func isArray() -> Bool {

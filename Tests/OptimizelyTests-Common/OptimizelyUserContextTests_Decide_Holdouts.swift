@@ -175,10 +175,10 @@ class OptimizelyUserContextTests_Decide_Holdouts: XCTestCase {
         var user = optimizely.createUserContext(userId: kUserId, attributes: ["gender": "f"])
         var decision = user.decide(key: featureKey)
         
-        XCTAssert(decision == OptimizelyDecision(variationKey: "key_holdout_variation",
+        XCTAssert(decision == OptimizelyDecision(variationKey: nil,
                                                  enabled: false,
                                                  variables: variablesExpected,
-                                                 ruleKey: "key_holdout",
+                                                 ruleKey: nil,
                                                  flagKey: featureKey,
                                                  userContext: user,
                                                  reasons: []))
@@ -213,10 +213,10 @@ class OptimizelyUserContextTests_Decide_Holdouts: XCTestCase {
 
         let decision1 = user.decide(key: featureKey1)
         
-        XCTAssert(decision1 == OptimizelyDecision(variationKey: "key_holdout_variation",
+        XCTAssert(decision1 == OptimizelyDecision(variationKey: nil,
                                                                 enabled: false,
                                                                 variables: variablesExpected1,
-                                                                ruleKey: "key_holdout",
+                                                                ruleKey: nil,
                                                                 flagKey: featureKey1,
                                                                 userContext: user,
                                                                 reasons: []))
@@ -243,10 +243,10 @@ class OptimizelyUserContextTests_Decide_Holdouts: XCTestCase {
         
         XCTAssert(decisions.count == 2)
 
-        XCTAssert(decisions[featureKey1]! == OptimizelyDecision(variationKey: "key_holdout_variation",
+        XCTAssert(decisions[featureKey1]! == OptimizelyDecision(variationKey: nil,
                                                                 enabled: false,
                                                                 variables: variablesExpected1,
-                                                                ruleKey: "key_holdout",
+                                                                ruleKey: nil,
                                                                 flagKey: featureKey1,
                                                                 userContext: user,
                                                                 reasons: []))
@@ -336,10 +336,10 @@ extension OptimizelyUserContextTests_Decide_Holdouts {
                                                                 flagKey: featureKey1,
                                                                 userContext: user,
                                                                 reasons: []))
-        XCTAssert(decisions[featureKey2]! == OptimizelyDecision(variationKey: "key_holdout_variation",
+        XCTAssert(decisions[featureKey2]! == OptimizelyDecision(variationKey: nil,
                                                                 enabled: false,
                                                                 variables: variablesExpected2,
-                                                                ruleKey: "key_holdout",
+                                                                ruleKey: nil,
                                                                 flagKey: featureKey2,
                                                                 userContext: user,
                                                                 reasons: []))
@@ -375,10 +375,10 @@ extension OptimizelyUserContextTests_Decide_Holdouts {
 
         XCTAssert(decisions.count == 3)
 
-        XCTAssert(decisions[featureKey1]! == OptimizelyDecision(variationKey: "key_holdout_variation",
+        XCTAssert(decisions[featureKey1]! == OptimizelyDecision(variationKey: nil,
                                                                 enabled: false,
                                                                 variables: variablesExpected1,
-                                                                ruleKey: "key_holdout",
+                                                                ruleKey: nil,
                                                                 flagKey: featureKey1,
                                                                 userContext: user,
                                                                 reasons: []))
@@ -435,10 +435,10 @@ extension OptimizelyUserContextTests_Decide_Holdouts {
                                                                  flagKey: feature1.key,
                                                                  userContext: user,
                                                                  reasons: []))
-        XCTAssert(decisions[feature2.key]! == OptimizelyDecision(variationKey: "key_holdout_variation",
+        XCTAssert(decisions[feature2.key]! == OptimizelyDecision(variationKey: nil,
                                                                  enabled: false,
                                                                  variables: variablesExpected2,
-                                                                 ruleKey: "holdout_key_included",
+                                                                 ruleKey: nil,
                                                                  flagKey: feature2.key,
                                                                  userContext: user,
                                                                  reasons: []))

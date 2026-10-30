@@ -1,5 +1,18 @@
 # Optimizely Swift SDK Changelog
 
+## 6.1.0
+October 30, 2026
+
+### Changed
+
+**Local Holdouts: rule evaluation continues after a holdout hit**:
+When a user matches a local holdout on a rule, the SDK now excludes the user from that rule only
+and continues evaluating the remaining rules, instead of returning the holdout variation and skipping
+the rest of the flag. Each local holdout hit sends its own holdout impression event (using the
+existing event format), regardless of `sendFlagDecisions`. Global holdouts are unchanged.
+
+- Continue rule evaluation after local holdout hit ([#669](https://github.com/optimizely/swift-sdk/pull/669))
+
 ## 6.0.1
 October 27, 2026
 

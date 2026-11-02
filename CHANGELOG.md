@@ -1,5 +1,12 @@
 # Optimizely Swift SDK Changelog
 
+## 6.1.0
+November 2, 2026
+
+### Fixes
+
+- Continue rule evaluation after local holdout hit ([#669](https://github.com/optimizely/swift-sdk/pull/669))
+
 ## 6.0.1
 October 27, 2026
 

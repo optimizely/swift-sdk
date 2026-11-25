@@ -20,6 +20,17 @@ jobs:
   lint_markdown_files:
     uses: ./.github/workflows/lint_markdown.yml
 
+  # Errors fail the job; warnings are reported but don't (Sources only, like the DemoSwiftApp build phase)
+  swiftlint:
+    runs-on: macos-15
+    timeout-minutes: 10
+    steps:
+    - uses: actions/checkout@v7
+      with:
+        persist-credentials: false
+    - run: brew install swiftlint
+    - run: swiftlint Sources
+
   integration_tests:
     # ci-helper-tools' trigger script only understands push and pull_request events
     if: github.event_name != 'workflow_dispatch'

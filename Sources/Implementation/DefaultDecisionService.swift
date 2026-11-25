@@ -57,6 +57,7 @@ struct DeliveryRuleDecision {
 
 typealias UserProfile = OPTUserProfileService.UPProfile
 
+// swiftlint:disable:next type_body_length
 class DefaultDecisionService: OPTDecisionService {
     let bucketer: OPTBucketer
     let userProfileService: OPTUserProfileService

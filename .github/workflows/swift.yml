@@ -24,12 +24,24 @@ jobs:
   swiftlint:
     runs-on: macos-15
     timeout-minutes: 10
+    env:
+      SWIFTLINT_VERSION: 0.65.1
     steps:
     - uses: actions/checkout@v7
       with:
         persist-credentials: false
-    - run: brew install swiftlint
-    - run: swiftlint Sources
+    - name: Cache SwiftLint
+      id: cache
+      uses: actions/cache@v4
+      with:
+        path: .swiftlint-bin
+        key: swiftlint-${{ env.SWIFTLINT_VERSION }}
+    - name: Download SwiftLint
+      if: steps.cache.outputs.cache-hit != 'true'
+      run: |
+        curl -fsSL -o swiftlint.zip "https://github.com/realm/SwiftLint/releases/download/$SWIFTLINT_VERSION/portable_swiftlint.zip"
+        unzip -q swiftlint.zip -d .swiftlint-bin
+    - run: .swiftlint-bin/swiftlint Sources
 
   integration_tests:
     # ci-helper-tools' trigger script only understands push and pull_request events

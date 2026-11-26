@@ -510,6 +510,7 @@ extension OptimizelyClient {
 }
 
 // MARK: - ObjC protocols
+// swiftlint:disable:next type_name
 @objc(OPTEventDispatcher) public protocol _ObjcOPTEventDispatcher {
     func dispatchEvent(event: EventForDispatch, completionHandler: ((Data?, NSError?) -> Void)?)
     

@@ -20,6 +20,25 @@ jobs:
   lint_markdown_files:
     uses: ./.github/workflows/lint_markdown.yml
 
+  # Errors fail the job; warnings are reported but don't (Sources only, like the DemoSwiftApp build phase)
+  swiftlint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      SWIFTLINT_VERSION: 0.65.1
+      # sha256 of swiftlint_linux_amd64.zip for the version above; update both together
+      SWIFTLINT_SHA256: caeed6f4a679c35539ffaf124f6c4ab4a8416917f7d8796279dc52b74026059d
+    steps:
+    - uses: actions/checkout@v7
+      with:
+        persist-credentials: false
+    - name: Download SwiftLint
+      run: |
+        curl -fsSL -o swiftlint.zip "https://github.com/realm/SwiftLint/releases/download/$SWIFTLINT_VERSION/swiftlint_linux_amd64.zip"
+        echo "$SWIFTLINT_SHA256  swiftlint.zip" | sha256sum -c -
+        unzip -q swiftlint.zip swiftlint-static -d .swiftlint-bin
+    - run: .swiftlint-bin/swiftlint-static Sources --reporter github-actions-logging
+
   integration_tests:
     # ci-helper-tools' trigger script only understands push and pull_request events
     if: github.event_name != 'workflow_dispatch'
